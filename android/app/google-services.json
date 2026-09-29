@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1092561785489",
+    "project_id": "louagego-d3a43",
+    "storage_bucket": "louagego-d3a43.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092561785489:android:2f39d26c010ca69b0d2530",
+        "android_client_info": {
+          "package_name": "com.example.louage_go"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZn3ZLTI5VYjz2xhRR_R-iE_RFO1km4jc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
