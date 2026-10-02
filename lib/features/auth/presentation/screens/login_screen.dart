@@ -1,0 +1,424 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_text_field.dart';
+import '../../../../features/auth/auth_providers.dart';
+import '../../../../features/auth/domain/auth_exception.dart';
+import '../../../../features/auth/presentation/auth_error_message.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen>
+    with SingleTickerProviderStateMixin {
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+  bool _loading = false;
+  late final AnimationController _entryController;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _entryController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    );
+    final curve = CurvedAnimation(
+      parent: _entryController,
+      curve: Curves.easeOutCubic,
+    );
+    _fade = curve;
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.09),
+      end: Offset.zero,
+    ).animate(curve);
+    _entryController.forward();
+  }
+
+  @override
+  void dispose() {
+    _entryController.dispose();
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  void _message(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  Future<void> _login() async {
+    final l10n = AppLocalizations.of(context)!;
+    final email = _email.text.trim();
+    final password = _password.text;
+    if (email.isEmpty || password.isEmpty) {
+      _message(l10n.formRequiredFields);
+      return;
+    }
+
+    setState(() => _loading = true);
+    try {
+      await ref
+          .read(authControllerProvider.notifier)
+          .login(email: email, password: password);
+    } on AuthException catch (error) {
+      if (!mounted) return;
+      _message(authErrorMessage(AppLocalizations.of(context)!, error.code));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _forgotPassword() async {
+    final l10n = AppLocalizations.of(context)!;
+    final email = await _requestResetEmail(l10n);
+    if (email == null || !mounted) return;
+
+    try {
+      final code = await ref
+          .read(authControllerProvider.notifier)
+          .resetPassword(email);
+      if (!mounted) return;
+
+      final messenger = ScaffoldMessenger.of(context);
+      await messenger
+          .showSnackBar(
+            SnackBar(
+              content: Text(l10n.authResetCodeGenerated(code)),
+              duration: const Duration(seconds: 12),
+              action: SnackBarAction(
+                label: l10n.authContinue,
+                onPressed: () {},
+              ),
+            ),
+          )
+          .closed;
+      if (!mounted) return;
+
+      final credentials = await _requestNewPassword(l10n, code);
+      if (credentials == null || !mounted) return;
+
+      await ref
+          .read(authControllerProvider.notifier)
+          .completePasswordReset(
+            email: email,
+            code: credentials.code,
+            newPassword: credentials.password,
+          );
+      if (mounted) _message(l10n.authResetCompleted);
+    } on AuthException catch (error) {
+      if (!mounted) return;
+      _message(authErrorMessage(l10n, error.code));
+    }
+  }
+
+  Future<String?> _requestResetEmail(AppLocalizations l10n) async {
+    final controller = TextEditingController(text: _email.text.trim());
+    final formKey = GlobalKey<FormState>();
+    try {
+      return await showDialog<String>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          scrollable: true,
+          title: Text(l10n.authResetPasswordTitle),
+          content: Form(
+            key: formKey,
+            child: AppTextField(
+              controller: controller,
+              label: l10n.authResetEmailLabel,
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) => value == null || value.trim().isEmpty
+                  ? l10n.authInvalidEmail
+                  : null,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.authCancel),
+            ),
+            FilledButton(
+              onPressed: () {
+                if (formKey.currentState?.validate() ?? false) {
+                  Navigator.of(dialogContext).pop(controller.text.trim());
+                }
+              },
+              child: Text(l10n.authContinue),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      controller.dispose();
+    }
+  }
+
+  Future<_ResetCredentials?> _requestNewPassword(
+    AppLocalizations l10n,
+    String expectedCode,
+  ) async {
+    final codeController = TextEditingController();
+    final passwordController = TextEditingController();
+    final confirmController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    try {
+      return await showDialog<_ResetCredentials>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          scrollable: true,
+          title: Text(l10n.authResetPasswordTitle),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppTextField(
+                  controller: codeController,
+                  label: l10n.authResetCodeLabel,
+                  icon: Icons.pin_outlined,
+                  keyboardType: TextInputType.number,
+                  validator: (value) => value?.trim() == expectedCode
+                      ? null
+                      : l10n.authInvalidResetCode,
+                ),
+                const SizedBox(height: 12),
+                AppTextField(
+                  controller: passwordController,
+                  label: l10n.authNewPasswordLabel,
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  validator: (value) => value == null || value.length < 6
+                      ? l10n.authWeakPassword
+                      : null,
+                ),
+                const SizedBox(height: 12),
+                AppTextField(
+                  controller: confirmController,
+                  label: l10n.authConfirmPasswordLabel,
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  validator: (value) => value != passwordController.text
+                      ? l10n.authPasswordMismatch
+                      : null,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.authCancel),
+            ),
+            FilledButton(
+              onPressed: () {
+                if (formKey.currentState?.validate() ?? false) {
+                  Navigator.of(dialogContext).pop(
+                    _ResetCredentials(
+                      code: codeController.text.trim(),
+                      password: passwordController.text,
+                    ),
+                  );
+                }
+              },
+              child: Text(l10n.authResetAction),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      codeController.dispose();
+      passwordController.dispose();
+      confirmController.dispose();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final headerHeight = (MediaQuery.sizeOf(context).height * 0.43).clamp(
+      285.0,
+      340.0,
+    );
+
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      body: LayoutBuilder(
+        builder: (context, constraints) => Stack(
+          children: [
+            PositionedDirectional(
+              top: 0,
+              start: 0,
+              end: 0,
+              child: ClipPath(
+                clipper: _LoginHeaderClipper(),
+                child: Container(
+                  height: headerHeight,
+                  color: colorScheme.primary,
+                  child: SafeArea(
+                    bottom: false,
+                    child: Align(
+                      alignment: const AlignmentDirectional(-0.15, -0.3),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.airport_shuttle_rounded,
+                            color: colorScheme.onPrimary,
+                            size: 42,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'LouageGo',
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(
+                                  fontFamily: 'Poppins',
+                                  color: colorScheme.onPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsetsDirectional.fromSTEB(
+                  20,
+                  headerHeight - 100,
+                  20,
+                  28,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 460),
+                    child: FadeTransition(
+                      opacity: _fade,
+                      child: SlideTransition(
+                        position: _slide,
+                        child: Card(
+                          color: colorScheme.surface,
+                          elevation: 8,
+                          shadowColor: colorScheme.shadow,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.all(24),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  l10n.loginWelcome,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  l10n.loginSubtitle,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                ),
+                                const SizedBox(height: 24),
+                                AppTextField(
+                                  controller: _email,
+                                  label: l10n.loginEmailLabel,
+                                  icon: Icons.email_outlined,
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                                const SizedBox(height: 14),
+                                AppTextField(
+                                  controller: _password,
+                                  label: l10n.loginPasswordLabel,
+                                  icon: Icons.lock_outline,
+                                  isPassword: true,
+                                ),
+                                Align(
+                                  alignment: AlignmentDirectional.centerEnd,
+                                  child: TextButton(
+                                    onPressed: _forgotPassword,
+                                    style: TextButton.styleFrom(
+                                      minimumSize: const Size(48, 48),
+                                    ),
+                                    child: Text(l10n.loginForgotPassword),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                AppButton(
+                                  label: l10n.loginSubmit,
+                                  onPressed: _loading ? null : _login,
+                                  isLoading: _loading,
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Flexible(child: Text(l10n.loginNoAccount)),
+                                    TextButton(
+                                      onPressed: () =>
+                                          context.pushNamed('register'),
+                                      style: TextButton.styleFrom(
+                                        minimumSize: const Size(48, 48),
+                                      ),
+                                      child: Text(l10n.loginCreateAccount),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LoginHeaderClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) => Path()
+    ..lineTo(0, size.height - 64)
+    ..quadraticBezierTo(
+      size.width * 0.5,
+      size.height + 36,
+      size.width,
+      size.height - 62,
+    )
+    ..lineTo(size.width, 0)
+    ..close();
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+}
+
+class _ResetCredentials {
+  final String code;
+  final String password;
+
+  const _ResetCredentials({required this.code, required this.password});
+}

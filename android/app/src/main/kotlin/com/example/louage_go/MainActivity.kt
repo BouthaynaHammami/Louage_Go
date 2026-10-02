@@ -1,4 +1,4 @@
-package com.example.louage_go
+package tn.louagego.app
 
 import io.flutter.embedding.android.FlutterActivity
 

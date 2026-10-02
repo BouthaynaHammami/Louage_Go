@@ -27,11 +27,23 @@ migrate_working_dir/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.packages
 .flutter-plugins-dependencies
+.flutter-plugins
 .pub-cache/
 .pub/
-/build/
+build/
+**/build/
 /coverage/
+
+# Configuration locale, Android et Firebase
+**/local.properties
+**/google-services.json
+**/firebase_options.dart
+
+# Android/Gradle
+.gradle/
+**/.gradle/
 
 # Symbolication related
 app.*.symbols
@@ -46,3 +58,6 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Fichiers système
+Thumbs.db
