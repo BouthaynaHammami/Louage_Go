@@ -131,6 +131,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Check permissions and available storage, then restart the app.';
 
   @override
+  String authWelcomeMessage(String name) {
+    return 'Welcome, $name';
+  }
+
+  @override
   String get loginWelcome => 'Welcome to LouageGo';
 
   @override
@@ -183,6 +188,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registerSubmit => 'Create my account';
+
+  @override
+  String get registerSignInLink => 'Already have an account? Sign in';
+
+  @override
+  String get registerPasswordStrengthLabel => 'Password strength';
+
+  @override
+  String get registerPasswordStrengthWeak => 'Weak';
+
+  @override
+  String get registerPasswordStrengthMedium => 'Medium';
+
+  @override
+  String get registerPasswordStrengthStrong => 'Strong';
 
   @override
   String get formRequiredFields => 'Please fill in all fields';
@@ -532,7 +552,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String louageDriverRating(String rating) {
+    return 'Driver rating: $rating / 5';
+  }
+
+  @override
   String get profileTitle => 'Profile';
+
+  @override
+  String get profileHelp => 'Help';
+
+  @override
+  String get profileTerms => 'Terms and conditions';
 
   @override
   String get profileDriverTitle => 'Driver profile';

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/auth_scaffold.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../features/auth/domain/auth_exception.dart';
@@ -16,37 +17,13 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen>
-    with SingleTickerProviderStateMixin {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _loading = false;
-  late final AnimationController _entryController;
-  late final Animation<double> _fade;
-  late final Animation<Offset> _slide;
-
-  @override
-  void initState() {
-    super.initState();
-    _entryController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 650),
-    );
-    final curve = CurvedAnimation(
-      parent: _entryController,
-      curve: Curves.easeOutCubic,
-    );
-    _fade = curve;
-    _slide = Tween<Offset>(
-      begin: const Offset(0, 0.09),
-      end: Offset.zero,
-    ).animate(curve);
-    _entryController.forward();
-  }
 
   @override
   void dispose() {
-    _entryController.dispose();
     _email.dispose();
     _password.dispose();
     super.dispose();
@@ -67,9 +44,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     setState(() => _loading = true);
     try {
-      await ref
+      final user = await ref
           .read(authControllerProvider.notifier)
           .login(email: email, password: password);
+      if (!mounted) return;
+
+      final destination = switch (user.role) {
+        'driver' => '/driver/home',
+        'admin' => '/admin/dashboard',
+        _ => '/passenger/home',
+      };
+      final messenger = ScaffoldMessenger.of(context);
+      context.go(destination);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.authWelcomeMessage(user.name)),
+          duration: const Duration(seconds: 3),
+        ),
+      );
     } on AuthException catch (error) {
       if (!mounted) return;
       _message(authErrorMessage(AppLocalizations.of(context)!, error.code));
@@ -245,175 +237,72 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
-    final headerHeight = (MediaQuery.sizeOf(context).height * 0.43).clamp(
-      285.0,
-      340.0,
-    );
-
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      body: LayoutBuilder(
-        builder: (context, constraints) => Stack(
-          children: [
-            PositionedDirectional(
-              top: 0,
-              start: 0,
-              end: 0,
-              child: ClipPath(
-                clipper: _LoginHeaderClipper(),
-                child: Container(
-                  height: headerHeight,
-                  color: colorScheme.primary,
-                  child: SafeArea(
-                    bottom: false,
-                    child: Align(
-                      alignment: const AlignmentDirectional(-0.15, -0.3),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.airport_shuttle_rounded,
-                            color: colorScheme.onPrimary,
-                            size: 42,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'LouageGo',
-                            style: Theme.of(context).textTheme.headlineMedium
-                                ?.copyWith(
-                                  fontFamily: 'Poppins',
-                                  color: colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+    return AuthScaffold(
+      title: l10n.loginWelcome,
+      subtitle: l10n.loginSubtitle,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AuthStaggerItem(
+            index: 3,
+            child: AppTextField(
+              controller: _email,
+              label: l10n.loginEmailLabel,
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
             ),
-            SafeArea(
-              child: SingleChildScrollView(
-                padding: EdgeInsetsDirectional.fromSTEB(
-                  20,
-                  headerHeight - 100,
-                  20,
-                  28,
-                ),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 460),
-                    child: FadeTransition(
-                      opacity: _fade,
-                      child: SlideTransition(
-                        position: _slide,
-                        child: Card(
-                          color: colorScheme.surface,
-                          elevation: 8,
-                          shadowColor: colorScheme.shadow,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.all(24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  l10n.loginWelcome,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall,
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  l10n.loginSubtitle,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
-                                ),
-                                const SizedBox(height: 24),
-                                AppTextField(
-                                  controller: _email,
-                                  label: l10n.loginEmailLabel,
-                                  icon: Icons.email_outlined,
-                                  keyboardType: TextInputType.emailAddress,
-                                ),
-                                const SizedBox(height: 14),
-                                AppTextField(
-                                  controller: _password,
-                                  label: l10n.loginPasswordLabel,
-                                  icon: Icons.lock_outline,
-                                  isPassword: true,
-                                ),
-                                Align(
-                                  alignment: AlignmentDirectional.centerEnd,
-                                  child: TextButton(
-                                    onPressed: _forgotPassword,
-                                    style: TextButton.styleFrom(
-                                      minimumSize: const Size(48, 48),
-                                    ),
-                                    child: Text(l10n.loginForgotPassword),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                AppButton(
-                                  label: l10n.loginSubmit,
-                                  onPressed: _loading ? null : _login,
-                                  isLoading: _loading,
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Flexible(child: Text(l10n.loginNoAccount)),
-                                    TextButton(
-                                      onPressed: () =>
-                                          context.pushNamed('register'),
-                                      style: TextButton.styleFrom(
-                                        minimumSize: const Size(48, 48),
-                                      ),
-                                      child: Text(l10n.loginCreateAccount),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+          ),
+          const SizedBox(height: 14),
+          AuthStaggerItem(
+            index: 4,
+            child: AppTextField(
+              controller: _password,
+              label: l10n.loginPasswordLabel,
+              icon: Icons.lock_outline,
+              isPassword: true,
             ),
-          ],
-        ),
+          ),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton(
+              onPressed: _forgotPassword,
+              style: TextButton.styleFrom(
+                minimumSize: const Size(48, 48),
+              ),
+              child: Text(l10n.loginForgotPassword),
+            ),
+          ),
+          const SizedBox(height: 8),
+          AuthStaggerItem(
+            index: 5,
+            child: AppButton(
+              label: l10n.loginSubmit,
+              onPressed: _loading ? null : _login,
+              isLoading: _loading,
+            ),
+          ),
+          const SizedBox(height: 12),
+          AuthStaggerItem(
+            index: 6,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(l10n.loginNoAccount),
+                TextButton(
+                  onPressed: () => context.pushNamed('register'),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(48, 48),
+                  ),
+                  child: Text(l10n.loginCreateAccount),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
-}
-
-class _LoginHeaderClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) => Path()
-    ..lineTo(0, size.height - 64)
-    ..quadraticBezierTo(
-      size.width * 0.5,
-      size.height + 36,
-      size.width,
-      size.height - 62,
-    )
-    ..lineTo(size.width, 0)
-    ..close();
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
 
 class _ResetCredentials {

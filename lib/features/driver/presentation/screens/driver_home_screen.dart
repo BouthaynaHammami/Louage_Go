@@ -2,32 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/storage/hive_service.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/section_header.dart';
 import '../../../../core/widgets/status_chip.dart';
 import '../../../../features/auth/auth_providers.dart';
+import '../../../../features/driver/domain/entities/driver_dashboard_data.dart';
+import '../../../../features/driver/domain/entities/driver_passenger.dart';
+import '../../../../features/driver/presentation/providers/driver_home_provider.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/app_user.dart';
 import '../../../../models/booking.dart';
-import '../../../../models/driver_profile.dart';
 import '../../../../models/louage.dart';
-import '../../../../models/station.dart';
 import '../../../../models/trip.dart';
-
-final _driverQueueJoinedProvider = StreamProvider.family<bool, String>((
-  ref,
-  driverId,
-) async* {
-  final key = 'driverQueue_$driverId';
-  bool joined() => HiveService.session.get(key)?['joined'] == true;
-  yield joined();
-  await for (final _ in HiveService.session.watch(key: key)) {
-    yield joined();
-  }
-});
 
 class DriverHomeScreen extends ConsumerWidget {
   const DriverHomeScreen({super.key});
@@ -53,16 +41,31 @@ class DriverHomeScreen extends ConsumerWidget {
                     title: l10n.sessionExpired,
                   ),
                 )
-              : _buildDashboard(context, ref, user),
+              : ref
+                    .watch(driverDashboardProvider(user.id))
+                    .when(
+                      loading: () => const Scaffold(
+                        body: Center(child: CircularProgressIndicator()),
+                      ),
+                      error: (error, stackTrace) => Scaffold(
+                        body: EmptyState(
+                          icon: Icons.error_outline,
+                          title: l10n.driverProfileUnavailable,
+                        ),
+                      ),
+                      data: (dashboard) =>
+                          _buildDashboard(context, user, dashboard),
+                    ),
         );
   }
 
-  Widget _buildDashboard(BuildContext context, WidgetRef ref, AppUser user) {
+  Widget _buildDashboard(
+    BuildContext context,
+    AppUser user,
+    DriverDashboardData dashboard,
+  ) {
     final l10n = AppLocalizations.of(context)!;
-    final profileMap = HiveService.drivers.get(user.id);
-    final profile = profileMap == null
-        ? DriverProfile(userId: user.id)
-        : DriverProfile.fromMap(profileMap);
+    final profile = dashboard.profile;
     final validated = const {
       'approved',
       'validated',
@@ -123,28 +126,9 @@ class DriverHomeScreen extends ConsumerWidget {
       );
     }
 
-    final louages = HiveService.louages.values
-        .map(Louage.fromMap)
-        .where(
-          (louage) =>
-              louage.driverId == user.id ||
-              (profile.matricule.isNotEmpty &&
-                  louage.matricule == profile.matricule),
-        )
-        .toList();
-    final louage = louages.isEmpty ? null : louages.first;
-    final stationMap = louage == null
-        ? null
-        : HiveService.stations.get(louage.currentStationId);
-    final station = stationMap == null ? null : Station.fromMap(stationMap);
-    final trips =
-        louage == null
-              ? <Trip>[]
-              : HiveService.trips.values
-                    .map(Trip.fromMap)
-                    .where((trip) => trip.louageId == louage.id)
-                    .toList()
-          ..sort((a, b) => a.departureTime.compareTo(b.departureTime));
+    final louage = dashboard.louage;
+    final station = dashboard.station;
+    final trips = dashboard.trips;
     final trip = trips.isEmpty ? null : _selectTrip(trips);
 
     return Scaffold(
@@ -258,7 +242,7 @@ class DriverHomeScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _DriverQueueActions(driverId: user.id),
+            _DriverQueueActions(louage: louage),
             const SizedBox(height: 24),
             SectionHeader(title: l10n.driverPassengersReserved),
             const SizedBox(height: 8),
@@ -269,7 +253,11 @@ class DriverHomeScreen extends ConsumerWidget {
                 description: l10n.driverBookingsAppearHere,
               )
             else
-              _PassengerReservations(trip: trip),
+              _PassengerReservations(
+                trip: trip,
+                bookings: dashboard.bookings,
+                passengers: dashboard.passengers,
+              ),
           ],
         ),
       ),
@@ -345,28 +333,30 @@ class _ValidationBanner extends StatelessWidget {
 }
 
 class _DriverQueueActions extends ConsumerWidget {
-  final String driverId;
+  final Louage? louage;
 
-  const _DriverQueueActions({required this.driverId});
+  const _DriverQueueActions({required this.louage});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final queued = ref
-        .watch(_driverQueueJoinedProvider(driverId))
-        .maybeWhen(data: (value) => value, orElse: () => false);
-    final sessionKey = 'driverQueue_$driverId';
+    final currentLouage = louage;
+    final queued = currentLouage?.isQueued ?? false;
     return SizedBox(
       width: double.infinity,
       child: AppButton(
         label: queued ? l10n.driverLeaveQueue : l10n.driverJoinQueue,
         icon: queued ? Icons.logout : Icons.queue_play_next,
         variant: queued ? AppButtonVariant.secondary : AppButtonVariant.primary,
-        onPressed: () async {
-          await HiveService.session.put(sessionKey, {'joined': !queued});
-          if (!context.mounted) return;
-          context.goNamed('driverQueue');
-        },
+        onPressed: currentLouage == null
+            ? null
+            : () async {
+                await ref
+                    .read(driverRepositoryProvider)
+                    .toggleQueue(currentLouage.id);
+                if (!context.mounted) return;
+                context.goNamed('driverQueue');
+              },
       ),
     );
   }
@@ -374,26 +364,27 @@ class _DriverQueueActions extends ConsumerWidget {
 
 class _PassengerReservations extends StatelessWidget {
   final Trip trip;
+  final List<Booking> bookings;
+  final Map<String, DriverPassenger> passengers;
 
-  const _PassengerReservations({required this.trip});
+  const _PassengerReservations({
+    required this.trip,
+    required this.bookings,
+    required this.passengers,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final bookings = HiveService.bookings.values
-        .map(Booking.fromMap)
+    final tripBookings = bookings
         .where(
           (booking) =>
               booking.tripId == trip.id &&
               !const {'cancelled', 'rejected'}.contains(booking.status),
         )
         .toList();
-    final users = {
-      for (final entry in HiveService.users.toMap().entries)
-        entry.key.toString(): AppUser.fromMap(entry.value),
-    };
 
-    if (bookings.isEmpty) {
+    if (tripBookings.isEmpty) {
       return EmptyState(
         icon: Icons.event_seat_outlined,
         title: l10n.driverNoBookings,
@@ -405,18 +396,22 @@ class _PassengerReservations extends StatelessWidget {
       padding: EdgeInsetsDirectional.zero,
       child: Column(
         children: [
-          for (var index = 0; index < bookings.length; index++) ...[
+          for (var index = 0; index < tripBookings.length; index++) ...[
             if (index > 0) const Divider(height: 1, indent: 16, endIndent: 16),
             ListTile(
               minVerticalPadding: 8,
               leading: const CircleAvatar(child: Icon(Icons.person_outline)),
               title: Text(
-                users[bookings[index].userId]?.name ??
+                passengers[tripBookings[index].userId]?.name ??
                     l10n.driverPassengerFallback,
               ),
-              subtitle: Text(users[bookings[index].userId]?.phone ?? ''),
+              subtitle: Text(
+                passengers[tripBookings[index].userId]?.phone ?? '',
+              ),
               trailing: Text(
-                l10n.driverBookingSeatCount(bookings[index].seats.toString()),
+                l10n.driverBookingSeatCount(
+                  tripBookings[index].seats.toString(),
+                ),
               ),
             ),
           ],

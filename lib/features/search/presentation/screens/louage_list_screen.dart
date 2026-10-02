@@ -494,9 +494,31 @@ class _StaggeredTripCardState extends State<_StaggeredTripCard>
                 ],
               ),
               const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(
+                    Icons.route_outlined,
+                    size: 18,
+                    color: colorScheme.secondary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      l10n.searchRoutePair(
+                        result.fromStation.city,
+                        result.toStation.city,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
               Text(
                 result.louage.matricule,
-                style: Theme.of(context).textTheme.bodyMedium
+                style: Theme.of(context).textTheme.bodySmall
                     ?.copyWith(color: colorScheme.onSurfaceVariant),
               ),
               if (widget.afterRequestedTime) ...[

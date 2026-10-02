@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/auth_providers.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
+import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
+import '../../features/profile/presentation/screens/settings_screen.dart';
 import '../../features/search/domain/trip_search_criteria.dart';
 import '../../features/search/presentation/screens/louage_detail_screen.dart';
 import '../../features/search/presentation/screens/louage_list_screen.dart';
@@ -16,8 +18,6 @@ import '../../features/driver/presentation/screens/driver_home_screen.dart';
 import '../../features/driver/presentation/screens/driver_placeholder_screen.dart';
 import '../../features/driver/presentation/screens/driver_profile_screen.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../screens/auth/register_screen.dart';
-import '../../screens/settings_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = _RouterRefreshNotifier();
@@ -30,14 +30,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (context, state) async {
       AppUser? user;
-      try {
-        user = await ref.read(currentUserProvider.future);
-      } catch (_) {
-        user = null;
+      final authState = ref.read(authControllerProvider);
+      if (authState is AsyncData<AppUser?>) {
+        user = authState.value;
+      } else {
+        try {
+          user = await ref.read(currentUserProvider.future);
+        } catch (_) {
+          user = null;
+        }
       }
 
       final location = state.matchedLocation;
-      if (location == '/splash') return null;
+      if (location == '/splash') {
+        return user == null ? null : _homeForRole(user.role);
+      }
       const publicLocations = {
         '/splash',
         '/onboarding',
@@ -84,12 +91,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) =>
+            _authTransitionPage(state: state, child: const LoginScreen()),
       ),
       GoRoute(
         path: '/register',
         name: 'register',
-        builder: (context, state) => const RegisterScreen(),
+        pageBuilder: (context, state) =>
+            _authTransitionPage(state: state, child: const RegisterScreen()),
       ),
       GoRoute(
         path: '/settings',
@@ -269,6 +278,30 @@ String _homeForRole(String role) => switch (role) {
   _ => '/passenger/home',
 };
 
+CustomTransitionPage<void> _authTransitionPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 300),
+    reverseTransitionDuration: const Duration(milliseconds: 300),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final isRtl = Directionality.of(context) == TextDirection.rtl;
+      final progress = animation.drive(CurveTween(curve: Curves.easeOutCubic));
+      final slide = Tween<Offset>(
+        begin: Offset(isRtl ? -0.035 : 0.035, 0),
+        end: Offset.zero,
+      ).animate(progress);
+      return FadeTransition(
+        opacity: progress,
+        child: SlideTransition(position: slide, child: child),
+      );
+    },
+  );
+}
+
 class _RouterRefreshNotifier extends ChangeNotifier {
   void refresh() => notifyListeners();
 }
@@ -444,23 +477,41 @@ class _BottomNavigationShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final selectedIndex = destinations.indexWhere(
       (destination) => destination.path == state.uri.path,
     );
     return Scaffold(
       body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
-        onDestinationSelected: (index) =>
-            context.goNamed(destinations[index].name),
-        destinations: [
-          for (final destination in destinations)
-            NavigationDestination(
-              icon: Icon(destination.icon),
-              selectedIcon: Icon(destination.selectedIcon),
-              label: destination.label,
+      bottomNavigationBar: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          indicatorColor: colorScheme.secondary,
+          iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+            (states) => IconThemeData(
+              color: states.contains(WidgetState.selected)
+                  ? colorScheme.onSecondary
+                  : colorScheme.onSurfaceVariant,
             ),
-        ],
+          ),
+          labelTextStyle: WidgetStatePropertyAll(
+            Theme.of(context).textTheme.labelSmall
+                ?.copyWith(color: colorScheme.onSurface),
+          ),
+        ),
+        child: NavigationBar(
+          selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          onDestinationSelected: (index) =>
+              context.goNamed(destinations[index].name),
+          destinations: [
+            for (final destination in destinations)
+              NavigationDestination(
+                icon: Icon(destination.icon),
+                selectedIcon: Icon(destination.selectedIcon),
+                label: destination.label,
+              ),
+          ],
+        ),
       ),
     );
   }

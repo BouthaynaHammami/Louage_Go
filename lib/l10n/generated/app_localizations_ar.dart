@@ -130,6 +130,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'تحقق من الأذونات والمساحة المتاحة، ثم أعد تشغيل التطبيق.';
 
   @override
+  String authWelcomeMessage(String name) {
+    return 'مرحبًا، $name';
+  }
+
+  @override
   String get loginWelcome => 'مرحبًا بك في لواج غو';
 
   @override
@@ -182,6 +187,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get registerSubmit => 'إنشاء حسابي';
+
+  @override
+  String get registerSignInLink => 'لديك حساب بالفعل؟ سجّل الدخول';
+
+  @override
+  String get registerPasswordStrengthLabel => 'قوة كلمة المرور';
+
+  @override
+  String get registerPasswordStrengthWeak => 'ضعيفة';
+
+  @override
+  String get registerPasswordStrengthMedium => 'متوسطة';
+
+  @override
+  String get registerPasswordStrengthStrong => 'قوية';
 
   @override
   String get formRequiredFields => 'يرجى ملء جميع الحقول';
@@ -529,7 +549,18 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String louageDriverRating(String rating) {
+    return 'تقييم السائق: $rating / 5';
+  }
+
+  @override
   String get profileTitle => 'الملف الشخصي';
+
+  @override
+  String get profileHelp => 'المساعدة';
+
+  @override
+  String get profileTerms => 'الشروط والأحكام';
 
   @override
   String get profileDriverTitle => 'ملف السائق';

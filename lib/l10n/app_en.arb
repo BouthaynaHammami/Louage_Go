@@ -38,6 +38,14 @@
   "statusCancelled": "Cancelled",
   "storageUnavailableTitle": "Local storage unavailable",
   "storageUnavailableBody": "Check permissions and available storage, then restart the app.",
+  "authWelcomeMessage": "Welcome, {name}",
+  "@authWelcomeMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "loginWelcome": "Welcome to LouageGo",
   "loginSubtitle": "Sign in to continue",
   "loginEmailLabel": "Email",
@@ -56,6 +64,11 @@
   "registerPasswordLabel": "Password",
   "registerConfirmPasswordLabel": "Confirm password",
   "registerSubmit": "Create my account",
+  "registerSignInLink": "Already have an account? Sign in",
+  "registerPasswordStrengthLabel": "Password strength",
+  "registerPasswordStrengthWeak": "Weak",
+  "registerPasswordStrengthMedium": "Medium",
+  "registerPasswordStrengthStrong": "Strong",
   "formRequiredFields": "Please fill in all fields",
   "passwordMismatch": "Passwords do not match",
   "passwordReveal": "Show password",
@@ -162,7 +175,17 @@
   "louageVehicle": "Vehicle",
   "louagePricePerSeat": "Price per seat",
   "louageSeatsFreeOfTotal": "{available} of {total} seats available",
+  "louageDriverRating": "Driver rating: {rating} / 5",
+  "@louageDriverRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
   "profileTitle": "Profile",
+  "profileHelp": "Help",
+  "profileTerms": "Terms and conditions",
   "profileDriverTitle": "Driver profile",
   "profilePassengerFallback": "Passenger",
   "profileDriverFallback": "Driver",

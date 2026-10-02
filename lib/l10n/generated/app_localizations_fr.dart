@@ -133,6 +133,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vérifiez les permissions et l’espace disponible, puis redémarrez l’application.';
 
   @override
+  String authWelcomeMessage(String name) {
+    return 'Bienvenue, $name';
+  }
+
+  @override
   String get loginWelcome => 'Bienvenue sur LouageGo';
 
   @override
@@ -185,6 +190,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get registerSubmit => 'Créer mon compte';
+
+  @override
+  String get registerSignInLink => 'Déjà un compte ? Se connecter';
+
+  @override
+  String get registerPasswordStrengthLabel => 'Sécurité du mot de passe';
+
+  @override
+  String get registerPasswordStrengthWeak => 'Faible';
+
+  @override
+  String get registerPasswordStrengthMedium => 'Moyen';
+
+  @override
+  String get registerPasswordStrengthStrong => 'Fort';
 
   @override
   String get formRequiredFields => 'Remplissez tous les champs';
@@ -535,7 +555,18 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String louageDriverRating(String rating) {
+    return 'Note du chauffeur : $rating / 5';
+  }
+
+  @override
   String get profileTitle => 'Profil';
+
+  @override
+  String get profileHelp => 'Aide';
+
+  @override
+  String get profileTerms => 'Conditions d’utilisation';
 
   @override
   String get profileDriverTitle => 'Profil chauffeur';

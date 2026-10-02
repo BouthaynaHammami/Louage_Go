@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/storage/hive_service.dart';
+import '../../../../core/widgets/app_logo.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -84,8 +85,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _pageController,
                 itemCount: _pageCount,
                 onPageChanged: (page) => setState(() => _page = page),
-                itemBuilder: (context, index) =>
-                    _OnboardingPage(slide: slides[index]),
+                itemBuilder: (context, index) => _OnboardingPage(
+                  slide: slides[index],
+                  showLogo: index == 0,
+                ),
               ),
             ),
             Row(
@@ -144,8 +147,9 @@ class _OnboardingSlide {
 
 class _OnboardingPage extends StatelessWidget {
   final _OnboardingSlide slide;
+  final bool showLogo;
 
-  const _OnboardingPage({required this.slide});
+  const _OnboardingPage({required this.slide, required this.showLogo});
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +159,10 @@ class _OnboardingPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          if (showLogo) ...[
+            const AppLogo(size: 56),
+            const SizedBox(height: 16),
+          ],
           Container(
             width: 196,
             height: 196,

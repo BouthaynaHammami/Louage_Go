@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/storage/hive_service.dart';
+import '../../../../core/widgets/app_logo.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _rideController;
   late final Animation<double> _rideProgress;
+  late final Animation<double> _logoFade;
   late final Timer _redirectTimer;
 
   @override
@@ -29,6 +31,10 @@ class _SplashScreenState extends State<SplashScreen>
     _rideProgress = CurvedAnimation(
       parent: _rideController,
       curve: Curves.easeInOutCubic,
+    );
+    _logoFade = CurvedAnimation(
+      parent: _rideController,
+      curve: const Interval(0.3, 1, curve: Curves.easeIn),
     );
     _rideController.forward();
     _redirectTimer = Timer(const Duration(seconds: 2), _continue);
@@ -123,15 +129,13 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 child: Column(
                   children: [
-                    Text(
-                      'LouageGo',
-                      style: Theme.of(context).textTheme.headlineLarge
-                          ?.copyWith(
-                            fontFamily: 'Poppins',
-                            color: textColor,
-                            fontWeight: FontWeight.w700,
-                          ),
+                    FadeTransition(
+                      opacity: _logoFade,
+                      child: const AppLogoMark(size: 104),
                     ),
+                    const SizedBox(height: 12),
+                    const AppWordmark(),
+                    const SizedBox(height: 16),
                     const SizedBox(height: 8),
                     Text(
                       slogan,

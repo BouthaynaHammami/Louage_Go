@@ -38,6 +38,14 @@
   "statusCancelled": "ملغى",
   "storageUnavailableTitle": "التخزين المحلي غير متاح",
   "storageUnavailableBody": "تحقق من الأذونات والمساحة المتاحة، ثم أعد تشغيل التطبيق.",
+  "authWelcomeMessage": "مرحبًا، {name}",
+  "@authWelcomeMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "loginWelcome": "مرحبًا بك في لواج غو",
   "loginSubtitle": "سجّل الدخول للمتابعة",
   "loginEmailLabel": "البريد الإلكتروني",
@@ -56,6 +64,11 @@
   "registerPasswordLabel": "كلمة المرور",
   "registerConfirmPasswordLabel": "تأكيد كلمة المرور",
   "registerSubmit": "إنشاء حسابي",
+  "registerSignInLink": "لديك حساب بالفعل؟ سجّل الدخول",
+  "registerPasswordStrengthLabel": "قوة كلمة المرور",
+  "registerPasswordStrengthWeak": "ضعيفة",
+  "registerPasswordStrengthMedium": "متوسطة",
+  "registerPasswordStrengthStrong": "قوية",
   "formRequiredFields": "يرجى ملء جميع الحقول",
   "passwordMismatch": "كلمتا المرور غير متطابقتين",
   "passwordReveal": "إظهار كلمة المرور",
@@ -162,7 +175,17 @@
   "louageVehicle": "المركبة",
   "louagePricePerSeat": "السعر لكل مقعد",
   "louageSeatsFreeOfTotal": "المقاعد المتاحة: {available} من أصل {total}",
+  "louageDriverRating": "تقييم السائق: {rating} / 5",
+  "@louageDriverRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
   "profileTitle": "الملف الشخصي",
+  "profileHelp": "المساعدة",
+  "profileTerms": "الشروط والأحكام",
   "profileDriverTitle": "ملف السائق",
   "profilePassengerFallback": "مسافر",
   "profileDriverFallback": "سائق",

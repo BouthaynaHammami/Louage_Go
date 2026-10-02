@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/storage/hive_service.dart';
-import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/section_header.dart';
+import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../../models/favorite.dart';
 import '../../../../models/route_line.dart';
 import '../../../../models/station.dart';
 import '../../domain/trip_search_criteria.dart';
+import '../providers/trip_search_results_provider.dart';
+import '../widgets/search_card.dart';
 
 class PassengerHomeScreen extends ConsumerStatefulWidget {
   const PassengerHomeScreen({super.key});
@@ -25,30 +27,19 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
     with SingleTickerProviderStateMixin {
   String? _from;
   String? _to;
+  bool _showLocationError = false;
+  bool _isSearching = false;
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   late final AnimationController _swapController;
   late final Animation<double> _swapTurns;
-
-  List<Station> get _stations => HiveService.stations.values
-      .map(Station.fromMap)
-      .where((station) => station.city.isNotEmpty)
-      .toList();
-
-  List<RouteLine> get _routes => HiveService.routes.values
-      .map(RouteLine.fromMap)
-      .where(
-        (route) =>
-            route.fromStationId.isNotEmpty && route.toStationId.isNotEmpty,
-      )
-      .toList();
 
   @override
   void initState() {
     super.initState();
     _swapController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 360),
+      duration: const Duration(milliseconds: 260),
     );
     _swapTurns = Tween<double>(begin: 0, end: 0.5).animate(
       CurvedAnimation(parent: _swapController, curve: Curves.easeInOut),
@@ -61,15 +52,25 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
     super.dispose();
   }
 
-  Future<void> _pickCity({required bool isFrom}) async {
+  Future<void> _pickCity({
+    required bool isFrom,
+    required List<Station> stations,
+  }) async {
     final city = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => _StationPicker(stations: _stations),
+      builder: (_) => _StationPicker(stations: stations),
     );
     if (city == null || !mounted) return;
-    setState(() => isFrom ? _from = city : _to = city);
+    setState(() {
+      if (isFrom) {
+        _from = city;
+      } else {
+        _to = city;
+      }
+      if (_from != null && _to != null) _showLocationError = false;
+    });
   }
 
   Future<void> _pickDate() async {
@@ -92,6 +93,7 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
       final previousFrom = _from;
       _from = _to;
       _to = previousFrom;
+      if (_from != null && _to != null) _showLocationError = false;
     });
     _swapController.forward(from: 0);
   }
@@ -99,6 +101,7 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
   Future<void> _search() async {
     final l10n = AppLocalizations.of(context)!;
     if (_from == null || _to == null) {
+      setState(() => _showLocationError = true);
       _message(l10n.searchChooseBothCities);
       return;
     }
@@ -107,37 +110,22 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
       return;
     }
 
-    await _rememberSearch(_from!, _to!);
-    if (!mounted) return;
-    context.pushNamed(
-      'passengerSearchResults',
-      extra: TripSearchCriteria(
-        from: _from!,
-        to: _to!,
-        date: _date,
-        time: _time,
-      ),
-    );
-  }
-
-  Future<void> _rememberSearch(String from, String to) async {
-    final stored = HiveService.session.get('lastTrips')?['items'];
-    final recent = <Map<String, String>>[];
-    if (stored is Iterable) {
-      for (final item in stored) {
-        if (item is Map && item['from'] is String && item['to'] is String) {
-          final oldFrom = item['from'] as String;
-          final oldTo = item['to'] as String;
-          if (oldFrom != from || oldTo != to) {
-            recent.add({'from': oldFrom, 'to': oldTo});
-          }
-        }
-      }
+    setState(() => _isSearching = true);
+    try {
+      await ref.read(searchRepositoryProvider).rememberSearch(_from!, _to!);
+      if (!mounted) return;
+      context.pushNamed(
+        'passengerSearchResults',
+        extra: TripSearchCriteria(
+          from: _from!,
+          to: _to!,
+          date: _date,
+          time: _time,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSearching = false);
     }
-    recent.insert(0, {'from': from, 'to': to});
-    await HiveService.session.put('lastTrips', {
-      'items': recent.take(5).toList(),
-    });
   }
 
   void _message(String text) {
@@ -154,16 +142,59 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final userAsync = ref.watch(currentUserProvider);
+    return userAsync.when(
+      loading: () => _buildLoading(context),
+      error: (error, stackTrace) => Scaffold(
+        body: EmptyState(
+          icon: Icons.error_outline,
+          title: l10n.searchLoadError,
+        ),
+      ),
+      data: (user) {
+        final dataAsync = ref.watch(passengerHomeDataProvider(user?.id));
+        final firstName = user?.name.trim().split(RegExp(r'\s+')).firstOrNull;
+        return dataAsync.when(
+          loading: () => _buildLoading(context),
+          error: (error, stackTrace) => Scaffold(
+            body: EmptyState(
+              icon: Icons.error_outline,
+              title: l10n.searchLoadError,
+            ),
+          ),
+          data: (data) => _buildHome(context, data, firstName),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoading(BuildContext context) => Scaffold(
+    body: SafeArea(
+      child: ListView(
+        padding: const EdgeInsetsDirectional.all(18),
+        children: const [
+          SkeletonBox(height: 210),
+          SizedBox(height: 20),
+          SkeletonBox(height: 320),
+          SizedBox(height: 20),
+          SkeletonBox(height: 150),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildHome(
+    BuildContext context,
+    PassengerHomeData data,
+    String? firstName,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-    final user = ref
-        .watch(currentUserProvider)
-        .maybeWhen(data: (user) => user, orElse: () => null);
-    final firstName = user?.name.trim().split(RegExp(r'\s+')).firstOrNull;
-    final stations = _stations;
+    final stations = data.stations;
     final stationById = {for (final station in stations) station.id: station};
-    final routes = _routes;
-    final lastTrips = _readLastTrips();
-    final favorites = _readFavorites(user?.id, routes, stationById);
+    final routes = data.routes;
+    final lastTrips = data.recentTrips;
+    final favorites = data.favorites;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -180,37 +211,34 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
               ),
             ),
             SliverToBoxAdapter(
-              child: Transform.translate(
-                offset: const Offset(0, -42),
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(18, 0, 18, 28),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 760),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _buildSearchCard(context),
-                          const SizedBox(height: 28),
-                          if (lastTrips.isNotEmpty) ...[
-                            SectionHeader(title: l10n.searchLastTrips),
-                            const SizedBox(height: 12),
-                            _buildRouteChips(lastTrips),
-                            const SizedBox(height: 24),
-                          ],
-                          if (favorites.isNotEmpty) ...[
-                            SectionHeader(title: l10n.searchFavorites),
-                            const SizedBox(height: 12),
-                            _buildRouteChips(favorites),
-                            const SizedBox(height: 24),
-                          ],
-                          SectionHeader(title: l10n.searchPopularTrips),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 28),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildSearchCard(context, stations),
+                        const SizedBox(height: 28),
+                        if (lastTrips.isNotEmpty) ...[
+                          SectionHeader(title: l10n.searchLastTrips),
                           const SizedBox(height: 12),
-                          _buildPopularRoutes(routes, stationById),
+                          _buildRouteChips(lastTrips),
                           const SizedBox(height: 24),
-                          _buildNearestStation(context),
                         ],
-                      ),
+                        if (favorites.isNotEmpty) ...[
+                          SectionHeader(title: l10n.searchFavorites),
+                          const SizedBox(height: 12),
+                          _buildRouteChips(favorites),
+                          const SizedBox(height: 24),
+                        ],
+                        SectionHeader(title: l10n.searchPopularTrips),
+                        const SizedBox(height: 12),
+                        _buildPopularRoutes(routes, stationById),
+                        const SizedBox(height: 24),
+                        _buildNearestStation(context),
+                      ],
                     ),
                   ),
                 ),
@@ -222,77 +250,43 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
     );
   }
 
-  Widget _buildSearchCard(BuildContext context) {
+  Widget _buildSearchCard(BuildContext context, List<Station> stations) {
     final l10n = AppLocalizations.of(context)!;
-    return AppCard(
-      padding: const EdgeInsetsDirectional.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _CityField(
-            icon: Icons.trip_origin,
-            label: l10n.searchDeparture,
-            value: _from,
-            onTap: () => _pickCity(isFrom: true),
-          ),
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: RotationTransition(
-              turns: _swapTurns,
-              child: IconButton.filledTonal(
-                tooltip: l10n.searchSwapRoute,
-                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                onPressed: _swapCities,
-                icon: const Icon(Icons.swap_vert),
-              ),
-            ),
-          ),
-          _CityField(
-            icon: Icons.location_on_outlined,
-            label: l10n.searchDestination,
-            value: _to,
-            onTap: () => _pickCity(isFrom: false),
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _DateTimeField(
-                  label: l10n.searchDate,
-                  value: MaterialLocalizations.of(context)
-                      .formatShortDate(_date),
-                  icon: Icons.calendar_today_outlined,
-                  onTap: _pickDate,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _DateTimeField(
-                  label: l10n.searchTime,
-                  value: _time.format(context),
-                  icon: Icons.access_time,
-                  onTap: _pickTime,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          AppButton(
-            label: l10n.searchSubmit,
-            icon: Icons.search,
-            onPressed: _search,
-          ),
-        ],
-      ),
+    return SearchCard(
+      departureLabel: l10n.searchDeparture,
+      destinationLabel: l10n.searchDestination,
+      chooseCityLabel: l10n.searchChooseCity,
+      dateLabel: l10n.searchDate,
+      dateValue: MaterialLocalizations.of(context).formatShortDate(_date),
+      timeLabel: l10n.searchTime,
+      timeValue: _time.format(context),
+      swapTooltip: l10n.searchSwapRoute,
+      searchLabel: l10n.searchSubmit,
+      departure: _from,
+      destination: _to,
+      swapAnimation: _swapTurns,
+      departureError: _showLocationError && _from == null,
+      destinationError: _showLocationError && _to == null,
+      isLoading: _isSearching,
+      onDepartureTap: () => _pickCity(isFrom: true, stations: stations),
+      onDestinationTap: () => _pickCity(isFrom: false, stations: stations),
+      onSwap: _swapCities,
+      onDateTap: _pickDate,
+      onTimeTap: _pickTime,
+      onSearch: _search,
     );
   }
 
-  Widget _buildRouteChips(List<_RouteShortcut> shortcuts) => Wrap(
-    spacing: 8,
-    runSpacing: 8,
-    children: [
-      for (final shortcut in shortcuts)
-        ActionChip(
+  Widget _buildRouteChips(List<SearchRouteShortcut> shortcuts) => SizedBox(
+    height: 52,
+    child: ListView.separated(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsetsDirectional.symmetric(vertical: 2),
+      itemCount: shortcuts.length,
+      separatorBuilder: (context, index) => const SizedBox(width: 8),
+      itemBuilder: (context, index) {
+        final shortcut = shortcuts[index];
+        return ActionChip(
           avatar: Icon(
             shortcut.isFavorite ? Icons.favorite : Icons.history,
             size: 16,
@@ -302,43 +296,10 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
                 .searchRoutePair(shortcut.from, shortcut.to),
           ),
           onPressed: () => _selectRoute(shortcut.from, shortcut.to),
-        ),
-    ],
+        );
+      },
+    ),
   );
-
-  List<_RouteShortcut> _readLastTrips() {
-    final items = HiveService.session.get('lastTrips')?['items'];
-    if (items is! Iterable) return const [];
-    return [
-      for (final item in items)
-        if (item is Map && item['from'] is String && item['to'] is String)
-          _RouteShortcut(
-            from: item['from'] as String,
-            to: item['to'] as String,
-          ),
-    ];
-  }
-
-  List<_RouteShortcut> _readFavorites(
-    String? userId,
-    List<RouteLine> routes,
-    Map<String, Station> stations,
-  ) {
-    if (userId == null) return const [];
-    final routesById = {for (final route in routes) route.id: route};
-    final shortcuts = <_RouteShortcut>[];
-    for (final raw in HiveService.favorites.values) {
-      final favorite = Favorite.fromMap(raw);
-      if (favorite.userId != userId) continue;
-      final route = routesById[favorite.routeId];
-      final from = route == null ? null : stations[route.fromStationId]?.city;
-      final to = route == null ? null : stations[route.toStationId]?.city;
-      if (from != null && to != null) {
-        shortcuts.add(_RouteShortcut(from: from, to: to, isFavorite: true));
-      }
-    }
-    return shortcuts;
-  }
 
   Widget _buildPopularRoutes(
     List<RouteLine> routes,
@@ -360,9 +321,12 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
 
     if (popular.isEmpty) {
       return SizedBox(
-        height: 126,
+        height: 184,
         child: Center(
-          child: Text(AppLocalizations.of(context)!.searchNoPopularTrips),
+          child: EmptyState(
+            icon: Icons.route_outlined,
+            title: AppLocalizations.of(context)!.searchNoPopularTrips,
+          ),
         ),
       );
     }
@@ -375,32 +339,56 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
         separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final route = popular[index];
-          return SizedBox(
-            width: 220,
-            child: AppCard(
-              onTap: () => _selectRoute(route.from, route.to),
-              padding: const EdgeInsetsDirectional.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Icon(
-                    Icons.route_outlined,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  const Spacer(),
-                  Text(
-                    AppLocalizations.of(context)!
-                        .searchRoutePair(route.from, route.to),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    AppLocalizations.of(context)!
-                        .searchPricePerSeat(_formatPrice(route.price)),
-                  ),
-                ],
+          return TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 260),
+            curve: Curves.easeOutCubic,
+            builder: (context, progress, child) => Opacity(
+              opacity: progress,
+              child: Transform.translate(
+                offset: Offset(0, 8 * (1 - progress)),
+                child: child,
+              ),
+            ),
+            child: SizedBox(
+              width: 220,
+              child: AppCard(
+                onTap: () => _selectRoute(route.from, route.to),
+                padding: const EdgeInsetsDirectional.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.route_outlined,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Directionality.of(context) == TextDirection.rtl
+                              ? Icons.arrow_back_rounded
+                              : Icons.arrow_forward_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    Text(
+                      AppLocalizations.of(context)!
+                          .searchRoutePair(route.from, route.to),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      AppLocalizations.of(context)!
+                          .searchPricePerSeat(_formatPrice(route.price)),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -528,169 +516,106 @@ class _GreetingHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-    final onPrimary = colorScheme.onPrimary;
     return Container(
-      height: 258,
       decoration: BoxDecoration(
-        color: colorScheme.primary,
-        borderRadius: BorderRadiusDirectional.only(
-          bottomStart: Radius.circular(36),
-          bottomEnd: Radius.circular(36),
+        color: colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.55),
+          ),
         ),
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 48),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: IconButton(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const AppLogoMark(size: 72, showBackground: false),
+                const Spacer(),
+                Tooltip(
+                  message: l10n.adminNavNotifications,
+                  child: Semantics(
+                    label: l10n.adminNavNotifications,
+                    child: SizedBox.square(
+                      dimension: 48,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: AlignmentDirectional.center,
+                        children: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerHighest,
+                              shape: BoxShape.circle,
+                            ),
+                            child: SizedBox.square(
+                              dimension: 48,
+                              child: Icon(
+                                Icons.notifications_none_rounded,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ),
+                          PositionedDirectional(
+                            top: 8,
+                            end: 8,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: colorScheme.secondary,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: colorScheme.surface,
+                                  width: 2,
+                                ),
+                              ),
+                              child: const SizedBox.square(dimension: 10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filledTonal(
                   tooltip: l10n.profileTitle,
                   onPressed: onProfile,
-                  style: IconButton.styleFrom(
-                    minimumSize: const Size(48, 48),
-                    foregroundColor: onPrimary,
-                    backgroundColor: onPrimary.withValues(alpha: 0.12),
+                  constraints: const BoxConstraints.tightFor(
+                    width: 48,
+                    height: 48,
                   ),
-                  icon: const Icon(Icons.person_outline),
+                  style: IconButton.styleFrom(
+                    shape: const CircleBorder(),
+                    backgroundColor: colorScheme.surfaceContainerHighest,
+                    foregroundColor: colorScheme.onSurface,
+                  ),
+                  icon: const Icon(Icons.person_outline_rounded),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.greetingPassenger(firstName),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.w700,
               ),
-              const Spacer(),
-              Text(
-                l10n.greetingPassenger(firstName),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.headlineMedium
-                    ?.copyWith(color: onPrimary, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                l10n.searchPrompt,
-                style: Theme.of(context).textTheme.bodyLarge
-                    ?.copyWith(color: onPrimary.withValues(alpha: 0.8)),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.searchPrompt,
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: colorScheme.onSurfaceVariant),
+            ),
+          ],
         ),
       ),
     );
   }
-}
-
-class _CityField extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String? value;
-  final VoidCallback onTap;
-
-  const _CityField({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
-    return Material(
-      color: colorScheme.surface,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.all(14),
-          child: Row(
-            children: [
-              Icon(icon, color: colorScheme.secondary),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(label, style: Theme.of(context).textTheme.labelMedium),
-                    const SizedBox(height: 2),
-                    Text(
-                      value ?? l10n.searchChooseCity,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              ),
-              Icon(Icons.expand_more, color: colorScheme.onSurfaceVariant),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DateTimeField extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _DateTimeField({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Material(
-      color: colorScheme.surface,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.all(12),
-          child: Row(
-            children: [
-              Icon(icon, size: 18, color: colorScheme.secondary),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(label, style: Theme.of(context).textTheme.labelSmall),
-                    Text(
-                      value,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RouteShortcut {
-  final String from;
-  final String to;
-  final bool isFavorite;
-
-  const _RouteShortcut({
-    required this.from,
-    required this.to,
-    this.isFavorite = false,
-  });
 }
 
 class _PopularRoute {

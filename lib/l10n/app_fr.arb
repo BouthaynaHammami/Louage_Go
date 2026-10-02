@@ -38,6 +38,14 @@
   "statusCancelled": "Annulé",
   "storageUnavailableTitle": "Stockage local indisponible",
   "storageUnavailableBody": "Vérifiez les permissions et l’espace disponible, puis redémarrez l’application.",
+  "authWelcomeMessage": "Bienvenue, {name}",
+  "@authWelcomeMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "loginWelcome": "Bienvenue sur LouageGo",
   "loginSubtitle": "Connectez-vous pour continuer",
   "loginEmailLabel": "Email",
@@ -56,6 +64,11 @@
   "registerPasswordLabel": "Mot de passe",
   "registerConfirmPasswordLabel": "Confirmer le mot de passe",
   "registerSubmit": "Créer mon compte",
+  "registerSignInLink": "Déjà un compte ? Se connecter",
+  "registerPasswordStrengthLabel": "Sécurité du mot de passe",
+  "registerPasswordStrengthWeak": "Faible",
+  "registerPasswordStrengthMedium": "Moyen",
+  "registerPasswordStrengthStrong": "Fort",
   "formRequiredFields": "Remplissez tous les champs",
   "passwordMismatch": "Les mots de passe ne correspondent pas",
   "passwordReveal": "Afficher le mot de passe",
@@ -162,7 +175,17 @@
   "louageVehicle": "Véhicule",
   "louagePricePerSeat": "Prix par place",
   "louageSeatsFreeOfTotal": "{available} places libres sur {total}",
+  "louageDriverRating": "Note du chauffeur : {rating} / 5",
+  "@louageDriverRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
   "profileTitle": "Profil",
+  "profileHelp": "Aide",
+  "profileTerms": "Conditions d’utilisation",
   "profileDriverTitle": "Profil chauffeur",
   "profilePassengerFallback": "Passager",
   "profileDriverFallback": "Chauffeur",

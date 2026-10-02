@@ -328,6 +328,12 @@ abstract class AppLocalizations {
   /// **'Vérifiez les permissions et l’espace disponible, puis redémarrez l’application.'**
   String get storageUnavailableBody;
 
+  /// No description provided for @authWelcomeMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue, {name}'**
+  String authWelcomeMessage(String name);
+
   /// No description provided for @loginWelcome.
   ///
   /// In fr, this message translates to:
@@ -435,6 +441,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Créer mon compte'**
   String get registerSubmit;
+
+  /// No description provided for @registerSignInLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjà un compte ? Se connecter'**
+  String get registerSignInLink;
+
+  /// No description provided for @registerPasswordStrengthLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sécurité du mot de passe'**
+  String get registerPasswordStrengthLabel;
+
+  /// No description provided for @registerPasswordStrengthWeak.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faible'**
+  String get registerPasswordStrengthWeak;
+
+  /// No description provided for @registerPasswordStrengthMedium.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moyen'**
+  String get registerPasswordStrengthMedium;
+
+  /// No description provided for @registerPasswordStrengthStrong.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fort'**
+  String get registerPasswordStrengthStrong;
 
   /// No description provided for @formRequiredFields.
   ///
@@ -1072,11 +1108,29 @@ abstract class AppLocalizations {
   /// **'{available} places libres sur {total}'**
   String louageSeatsFreeOfTotal(Object available, Object total);
 
+  /// No description provided for @louageDriverRating.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note du chauffeur : {rating} / 5'**
+  String louageDriverRating(String rating);
+
   /// No description provided for @profileTitle.
   ///
   /// In fr, this message translates to:
   /// **'Profil'**
   String get profileTitle;
+
+  /// No description provided for @profileHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aide'**
+  String get profileHelp;
+
+  /// No description provided for @profileTerms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions d’utilisation'**
+  String get profileTerms;
 
   /// No description provided for @profileDriverTitle.
   ///

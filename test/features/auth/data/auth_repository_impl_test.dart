@@ -41,6 +41,21 @@ void main() {
     expect(sessionBox.get('current')?['userId'], user.id);
   });
 
+  test('currentUser returns the user immediately after registration', () async {
+    final registered = await repository.register(
+      name: 'Test User',
+      phone: '20123456',
+      email: 'test@example.com',
+      password: 'secret123',
+      role: 'passenger',
+    );
+
+    final currentUser = await repository.currentUser();
+
+    expect(currentUser?.id, registered.id);
+    expect(currentUser?.email, registered.email);
+  });
+
   test('login verifies the salted hash and restores the session', () async {
     final registered = await repository.register(
       name: 'Test User',
