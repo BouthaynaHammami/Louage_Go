@@ -22,6 +22,8 @@ import '../../features/reviews/presentation/screens/rate_trip_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/search/domain/trip_search_criteria.dart';
 import '../../features/search/presentation/screens/louage_detail_screen.dart';
+import '../../features/booking/presentation/screens/booking_flow_screen.dart';
+import '../../features/booking/presentation/screens/booking_history_screen.dart';
 import '../../features/search/presentation/screens/louage_list_screen.dart';
 import '../../features/search/presentation/screens/passenger_home_screen.dart';
 import '../../features/search/presentation/screens/stations_screen.dart';
@@ -208,6 +210,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 LouageDetailScreen(tripId: state.pathParameters['tripId']!),
           ),
           GoRoute(
+            path: '/passenger/book/:tripId',
+            name: 'passengerBook',
+            builder: (context, state) =>
+                BookingFlowScreen(tripId: state.pathParameters['tripId']!),
+          ),
+          GoRoute(
             path: '/passenger/rate/:tripId',
             name: 'passengerRateTrip',
             builder: (context, state) =>
@@ -216,10 +224,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/passenger/trips',
             name: 'passengerTrips',
-            builder: (context, state) => _SimplePage(
-              title: AppLocalizations.of(context)!.passengerNavTrips,
-              icon: Icons.luggage_outlined,
-            ),
+            builder: (context, state) => const BookingHistoryScreen(),
           ),
           GoRoute(
             path: '/passenger/favorites',

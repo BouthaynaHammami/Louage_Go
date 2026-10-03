@@ -131,6 +131,102 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appTitle => 'LouageGo';
 
   @override
+  String get bookingReviewAction => 'Vérifier la réservation';
+
+  @override
+  String get bookingReviewTitle => 'Récapitulatif de la réservation';
+
+  @override
+  String get bookingConfirmAction => 'Confirmer et réserver';
+
+  @override
+  String get bookingConfirmed => 'Réservation confirmée';
+
+  @override
+  String get bookingTicketReady => 'Votre billet est prêt';
+
+  @override
+  String get bookingReference => 'Référence';
+
+  @override
+  String get bookingSeats => 'Places';
+
+  @override
+  String get bookingDriver => 'Conducteur';
+
+  @override
+  String get bookingMatricule => 'Matricule';
+
+  @override
+  String get bookingDeparture => 'Départ';
+
+  @override
+  String get bookingTotal => 'Total';
+
+  @override
+  String get bookingPayment => 'Paiement';
+
+  @override
+  String get bookingDownloadTicket => 'Enregistrer / partager le billet PDF';
+
+  @override
+  String get bookingDetails => 'Détails de la réservation';
+
+  @override
+  String get bookingCancel => 'Annuler';
+
+  @override
+  String get bookingCancelTitle => 'Annuler la réservation ?';
+
+  @override
+  String get bookingCancelMessage =>
+      'L’annulation est possible jusqu’à 2 heures avant le départ.';
+
+  @override
+  String get bookingEmpty => 'Aucune réservation pour le moment';
+
+  @override
+  String get bookingPerSeat => 'par place';
+
+  @override
+  String bookingSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Récapitulatif ($count places)',
+      one: 'Récapitulatif (1 place)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bookingPaymentSimulation => 'Paiement (simulation)';
+
+  @override
+  String get bookingPaymentMethod => 'Mode de paiement';
+
+  @override
+  String get bookingPayOnBoarding => 'Paiement à l’embarquement';
+
+  @override
+  String get bookingCardSimulation => 'Carte bancaire (simulation)';
+
+  @override
+  String get bookingMobileSimulation => 'Portefeuille mobile (simulation)';
+
+  @override
+  String get bookingDriverSeat => 'Conducteur';
+
+  @override
+  String get bookingTaken => 'Occupée';
+
+  @override
+  String get bookingSelected => 'Sélectionnée';
+
+  @override
+  String get bookingFree => 'Libre';
+
+  @override
   String get commonLoading => 'Chargement';
 
   @override

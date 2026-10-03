@@ -322,6 +322,180 @@ abstract class AppLocalizations {
   /// **'LouageGo'**
   String get appTitle;
 
+  /// No description provided for @bookingReviewAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifier la réservation'**
+  String get bookingReviewAction;
+
+  /// No description provided for @bookingReviewTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récapitulatif de la réservation'**
+  String get bookingReviewTitle;
+
+  /// No description provided for @bookingConfirmAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer et réserver'**
+  String get bookingConfirmAction;
+
+  /// No description provided for @bookingConfirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservation confirmée'**
+  String get bookingConfirmed;
+
+  /// No description provided for @bookingTicketReady.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre billet est prêt'**
+  String get bookingTicketReady;
+
+  /// No description provided for @bookingReference.
+  ///
+  /// In fr, this message translates to:
+  /// **'Référence'**
+  String get bookingReference;
+
+  /// No description provided for @bookingSeats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Places'**
+  String get bookingSeats;
+
+  /// No description provided for @bookingDriver.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conducteur'**
+  String get bookingDriver;
+
+  /// No description provided for @bookingMatricule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Matricule'**
+  String get bookingMatricule;
+
+  /// No description provided for @bookingDeparture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Départ'**
+  String get bookingDeparture;
+
+  /// No description provided for @bookingTotal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total'**
+  String get bookingTotal;
+
+  /// No description provided for @bookingPayment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement'**
+  String get bookingPayment;
+
+  /// No description provided for @bookingDownloadTicket.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer / partager le billet PDF'**
+  String get bookingDownloadTicket;
+
+  /// No description provided for @bookingDetails.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails de la réservation'**
+  String get bookingDetails;
+
+  /// No description provided for @bookingCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get bookingCancel;
+
+  /// No description provided for @bookingCancelTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler la réservation ?'**
+  String get bookingCancelTitle;
+
+  /// No description provided for @bookingCancelMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’annulation est possible jusqu’à 2 heures avant le départ.'**
+  String get bookingCancelMessage;
+
+  /// No description provided for @bookingEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune réservation pour le moment'**
+  String get bookingEmpty;
+
+  /// No description provided for @bookingPerSeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'par place'**
+  String get bookingPerSeat;
+
+  /// No description provided for @bookingSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1 {Récapitulatif (1 place)} other {Récapitulatif ({count} places)}}'**
+  String bookingSummary(int count);
+
+  /// No description provided for @bookingPaymentSimulation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement (simulation)'**
+  String get bookingPaymentSimulation;
+
+  /// No description provided for @bookingPaymentMethod.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode de paiement'**
+  String get bookingPaymentMethod;
+
+  /// No description provided for @bookingPayOnBoarding.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement à l’embarquement'**
+  String get bookingPayOnBoarding;
+
+  /// No description provided for @bookingCardSimulation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte bancaire (simulation)'**
+  String get bookingCardSimulation;
+
+  /// No description provided for @bookingMobileSimulation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Portefeuille mobile (simulation)'**
+  String get bookingMobileSimulation;
+
+  /// No description provided for @bookingDriverSeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conducteur'**
+  String get bookingDriverSeat;
+
+  /// No description provided for @bookingTaken.
+  ///
+  /// In fr, this message translates to:
+  /// **'Occupée'**
+  String get bookingTaken;
+
+  /// No description provided for @bookingSelected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionnée'**
+  String get bookingSelected;
+
+  /// No description provided for @bookingFree.
+  ///
+  /// In fr, this message translates to:
+  /// **'Libre'**
+  String get bookingFree;
+
   /// No description provided for @commonLoading.
   ///
   /// In fr, this message translates to:

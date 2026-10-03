@@ -260,7 +260,12 @@ class LouageDetailScreen extends ConsumerWidget {
             constraints: const BoxConstraints(maxWidth: 640),
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 16),
-              child: AppButton(label: l10n.searchReservation, onPressed: null),
+              child: AppButton(
+                label: l10n.searchReservation,
+                onPressed: full
+                    ? null
+                    : () => context.push('/passenger/book/${trip.id}'),
+              ),
             ),
           ),
         ),

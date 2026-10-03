@@ -129,6 +129,102 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'LouageGo';
 
   @override
+  String get bookingReviewAction => 'Review booking';
+
+  @override
+  String get bookingReviewTitle => 'Review your booking';
+
+  @override
+  String get bookingConfirmAction => 'Confirm and book';
+
+  @override
+  String get bookingConfirmed => 'Booking confirmed';
+
+  @override
+  String get bookingTicketReady => 'Your ticket is ready';
+
+  @override
+  String get bookingReference => 'Reference';
+
+  @override
+  String get bookingSeats => 'Seats';
+
+  @override
+  String get bookingDriver => 'Driver';
+
+  @override
+  String get bookingMatricule => 'Vehicle registration';
+
+  @override
+  String get bookingDeparture => 'Departure';
+
+  @override
+  String get bookingTotal => 'Total';
+
+  @override
+  String get bookingPayment => 'Payment';
+
+  @override
+  String get bookingDownloadTicket => 'Save / share PDF ticket';
+
+  @override
+  String get bookingDetails => 'Booking details';
+
+  @override
+  String get bookingCancel => 'Cancel';
+
+  @override
+  String get bookingCancelTitle => 'Cancel booking?';
+
+  @override
+  String get bookingCancelMessage =>
+      'Cancellation is available until 2 hours before departure.';
+
+  @override
+  String get bookingEmpty => 'No bookings yet';
+
+  @override
+  String get bookingPerSeat => 'per seat';
+
+  @override
+  String bookingSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Summary ($count seats)',
+      one: 'Summary (1 seat)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bookingPaymentSimulation => 'Payment (simulation)';
+
+  @override
+  String get bookingPaymentMethod => 'Payment method';
+
+  @override
+  String get bookingPayOnBoarding => 'Pay on boarding';
+
+  @override
+  String get bookingCardSimulation => 'Bank card (simulation)';
+
+  @override
+  String get bookingMobileSimulation => 'Mobile wallet (simulation)';
+
+  @override
+  String get bookingDriverSeat => 'Driver';
+
+  @override
+  String get bookingTaken => 'Taken';
+
+  @override
+  String get bookingSelected => 'Selected';
+
+  @override
+  String get bookingFree => 'Free';
+
+  @override
   String get commonLoading => 'Loading';
 
   @override
