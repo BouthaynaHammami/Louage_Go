@@ -26,7 +26,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authPhoneAlreadyUsed => 'رقم الهاتف هذا مستخدم بالفعل';
 
   @override
+  String get authInvalidPhone => 'رقم الهاتف غير صالح';
+
+  @override
+  String get authOtpInvalid => 'رمز التحقق غير صحيح';
+
+  @override
+  String get authOtpExpired => 'انتهت صلاحية رمز التحقق';
+
+  @override
+  String get authOtpTooManyAttempts => 'محاولات كثيرة جدًا. اطلب رمزًا جديدًا';
+
+  @override
+  String get authOtpResendTooSoon => 'يرجى الانتظار قبل طلب رمز جديد';
+
+  @override
+  String get authPhoneNotRegistered => 'لا يوجد حساب مرتبط بهذا الرقم';
+
+  @override
   String get authAccountBlocked => 'هذا الحساب محظور';
+
+  @override
+  String get authProfileUnavailable => 'تعذر العثور على الملف الشخصي.';
 
   @override
   String get authUnexpectedError => 'حدث خطأ أثناء تسجيل الدخول.';
@@ -141,6 +162,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginSubtitle => 'سجّل الدخول للمتابعة';
 
   @override
+  String get loginMethodPhone => 'الهاتف';
+
+  @override
+  String get loginMethodEmail => 'البريد الإلكتروني';
+
+  @override
+  String get loginPhoneLabel => 'الهاتف';
+
+  @override
+  String get loginSendCode => 'أرسل لي رمزًا';
+
+  @override
   String get loginEmailLabel => 'البريد الإلكتروني';
 
   @override
@@ -151,6 +184,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loginForgotPassword => 'هل نسيت كلمة المرور؟';
+
+  @override
+  String get loginAccountInaccessible => 'لا يمكنك الوصول إلى حسابك؟';
+
+  @override
+  String get loginContinueWithGoogle => 'المتابعة باستخدام Google';
+
+  @override
+  String get loginGoogleUnavailable => 'تسجيل الدخول باستخدام Google غير مُعد.';
 
   @override
   String get loginNoAccount => 'ليس لديك حساب؟';
@@ -178,6 +220,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get registerEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get registerEmailOptional => 'البريد الإلكتروني (اختياري)';
+
+  @override
+  String get registerUseEmail => 'استخدام البريد الإلكتروني';
+
+  @override
+  String get registerUsePhone => 'استخدام الهاتف';
+
+  @override
+  String get registerAcceptTerms => 'أوافق على';
+
+  @override
+  String get registerTermsLink => 'شروط الاستخدام';
+
+  @override
+  String get registerAnd => 'و';
+
+  @override
+  String get registerPrivacyLink => 'سياسة الخصوصية';
+
+  @override
+  String get registerConsentRequired =>
+      'يرجى الموافقة على الشروط وسياسة الخصوصية للمتابعة.';
 
   @override
   String get registerPasswordLabel => 'كلمة المرور';
@@ -217,6 +284,249 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get otpPageTitle => 'التحقق من الرمز';
+
+  @override
+  String otpCodeSentTo(String phone) {
+    return 'أدخل الرمز المرسل إلى $phone';
+  }
+
+  @override
+  String get otpVerifyAction => 'تحقق من الرمز';
+
+  @override
+  String get otpResendAction => 'إعادة إرسال الرمز';
+
+  @override
+  String otpResendCountdown(int seconds) {
+    return 'إعادة الإرسال خلال $seconds ث';
+  }
+
+  @override
+  String otpDemoCode(String code) {
+    return 'وضع تجريبي: رمزك هو $code';
+  }
+
+  @override
+  String get otpCodeResent => 'تم إنشاء رمز جديد.';
+
+  @override
+  String get otpCodeVerified => 'تم التحقق من رقم الهاتف.';
+
+  @override
+  String get legalTermsTitle => 'شروط الاستخدام';
+
+  @override
+  String get legalTermsBody =>
+      'لواج غو مشروع جامعي لحجز سيارات الأجرة المشتركة. بإنشاء حساب، تؤكد صحة المعلومات المقدمة وتوافق على استخدام الخدمة وفقًا للقواعد المعمول بها.\n\nتخضع الحجوزات لتوفر الرحلات والمقاعد.';
+
+  @override
+  String get legalUpdatedAt => 'آخر تحديث: 3 أكتوبر 2026';
+
+  @override
+  String get legalTermsSectionServiceTitle => 'استخدام الخدمة';
+
+  @override
+  String get legalTermsSectionServiceBody =>
+      'يساعد تطبيق لواج غو المستخدمين على تصفح رحلات سيارات الأجرة المشتركة وحجزها. يلتزم المستخدم بتقديم معلومات صحيحة وحماية بيانات تسجيل الدخول واستخدام الخدمة وفق القوانين المعمول بها.';
+
+  @override
+  String get legalTermsSectionBookingsTitle => 'الحجوزات والرحلات';
+
+  @override
+  String get legalTermsSectionBookingsBody =>
+      'تعتمد الحجوزات على توفر الرحلات والمقاعد. قد تتغير الجداول والمعلومات المعروضة. تخضع الإلغاءات للشروط الموضحة في التطبيق.';
+
+  @override
+  String get legalTermsSectionDemoTitle => 'النسخة التجريبية';
+
+  @override
+  String get legalTermsSectionDemoBody =>
+      'هذا التطبيق مشروع جامعي. بعض الميزات تجريبية ولا تضمن النقل أو الدفع الفعلي.';
+
+  @override
+  String get legalPrivacyTitle => 'سياسة الخصوصية';
+
+  @override
+  String get legalPrivacyBody =>
+      'في هذه النسخة التجريبية، تُخزّن معلومات الحساب محليًا على هذا الجهاز. لا تُرسل رسائل نصية حقيقية؛ رمز التحقق تجريبي.\n\nلا تُرسل بياناتك إلى Firebase.';
+
+  @override
+  String get legalPrivacySectionDataTitle => 'المعلومات المخزنة';
+
+  @override
+  String get legalPrivacySectionDataBody =>
+      'تُخزّن معلومات الملف الشخصي والتفضيلات والمفضلة والبيانات اللازمة لدعم ميزات الحجز محليًا في التطبيق.';
+
+  @override
+  String get legalPrivacySectionUseTitle => 'كيفية استخدام المعلومات';
+
+  @override
+  String get legalPrivacySectionUseBody =>
+      'تُستخدم المعلومات لعرض ملفك الشخصي وحفظ التفضيلات ودعم ميزات الحجز. لا ترسل هذه النسخة التجريبية البيانات إلى Firebase.';
+
+  @override
+  String get legalPrivacySectionControlTitle => 'خياراتك وحذف الحساب';
+
+  @override
+  String get legalPrivacySectionControlBody =>
+      'يمكنك تعديل ملفك الشخصي أو طلب حذف حسابك. قد تُحفظ الحجوزات والتقييمات السابقة بعد إخفاء الهوية.';
+
+  @override
+  String get legalPrivacySectionDemoTitle => 'رسائل التحقق';
+
+  @override
+  String get legalPrivacySectionDemoBody =>
+      'لا تُرسل رسائل SMS حقيقية في هذه النسخة؛ رموز التحقق تجريبية.';
+
+  @override
+  String get settingsAccountSection => 'الحساب';
+
+  @override
+  String get settingsPreferencesSection => 'تفضيلات التطبيق';
+
+  @override
+  String get settingsSecuritySection => 'الأمان';
+
+  @override
+  String get settingsSupportSection => 'المساعدة والمعلومات';
+
+  @override
+  String get profileFirstNameLabel => 'الاسم الأول';
+
+  @override
+  String get profileLastNameLabel => 'اسم العائلة';
+
+  @override
+  String get profileSignOutTitle => 'تسجيل الخروج؟';
+
+  @override
+  String get profileSignOutMessage => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
+
+  @override
+  String get helpSupportTitle => 'المساعدة والدعم';
+
+  @override
+  String get helpFaqSection => 'الأسئلة الشائعة';
+
+  @override
+  String get helpFaqBookingQuestion => 'كيف أجد رحلة؟';
+
+  @override
+  String get helpFaqBookingAnswer =>
+      'اختر مدينة الانطلاق والوجهة من الشاشة الرئيسية، ثم ستظهر الرحلات المتاحة.';
+
+  @override
+  String get helpFaqPaymentQuestion => 'كيف أحجز مقعدًا؟';
+
+  @override
+  String get helpFaqPaymentAnswer =>
+      'افتح رحلة متاحة للاطلاع على تفاصيلها وإجراءات الحجز المتوفرة.';
+
+  @override
+  String get helpFaqPhoneQuestion => 'كيف أغيّر رقم هاتفي؟';
+
+  @override
+  String get helpFaqPhoneAnswer =>
+      'من ملفك الشخصي، افتح تعديل الملف الشخصي ثم اختر تغيير رقم الهاتف. يتم التحقق باستخدام رمز OTP.';
+
+  @override
+  String get helpHowItWorksTitle => 'كيف يعمل لواج غو';
+
+  @override
+  String get helpHowItWorksBody =>
+      'اختر نقطة الانطلاق والوجهة، وتصفح الرحلات المتاحة، ثم افتح الرحلة لعرض تفاصيلها. يمكن للسائقين إدارة حسابهم من ملفهم الشخصي.';
+
+  @override
+  String get helpContactTitle => 'تواصل معنا';
+
+  @override
+  String get helpContactSupport => 'التواصل مع الدعم';
+
+  @override
+  String get helpEmailCopied => 'تم نسخ بريد الدعم.';
+
+  @override
+  String get helpReportProblem => 'الإبلاغ عن مشكلة';
+
+  @override
+  String get helpReportHint => 'صف المشكلة التي واجهتها';
+
+  @override
+  String get helpCopyReport => 'نسخ البلاغ';
+
+  @override
+  String get helpReportCopied => 'تم نسخ البلاغ. يمكنك إرساله إلى الدعم.';
+
+  @override
+  String get profilePrivacy => 'الخصوصية';
+
+  @override
+  String get profileEditTitle => 'تعديل الملف الشخصي';
+
+  @override
+  String get profileCityLabel => 'المدينة';
+
+  @override
+  String get profileCityNotSet => 'لم يتم اختيار مدينة';
+
+  @override
+  String get profileChooseGallery => 'الاختيار من المعرض';
+
+  @override
+  String get profileChooseCamera => 'التقاط صورة';
+
+  @override
+  String get profileChangePhoto => 'تغيير الصورة';
+
+  @override
+  String get profilePhotoError => 'تعذر اختيار الصورة أو حفظها.';
+
+  @override
+  String get profilePhotoCleanupWarning =>
+      'تم حفظ الملف الشخصي، لكن تعذّر حذف الصورة السابقة.';
+
+  @override
+  String get profileUpdated => 'تم تحديث الملف الشخصي.';
+
+  @override
+  String get profileUnavailable => 'الملف الشخصي غير متاح.';
+
+  @override
+  String get profileSaveAction => 'حفظ';
+
+  @override
+  String get profilePhoneUpdated => 'تم تحديث رقم الهاتف.';
+
+  @override
+  String get profileHelpBody =>
+      'الأسئلة الشائعة\n\nكيف أحجز رحلة؟ اختر مدينة الانطلاق والوجهة، ثم حدد رحلة متاحة.\n\nكيف أغيّر رقم هاتفي؟ افتح تعديل الملف الشخصي ثم اختر تغيير رقم الهاتف. سيُطلب رمز تحقق.\n\nكيف أحمي حسابي؟ حافظ على التحكم بهاتفك ومعلومات تسجيل الدخول.';
+
+  @override
+  String get deleteAccountAction => 'حذف حسابي';
+
+  @override
+  String get deleteAccountTitle => 'حذف الحساب؟';
+
+  @override
+  String get deleteAccountWarning =>
+      'هذا الإجراء نهائي. سيتم حذف المفضلة والإشعارات وبيانات الملف الشخصي. ستُحفظ الحجوزات والتقييمات بعد إخفاء الهوية.';
+
+  @override
+  String get deleteAccountConfirmTitle => 'تأكيد الحذف';
+
+  @override
+  String get deleteAccountConfirmationWord => 'حذف';
+
+  @override
+  String deleteAccountTypeConfirmation(String word) {
+    return 'اكتب $word للتأكيد.';
+  }
+
+  @override
+  String get deleteAccountConfirmationMismatch => 'الكلمة المدخلة غير مطابقة.';
+
+  @override
+  String get deleteAccountCompleted => 'تم حذف حسابك.';
 
   @override
   String get pageNotFound => 'الصفحة غير موجودة';
@@ -555,6 +865,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileTitle => 'الملف الشخصي';
+
+  @override
+  String get profileChangePhone => 'تغيير رقم الهاتف';
+
+  @override
+  String get profileNewPhoneLabel => 'رقم الهاتف الجديد';
 
   @override
   String get profileHelp => 'المساعدة';

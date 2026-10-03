@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,7 +10,11 @@ import '../../../../core/widgets/auth_scaffold.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../auth_providers.dart';
 import '../../domain/auth_exception.dart';
+import '../../domain/otp_challenge.dart';
+import '../../domain/phone_number.dart';
 import '../auth_error_message.dart';
+import '../auth_home_route.dart';
+import '../otp_arguments.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -26,6 +31,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _confirm = TextEditingController();
   String role = 'passenger';
   bool loading = false;
+  bool _phoneMode = true;
+  bool _acceptedTerms = false;
+  bool _consentError = false;
   int _passwordStrength = 0;
 
   @override
@@ -72,39 +80,62 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final email = _email.text.trim();
     final password = _password.text;
 
-    if (name.isEmpty || phone.isEmpty || email.isEmpty || password.isEmpty) {
+    if (!_acceptedTerms) {
+      setState(() => _consentError = true);
+      _msg(l10n.registerConsentRequired);
+      return;
+    }
+    if (name.isEmpty ||
+        phone.isEmpty ||
+        (!_phoneMode && (email.isEmpty || password.isEmpty))) {
       _msg(l10n.formRequiredFields);
       return;
     }
-    if (password != _confirm.text) {
+    if (!_phoneMode && password != _confirm.text) {
       _msg(l10n.passwordMismatch);
       return;
     }
 
     setState(() => loading = true);
     try {
-      final user = await ref
-          .read(authControllerProvider.notifier)
-          .register(
+      final controller = ref.read(authControllerProvider.notifier);
+      if (_phoneMode) {
+        final parsedPhone = PhoneNumber(phone);
+        final challenge = await controller.requestOtp(
+          parsedPhone,
+          OtpPurpose.register,
+        );
+        if (!mounted) return;
+        context.pushNamed(
+          'otp',
+          extra: OtpArguments(
+            phone: parsedPhone,
+            purpose: OtpPurpose.register,
+            challenge: challenge,
             name: name,
-            phone: phone,
-            email: email,
-            password: password,
             role: role,
-          );
-      if (!mounted) return;
+            email: email.isEmpty ? null : email,
+          ),
+        );
+      } else {
+        final user = await controller.register(
+          name: name,
+          phone: phone,
+          email: email,
+          password: password,
+          role: role,
+        );
+        if (!mounted) return;
 
-      final destination = user.role == 'driver'
-          ? '/driver/home'
-          : '/passenger/home';
-      final messenger = ScaffoldMessenger.of(context);
-      context.go(destination);
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(l10n.authWelcomeMessage(user.name)),
-          duration: const Duration(seconds: 3),
-        ),
-      );
+        final messenger = ScaffoldMessenger.of(context);
+        context.go(authHomeRouteForRole(user.role));
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l10n.authWelcomeMessage(user.name)),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     } on AuthException catch (e) {
       if (!mounted) return;
       _msg(authErrorMessage(AppLocalizations.of(context)!, e.code));
@@ -112,6 +143,42 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (mounted) setState(() => loading = false);
     }
   }
+
+  Widget _buildConsent(AppLocalizations l10n) => Material(
+    color: Colors.transparent,
+    child: CheckboxListTile(
+      value: _acceptedTerms,
+      onChanged: (accepted) => setState(() {
+        _acceptedTerms = accepted ?? false;
+        _consentError = false;
+      }),
+      controlAffinity: ListTileControlAffinity.leading,
+      contentPadding: EdgeInsetsDirectional.zero,
+      title: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(l10n.registerAcceptTerms),
+          TextButton(
+            onPressed: () => context.pushNamed('legalTerms'),
+            style: TextButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 4),
+            ),
+            child: Text(l10n.registerTermsLink),
+          ),
+          Text(l10n.registerAnd),
+          TextButton(
+            onPressed: () => context.pushNamed('legalPrivacy'),
+            style: TextButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 4),
+            ),
+            child: Text(l10n.registerPrivacyLink),
+          ),
+        ],
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +224,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: AlignmentDirectional.center,
+            child: TextButton.icon(
+              onPressed: loading
+                  ? null
+                  : () => setState(() => _phoneMode = !_phoneMode),
+              icon: Icon(
+                _phoneMode ? Icons.alternate_email : Icons.phone_outlined,
+              ),
+              label: Text(
+                _phoneMode ? l10n.registerUseEmail : l10n.registerUsePhone,
+              ),
+              style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
+            ),
+          ),
           const SizedBox(height: 20),
           AuthStaggerItem(
             index: 4,
@@ -174,6 +257,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               label: l10n.registerPhoneLabel,
               icon: Icons.phone_outlined,
               keyboardType: TextInputType.phone,
+              prefixText: _phoneMode ? '+216 ' : null,
+              textDirection: _phoneMode ? TextDirection.ltr : null,
+              inputFormatters: _phoneMode
+                  ? [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(8),
+                    ]
+                  : null,
+              maxLength: _phoneMode ? 8 : null,
             ),
           ),
           const SizedBox(height: 12),
@@ -181,41 +273,59 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             index: 6,
             child: AppTextField(
               controller: _email,
-              label: l10n.registerEmailLabel,
+              label: _phoneMode
+                  ? l10n.registerEmailOptional
+                  : l10n.registerEmailLabel,
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
+              autofillHints: const [AutofillHints.email],
             ),
           ),
-          const SizedBox(height: 12),
-          AuthStaggerItem(
-            index: 7,
-            child: AppTextField(
-              controller: _password,
-              label: l10n.registerPasswordLabel,
-              icon: Icons.lock_outline,
-              isPassword: true,
+          if (!_phoneMode) ...[
+            const SizedBox(height: 12),
+            AuthStaggerItem(
+              index: 7,
+              child: AppTextField(
+                controller: _password,
+                label: l10n.registerPasswordLabel,
+                icon: Icons.lock_outline,
+                isPassword: true,
+                autofillHints: const [AutofillHints.newPassword],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          AuthStaggerItem(
-            index: 8,
-            child: _PasswordStrengthIndicator(strength: _passwordStrength),
-          ),
-          const SizedBox(height: 12),
-          AuthStaggerItem(
-            index: 9,
-            child: AppTextField(
-              controller: _confirm,
-              label: l10n.registerConfirmPasswordLabel,
-              icon: Icons.lock_outline,
-              isPassword: true,
+            const SizedBox(height: 8),
+            AuthStaggerItem(
+              index: 8,
+              child: _PasswordStrengthIndicator(strength: _passwordStrength),
             ),
-          ),
+            const SizedBox(height: 12),
+            AuthStaggerItem(
+              index: 9,
+              child: AppTextField(
+                controller: _confirm,
+                label: l10n.registerConfirmPasswordLabel,
+                icon: Icons.lock_outline,
+                isPassword: true,
+                autofillHints: const [AutofillHints.newPassword],
+              ),
+            ),
+          ],
           const SizedBox(height: 20),
+          _buildConsent(l10n),
+          if (_consentError) ...[
+            const SizedBox(height: 4),
+            Text(
+              l10n.registerConsentRequired,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.error),
+            ),
+          ],
+          const SizedBox(height: 12),
           AuthStaggerItem(
             index: 10,
             child: AppButton(
-              label: l10n.registerSubmit,
+              label: _phoneMode ? l10n.loginSendCode : l10n.registerSubmit,
               onPressed: loading ? null : _register,
               isLoading: loading,
             ),
@@ -253,12 +363,15 @@ class _RoleOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final animationDuration = MediaQuery.of(context).disableAnimations
+        ? Duration.zero
+        : const Duration(milliseconds: 200);
     return Semantics(
       button: true,
       selected: selected,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 88,
+        duration: animationDuration,
+        height: 104,
         decoration: BoxDecoration(
           color: selected
               ? colorScheme.secondary.withValues(alpha: 0.14)
@@ -307,7 +420,7 @@ class _RoleOption extends StatelessWidget {
                 end: 6,
                 child: AnimatedScale(
                   scale: selected ? 1 : 0,
-                  duration: const Duration(milliseconds: 180),
+                  duration: animationDuration,
                   child: Icon(
                     Icons.check_circle,
                     size: 18,

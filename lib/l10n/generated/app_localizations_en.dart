@@ -25,7 +25,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPhoneAlreadyUsed => 'This phone number is already in use';
 
   @override
+  String get authInvalidPhone => 'Invalid phone number';
+
+  @override
+  String get authOtpInvalid => 'Incorrect verification code';
+
+  @override
+  String get authOtpExpired => 'The verification code has expired';
+
+  @override
+  String get authOtpTooManyAttempts => 'Too many attempts. Request a new code';
+
+  @override
+  String get authOtpResendTooSoon =>
+      'Please wait before requesting another code';
+
+  @override
+  String get authPhoneNotRegistered =>
+      'No account is associated with this number';
+
+  @override
   String get authAccountBlocked => 'This account is blocked';
+
+  @override
+  String get authProfileUnavailable => 'The profile could not be found.';
 
   @override
   String get authUnexpectedError => 'An authentication error occurred.';
@@ -142,6 +165,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSubtitle => 'Sign in to continue';
 
   @override
+  String get loginMethodPhone => 'Phone';
+
+  @override
+  String get loginMethodEmail => 'Email';
+
+  @override
+  String get loginPhoneLabel => 'Phone';
+
+  @override
+  String get loginSendCode => 'Send me a code';
+
+  @override
   String get loginEmailLabel => 'Email';
 
   @override
@@ -152,6 +187,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginForgotPassword => 'Forgot password?';
+
+  @override
+  String get loginAccountInaccessible => 'Can\'t access your account?';
+
+  @override
+  String get loginContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String get loginGoogleUnavailable => 'Google sign-in is not configured.';
 
   @override
   String get loginNoAccount => 'Don\'t have an account?';
@@ -179,6 +223,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registerEmailLabel => 'Email';
+
+  @override
+  String get registerEmailOptional => 'Email (optional)';
+
+  @override
+  String get registerUseEmail => 'Use email instead';
+
+  @override
+  String get registerUsePhone => 'Use phone instead';
+
+  @override
+  String get registerAcceptTerms => 'I agree to';
+
+  @override
+  String get registerTermsLink => 'the terms of service';
+
+  @override
+  String get registerAnd => 'and';
+
+  @override
+  String get registerPrivacyLink => 'the privacy policy';
+
+  @override
+  String get registerConsentRequired =>
+      'Accept the terms and privacy policy to continue.';
 
   @override
   String get registerPasswordLabel => 'Password';
@@ -218,6 +287,250 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get otpPageTitle => 'Verify your code';
+
+  @override
+  String otpCodeSentTo(String phone) {
+    return 'Enter the code sent to $phone';
+  }
+
+  @override
+  String get otpVerifyAction => 'Verify code';
+
+  @override
+  String get otpResendAction => 'Resend code';
+
+  @override
+  String otpResendCountdown(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String otpDemoCode(String code) {
+    return 'Demo mode: your code is $code';
+  }
+
+  @override
+  String get otpCodeResent => 'A new code has been generated.';
+
+  @override
+  String get otpCodeVerified => 'Phone number verified.';
+
+  @override
+  String get legalTermsTitle => 'Terms of service';
+
+  @override
+  String get legalTermsBody =>
+      'LouageGo is a university project for booking shared taxis. By creating an account, you confirm that the information you provide is accurate and agree to use the service in accordance with applicable rules.\n\nBookings depend on trip and seat availability.';
+
+  @override
+  String get legalUpdatedAt => 'Updated October 3, 2026';
+
+  @override
+  String get legalTermsSectionServiceTitle => 'Using the service';
+
+  @override
+  String get legalTermsSectionServiceBody =>
+      'LouageGo helps users browse and book shared taxi trips. Users agree to provide accurate information, protect their sign-in details, and use the service in accordance with applicable laws.';
+
+  @override
+  String get legalTermsSectionBookingsTitle => 'Bookings and trips';
+
+  @override
+  String get legalTermsSectionBookingsBody =>
+      'Bookings depend on trip and seat availability. Schedules and displayed information may change. Cancellations are subject to the conditions shown in the app.';
+
+  @override
+  String get legalTermsSectionDemoTitle => 'Demo version';
+
+  @override
+  String get legalTermsSectionDemoBody =>
+      'This application is a university project. Some features are simulated and do not guarantee real transportation or payment.';
+
+  @override
+  String get legalPrivacyTitle => 'Privacy policy';
+
+  @override
+  String get legalPrivacyBody =>
+      'In this demo version, account information is stored locally on this device. No real SMS is sent; the verification code is simulated.\n\nYour data is not sent to Firebase.';
+
+  @override
+  String get legalPrivacySectionDataTitle => 'Information stored';
+
+  @override
+  String get legalPrivacySectionDataBody =>
+      'Profile information, preferences, favorites, and data needed to support booking features are stored locally by the application.';
+
+  @override
+  String get legalPrivacySectionUseTitle => 'How information is used';
+
+  @override
+  String get legalPrivacySectionUseBody =>
+      'Information is used to display your profile, save preferences, and support booking features. This demo version does not send data to Firebase.';
+
+  @override
+  String get legalPrivacySectionControlTitle => 'Your choices and deletion';
+
+  @override
+  String get legalPrivacySectionControlBody =>
+      'You can edit your profile or request account deletion. Historical bookings and reviews may be retained in anonymized form.';
+
+  @override
+  String get legalPrivacySectionDemoTitle => 'Verification messages';
+
+  @override
+  String get legalPrivacySectionDemoBody =>
+      'No real SMS is sent in this version; verification codes are simulated.';
+
+  @override
+  String get settingsAccountSection => 'Account';
+
+  @override
+  String get settingsPreferencesSection => 'App preferences';
+
+  @override
+  String get settingsSecuritySection => 'Security';
+
+  @override
+  String get settingsSupportSection => 'Help and information';
+
+  @override
+  String get profileFirstNameLabel => 'First name';
+
+  @override
+  String get profileLastNameLabel => 'Last name';
+
+  @override
+  String get profileSignOutTitle => 'Sign out?';
+
+  @override
+  String get profileSignOutMessage => 'Are you sure you want to sign out?';
+
+  @override
+  String get helpSupportTitle => 'Help & support';
+
+  @override
+  String get helpFaqSection => 'Frequently asked questions';
+
+  @override
+  String get helpFaqBookingQuestion => 'How do I find a trip?';
+
+  @override
+  String get helpFaqBookingAnswer =>
+      'Choose your departure and destination cities on the home screen. Available trips will then be shown.';
+
+  @override
+  String get helpFaqPaymentQuestion => 'How do I book a seat?';
+
+  @override
+  String get helpFaqPaymentAnswer =>
+      'Open an available trip to review its details and the booking actions provided.';
+
+  @override
+  String get helpFaqPhoneQuestion => 'How do I change my phone number?';
+
+  @override
+  String get helpFaqPhoneAnswer =>
+      'From your profile, open Edit profile and choose Change phone number. Verification is completed with an OTP code.';
+
+  @override
+  String get helpHowItWorksTitle => 'How LouageGo works';
+
+  @override
+  String get helpHowItWorksBody =>
+      'Choose your departure and destination, browse available trips, then open a trip to view its details. Drivers can manage their workspace from their profile.';
+
+  @override
+  String get helpContactTitle => 'Contact us';
+
+  @override
+  String get helpContactSupport => 'Contact support';
+
+  @override
+  String get helpEmailCopied => 'Support email copied.';
+
+  @override
+  String get helpReportProblem => 'Report a problem';
+
+  @override
+  String get helpReportHint => 'Describe the problem you encountered';
+
+  @override
+  String get helpCopyReport => 'Copy report';
+
+  @override
+  String get helpReportCopied => 'Report copied. You can send it to support.';
+
+  @override
+  String get profilePrivacy => 'Privacy';
+
+  @override
+  String get profileEditTitle => 'Edit profile';
+
+  @override
+  String get profileCityLabel => 'City';
+
+  @override
+  String get profileCityNotSet => 'No city selected';
+
+  @override
+  String get profileChooseGallery => 'Choose from gallery';
+
+  @override
+  String get profileChooseCamera => 'Take a photo';
+
+  @override
+  String get profileChangePhoto => 'Change photo';
+
+  @override
+  String get profilePhotoError => 'The photo could not be selected or saved.';
+
+  @override
+  String get profilePhotoCleanupWarning =>
+      'Profile saved, but the previous photo could not be removed.';
+
+  @override
+  String get profileUpdated => 'Profile updated.';
+
+  @override
+  String get profileUnavailable => 'Profile unavailable.';
+
+  @override
+  String get profileSaveAction => 'Save';
+
+  @override
+  String get profilePhoneUpdated => 'Phone number updated.';
+
+  @override
+  String get profileHelpBody =>
+      'Frequently asked questions\n\nHow do I book a trip? Choose your departure and destination cities, then select an available trip.\n\nHow do I change my phone number? Open Edit profile and select Change phone number. A verification code will be required.\n\nHow do I protect my account? Keep control of your phone and sign-in information.';
+
+  @override
+  String get deleteAccountAction => 'Delete my account';
+
+  @override
+  String get deleteAccountTitle => 'Delete account?';
+
+  @override
+  String get deleteAccountWarning =>
+      'This action is permanent. Your favorites, notifications, and profile data will be deleted. Bookings and reviews will be kept in anonymized form.';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Confirm deletion';
+
+  @override
+  String get deleteAccountConfirmationWord => 'DELETE';
+
+  @override
+  String deleteAccountTypeConfirmation(String word) {
+    return 'Type $word to confirm.';
+  }
+
+  @override
+  String get deleteAccountConfirmationMismatch =>
+      'The entered word does not match.';
+
+  @override
+  String get deleteAccountCompleted => 'Your account has been deleted.';
 
   @override
   String get pageNotFound => 'Page not found';
@@ -558,6 +871,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileTitle => 'Profile';
+
+  @override
+  String get profileChangePhone => 'Change phone number';
+
+  @override
+  String get profileNewPhoneLabel => 'New phone number';
 
   @override
   String get profileHelp => 'Help';

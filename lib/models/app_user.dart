@@ -13,6 +13,7 @@ class AppUser {
   final String passwordHash;
   final String salt;
   final String createdAt;
+  final bool phoneVerified;
 
   const AppUser({
     this.id = '',
@@ -27,6 +28,7 @@ class AppUser {
     this.passwordHash = '',
     this.salt = '',
     this.createdAt = '',
+    this.phoneVerified = false,
   });
 
   AppUser copyWith({
@@ -42,36 +44,38 @@ class AppUser {
     String? passwordHash,
     String? salt,
     String? createdAt,
-  }) =>
-      AppUser(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        phone: phone ?? this.phone,
-        email: email ?? this.email,
-        role: role ?? this.role,
-        photo: photo ?? this.photo,
-        city: city ?? this.city,
-        language: language ?? this.language,
-        status: status ?? this.status,
-        passwordHash: passwordHash ?? this.passwordHash,
-        salt: salt ?? this.salt,
-        createdAt: createdAt ?? this.createdAt,
-      );
+    bool? phoneVerified,
+  }) => AppUser(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    phone: phone ?? this.phone,
+    email: email ?? this.email,
+    role: role ?? this.role,
+    photo: photo ?? this.photo,
+    city: city ?? this.city,
+    language: language ?? this.language,
+    status: status ?? this.status,
+    passwordHash: passwordHash ?? this.passwordHash,
+    salt: salt ?? this.salt,
+    createdAt: createdAt ?? this.createdAt,
+    phoneVerified: phoneVerified ?? this.phoneVerified,
+  );
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'name': name,
-        'phone': phone,
-        'email': email,
-        'role': role,
-        'photo': photo,
-        'city': city,
-        'language': language,
-        'status': status,
-        'passwordHash': passwordHash,
-        'salt': salt,
-        'createdAt': createdAt,
-      };
+    'id': id,
+    'name': name,
+    'phone': phone,
+    'email': email,
+    'role': role,
+    'photo': photo,
+    'city': city,
+    'language': language,
+    'status': status,
+    'passwordHash': passwordHash,
+    'salt': salt,
+    'createdAt': createdAt,
+    'phoneVerified': phoneVerified,
+  };
 
   factory AppUser.fromMap(Map<dynamic, dynamic> map) {
     final role = ModelMap.text(map, 'role', 'passenger');
@@ -91,6 +95,7 @@ class AppUser {
       passwordHash: ModelMap.text(map, 'passwordHash'),
       salt: ModelMap.text(map, 'salt'),
       createdAt: ModelMap.date(map, 'createdAt'),
+      phoneVerified: ModelMap.boolean(map, 'phoneVerified'),
     );
   }
 }

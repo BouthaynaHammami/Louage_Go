@@ -5,8 +5,13 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/auth_providers.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/auth/presentation/screens/legal_document_screen.dart';
+import '../../features/auth/presentation/screens/otp_screen.dart';
+import '../../features/auth/presentation/otp_arguments.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
+import '../../features/profile/presentation/screens/edit_profile_screen.dart';
+import '../../features/profile/presentation/screens/help_support_screen.dart';
 import '../../features/search/domain/trip_search_criteria.dart';
 import '../../features/search/presentation/screens/louage_detail_screen.dart';
 import '../../features/search/presentation/screens/louage_list_screen.dart';
@@ -52,6 +57,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         '/register',
         '/otp',
       };
+      const publicDocumentLocations = {'/legal/terms', '/legal/privacy'};
+      const publicHelpLocations = {'/help/faq'};
+
+      if (publicDocumentLocations.contains(location) ||
+          publicHelpLocations.contains(location)) {
+        return null;
+      }
 
       if (user == null) {
         return publicLocations.contains(location) ? null : '/login';
@@ -106,12 +118,42 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
+        path: '/profile/edit',
+        name: 'profileEdit',
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
         path: '/otp',
         name: 'otp',
-        builder: (context, state) => _SimplePage(
-          title: AppLocalizations.of(context)!.otpPageTitle,
-          icon: Icons.pin_outlined,
-        ),
+        builder: (context, state) {
+          final extra = state.extra;
+          return OtpScreen(arguments: extra is OtpArguments ? extra : null);
+        },
+      ),
+      GoRoute(
+        path: '/profile/verify-phone',
+        name: 'profileVerifyPhone',
+        builder: (context, state) {
+          final extra = state.extra;
+          return OtpScreen(arguments: extra is OtpArguments ? extra : null);
+        },
+      ),
+      GoRoute(
+        path: '/legal/terms',
+        name: 'legalTerms',
+        builder: (context, state) =>
+            const LegalDocumentScreen(document: LegalDocument.terms),
+      ),
+      GoRoute(
+        path: '/legal/privacy',
+        name: 'legalPrivacy',
+        builder: (context, state) =>
+            const LegalDocumentScreen(document: LegalDocument.privacy),
+      ),
+      GoRoute(
+        path: '/help/faq',
+        name: 'helpFaq',
+        builder: (context, state) => const HelpSupportScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) =>

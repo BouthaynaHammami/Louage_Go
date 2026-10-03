@@ -4,10 +4,15 @@ import '../../core/storage/hive_service.dart';
 import '../../models/app_user.dart';
 import 'data/auth_repository_impl.dart';
 import 'domain/auth_repository.dart';
+import 'domain/otp_challenge.dart';
+import 'domain/phone_number.dart';
+import 'domain/social_auth_provider.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepositoryImpl(),
 );
+
+final socialAuthProvider = Provider<SocialAuthProvider?>((ref) => null);
 
 final currentUserProvider = StreamProvider<AppUser?>((ref) async* {
   final repository = ref.watch(authRepositoryProvider);
@@ -47,6 +52,55 @@ class AuthController extends AsyncNotifier<AppUser?> {
       role: role,
     ),
   );
+
+  Future<OtpChallenge> requestOtp(PhoneNumber phone, OtpPurpose purpose) =>
+      _repository.requestOtp(phone, purpose);
+
+  Future<void> verifyOtp(String challengeId, String code) =>
+      _repository.verifyOtp(challengeId, code);
+
+  Future<AppUser> registerWithPhone({
+    required String name,
+    required PhoneNumber phone,
+    required String role,
+    String? email,
+  }) => _run(
+    () => _repository.registerWithPhone(
+      name: name,
+      phone: phone,
+      role: role,
+      email: email,
+    ),
+  );
+
+  Future<AppUser> loginWithPhone(PhoneNumber phone) =>
+      _run(() => _repository.loginWithPhone(phone));
+
+  Future<AppUser> changePhone(PhoneNumber phone) async {
+    final user = await _run(() => _repository.changePhone(phone));
+    ref.invalidate(currentUserProvider);
+    return user;
+  }
+
+  Future<AppUser> updateProfile({
+    String? name,
+    String? email,
+    String? city,
+    String? photo,
+    String? language,
+  }) async {
+    final user = await _run(
+      () => _repository.updateProfile(
+        name: name,
+        email: email,
+        city: city,
+        photo: photo,
+        language: language,
+      ),
+    );
+    ref.invalidate(currentUserProvider);
+    return user;
+  }
 
   Future<AppUser> login({required String email, required String password}) =>
       _run(() => _repository.login(email: email, password: password));

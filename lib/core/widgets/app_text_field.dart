@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 
@@ -9,6 +10,13 @@ class AppTextField extends StatefulWidget {
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final FormFieldValidator<String>? validator;
+  final String? prefixText;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onChanged;
+  final Iterable<String>? autofillHints;
+  final TextDirection? textDirection;
 
   const AppTextField({
     super.key,
@@ -18,6 +26,13 @@ class AppTextField extends StatefulWidget {
     this.controller,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.prefixText,
+    this.inputFormatters,
+    this.maxLength,
+    this.textInputAction,
+    this.onChanged,
+    this.autofillHints,
+    this.textDirection,
   });
 
   @override
@@ -70,23 +85,37 @@ class _AppTextFieldState extends State<AppTextField> {
         obscureText: widget.isPassword && !_passwordVisible,
         keyboardType: widget.keyboardType,
         validator: widget.validator,
+        inputFormatters: widget.inputFormatters,
+        maxLength: widget.maxLength,
+        textInputAction: widget.textInputAction,
+        onChanged: widget.onChanged,
+        autofillHints: widget.autofillHints,
+        textDirection: widget.textDirection,
+        buildCounter: widget.maxLength == null
+            ? null
+            : (
+                context, {
+                required currentLength,
+                required isFocused,
+                maxLength,
+              }) => null,
         decoration: InputDecoration(
           filled: true,
           fillColor: colorScheme.surfaceContainerHighest.withValues(
             alpha: 0.58,
           ),
           labelText: widget.label,
+          prefix: widget.prefixText == null
+              ? null
+              : Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Text(widget.prefixText!),
+                ),
           labelStyle: Theme.of(context).textTheme.bodyMedium,
-          floatingLabelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: colorScheme.secondary,
-          ),
+          floatingLabelStyle: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: colorScheme.secondary),
           prefixIcon: Icon(widget.icon),
-          contentPadding: const EdgeInsetsDirectional.fromSTEB(
-            16,
-            18,
-            16,
-            18,
-          ),
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 18, 16, 18),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -108,9 +137,8 @@ class _AppTextFieldState extends State<AppTextField> {
             borderSide: BorderSide.none,
           ),
           errorMaxLines: 2,
-          errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: colorScheme.error,
-          ),
+          errorStyle: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: colorScheme.error),
           suffixIcon: widget.isPassword
               ? IconButton(
                   tooltip: _passwordVisible

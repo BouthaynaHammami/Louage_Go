@@ -158,6 +158,7 @@ class SeedData {
       passwordHash: AuthRepositoryImpl.hashPassword(password, salt),
       salt: salt,
       createdAt: createdAt.toIso8601String(),
+      phoneVerified: true,
     );
   }
 

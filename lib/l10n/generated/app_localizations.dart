@@ -130,11 +130,53 @@ abstract class AppLocalizations {
   /// **'Ce numéro de téléphone est déjà utilisé'**
   String get authPhoneAlreadyUsed;
 
+  /// No description provided for @authInvalidPhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro de téléphone invalide'**
+  String get authInvalidPhone;
+
+  /// No description provided for @authOtpInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code de vérification incorrect'**
+  String get authOtpInvalid;
+
+  /// No description provided for @authOtpExpired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le code de vérification a expiré'**
+  String get authOtpExpired;
+
+  /// No description provided for @authOtpTooManyAttempts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop de tentatives. Demandez un nouveau code'**
+  String get authOtpTooManyAttempts;
+
+  /// No description provided for @authOtpResendTooSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez attendre avant de demander un nouveau code'**
+  String get authOtpResendTooSoon;
+
+  /// No description provided for @authPhoneNotRegistered.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun compte n’est associé à ce numéro'**
+  String get authPhoneNotRegistered;
+
   /// No description provided for @authAccountBlocked.
   ///
   /// In fr, this message translates to:
   /// **'Ce compte est bloqué'**
   String get authAccountBlocked;
+
+  /// No description provided for @authProfileUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le profil est introuvable.'**
+  String get authProfileUnavailable;
 
   /// No description provided for @authUnexpectedError.
   ///
@@ -346,6 +388,30 @@ abstract class AppLocalizations {
   /// **'Connectez-vous pour continuer'**
   String get loginSubtitle;
 
+  /// No description provided for @loginMethodPhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone'**
+  String get loginMethodPhone;
+
+  /// No description provided for @loginMethodEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Email'**
+  String get loginMethodEmail;
+
+  /// No description provided for @loginPhoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone'**
+  String get loginPhoneLabel;
+
+  /// No description provided for @loginSendCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir le code'**
+  String get loginSendCode;
+
   /// No description provided for @loginEmailLabel.
   ///
   /// In fr, this message translates to:
@@ -369,6 +435,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Mot de passe oublié ?'**
   String get loginForgotPassword;
+
+  /// No description provided for @loginAccountInaccessible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte inaccessible ?'**
+  String get loginAccountInaccessible;
+
+  /// No description provided for @loginContinueWithGoogle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec Google'**
+  String get loginContinueWithGoogle;
+
+  /// No description provided for @loginGoogleUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'La connexion Google n’est pas configurée.'**
+  String get loginGoogleUnavailable;
 
   /// No description provided for @loginNoAccount.
   ///
@@ -423,6 +507,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Email'**
   String get registerEmailLabel;
+
+  /// No description provided for @registerEmailOptional.
+  ///
+  /// In fr, this message translates to:
+  /// **'Email (facultatif)'**
+  String get registerEmailOptional;
+
+  /// No description provided for @registerUseEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser un email'**
+  String get registerUseEmail;
+
+  /// No description provided for @registerUsePhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser un téléphone'**
+  String get registerUsePhone;
+
+  /// No description provided for @registerAcceptTerms.
+  ///
+  /// In fr, this message translates to:
+  /// **'J’accepte'**
+  String get registerAcceptTerms;
+
+  /// No description provided for @registerTermsLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'les conditions d’utilisation'**
+  String get registerTermsLink;
+
+  /// No description provided for @registerAnd.
+  ///
+  /// In fr, this message translates to:
+  /// **'et'**
+  String get registerAnd;
+
+  /// No description provided for @registerPrivacyLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'la politique de confidentialité'**
+  String get registerPrivacyLink;
+
+  /// No description provided for @registerConsentRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Acceptez les conditions et la politique pour continuer.'**
+  String get registerConsentRequired;
 
   /// No description provided for @registerPasswordLabel.
   ///
@@ -501,6 +633,444 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Vérification du code'**
   String get otpPageTitle;
+
+  /// No description provided for @otpCodeSentTo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez le code envoyé au {phone}'**
+  String otpCodeSentTo(String phone);
+
+  /// No description provided for @otpVerifyAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifier le code'**
+  String get otpVerifyAction;
+
+  /// No description provided for @otpResendAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renvoyer le code'**
+  String get otpResendAction;
+
+  /// No description provided for @otpResendCountdown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renvoyer dans {seconds} s'**
+  String otpResendCountdown(int seconds);
+
+  /// No description provided for @otpDemoCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode démo : votre code est {code}'**
+  String otpDemoCode(String code);
+
+  /// No description provided for @otpCodeResent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un nouveau code a été généré.'**
+  String get otpCodeResent;
+
+  /// No description provided for @otpCodeVerified.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro de téléphone vérifié.'**
+  String get otpCodeVerified;
+
+  /// No description provided for @legalTermsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions d’utilisation'**
+  String get legalTermsTitle;
+
+  /// No description provided for @legalTermsBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'LouageGo est un projet universitaire de réservation de louages. En créant un compte, vous confirmez l’exactitude des informations fournies et vous engagez à utiliser le service dans le respect des règles applicables.\n\nLes réservations sont soumises à la disponibilité des trajets et des places.'**
+  String get legalTermsBody;
+
+  /// No description provided for @legalUpdatedAt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mis à jour le 3 octobre 2026'**
+  String get legalUpdatedAt;
+
+  /// No description provided for @legalTermsSectionServiceTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilisation du service'**
+  String get legalTermsSectionServiceTitle;
+
+  /// No description provided for @legalTermsSectionServiceBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'LouageGo facilite la consultation et la réservation de trajets en louage. L’utilisateur s’engage à fournir des informations exactes, à protéger ses identifiants et à utiliser le service conformément aux lois applicables.'**
+  String get legalTermsSectionServiceBody;
+
+  /// No description provided for @legalTermsSectionBookingsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservations et trajets'**
+  String get legalTermsSectionBookingsTitle;
+
+  /// No description provided for @legalTermsSectionBookingsBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les réservations dépendent de la disponibilité des trajets et des places. Les horaires et informations affichés peuvent être mis à jour. Toute annulation reste soumise aux conditions indiquées dans l’application.'**
+  String get legalTermsSectionBookingsBody;
+
+  /// No description provided for @legalTermsSectionDemoTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version de démonstration'**
+  String get legalTermsSectionDemoTitle;
+
+  /// No description provided for @legalTermsSectionDemoBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette application est un projet universitaire. Certaines fonctionnalités sont simulées et ne constituent pas une garantie de transport ou de paiement réel.'**
+  String get legalTermsSectionDemoBody;
+
+  /// No description provided for @legalPrivacyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Politique de confidentialité'**
+  String get legalPrivacyTitle;
+
+  /// No description provided for @legalPrivacyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans cette version de démonstration, les informations du compte sont stockées localement sur cet appareil. Aucun SMS réel n’est envoyé : le code de vérification est simulé.\n\nLes données ne sont pas transmises à Firebase.'**
+  String get legalPrivacyBody;
+
+  /// No description provided for @legalPrivacySectionDataTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données enregistrées'**
+  String get legalPrivacySectionDataTitle;
+
+  /// No description provided for @legalPrivacySectionDataBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les informations de profil, préférences, favoris et données nécessaires au fonctionnement des réservations sont enregistrées dans le stockage local de l’application.'**
+  String get legalPrivacySectionDataBody;
+
+  /// No description provided for @legalPrivacySectionUseTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilisation des données'**
+  String get legalPrivacySectionUseTitle;
+
+  /// No description provided for @legalPrivacySectionUseBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les données servent à afficher le profil, gérer les préférences et faciliter l’utilisation des fonctions de réservation. Cette version de démonstration ne transmet pas les données à Firebase.'**
+  String get legalPrivacySectionUseBody;
+
+  /// No description provided for @legalPrivacySectionControlTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contrôle et suppression'**
+  String get legalPrivacySectionControlTitle;
+
+  /// No description provided for @legalPrivacySectionControlBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous pouvez modifier vos informations depuis votre profil ou demander la suppression de votre compte. Les réservations et avis historiques peuvent être conservés sous forme anonymisée.'**
+  String get legalPrivacySectionControlBody;
+
+  /// No description provided for @legalPrivacySectionDemoTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS de vérification'**
+  String get legalPrivacySectionDemoTitle;
+
+  /// No description provided for @legalPrivacySectionDemoBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun SMS réel n’est envoyé dans cette version : le code de vérification est simulé.'**
+  String get legalPrivacySectionDemoBody;
+
+  /// No description provided for @settingsAccountSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get settingsAccountSection;
+
+  /// No description provided for @settingsPreferencesSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Préférences de l’application'**
+  String get settingsPreferencesSection;
+
+  /// No description provided for @settingsSecuritySection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sécurité'**
+  String get settingsSecuritySection;
+
+  /// No description provided for @settingsSupportSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aide et informations'**
+  String get settingsSupportSection;
+
+  /// No description provided for @profileFirstNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prénom'**
+  String get profileFirstNameLabel;
+
+  /// No description provided for @profileLastNameLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get profileLastNameLabel;
+
+  /// No description provided for @profileSignOutTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter ?'**
+  String get profileSignOutTitle;
+
+  /// No description provided for @profileSignOutMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voulez-vous vraiment vous déconnecter ?'**
+  String get profileSignOutMessage;
+
+  /// No description provided for @helpSupportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aide et assistance'**
+  String get helpSupportTitle;
+
+  /// No description provided for @helpFaqSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes'**
+  String get helpFaqSection;
+
+  /// No description provided for @helpFaqBookingQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment trouver un trajet ?'**
+  String get helpFaqBookingQuestion;
+
+  /// No description provided for @helpFaqBookingAnswer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez votre ville de départ et votre destination sur l’écran d’accueil. Les trajets disponibles s’affichent ensuite.'**
+  String get helpFaqBookingAnswer;
+
+  /// No description provided for @helpFaqPaymentQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment réserver une place ?'**
+  String get helpFaqPaymentQuestion;
+
+  /// No description provided for @helpFaqPaymentAnswer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrez un trajet disponible pour consulter ses détails et les actions de réservation proposées.'**
+  String get helpFaqPaymentAnswer;
+
+  /// No description provided for @helpFaqPhoneQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment modifier mon numéro ?'**
+  String get helpFaqPhoneQuestion;
+
+  /// No description provided for @helpFaqPhoneAnswer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans votre profil, ouvrez Modifier le profil puis choisissez Changer de numéro. La vérification se fait par code OTP.'**
+  String get helpFaqPhoneAnswer;
+
+  /// No description provided for @helpHowItWorksTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment fonctionne LouageGo'**
+  String get helpHowItWorksTitle;
+
+  /// No description provided for @helpHowItWorksBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez votre départ et votre destination, consultez les trajets disponibles puis ouvrez un trajet pour voir ses informations. Les chauffeurs peuvent gérer leur espace depuis leur profil.'**
+  String get helpHowItWorksBody;
+
+  /// No description provided for @helpContactTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous contacter'**
+  String get helpContactTitle;
+
+  /// No description provided for @helpContactSupport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contacter l’assistance'**
+  String get helpContactSupport;
+
+  /// No description provided for @helpEmailCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse d’assistance copiée.'**
+  String get helpEmailCopied;
+
+  /// No description provided for @helpReportProblem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler un problème'**
+  String get helpReportProblem;
+
+  /// No description provided for @helpReportHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décrivez le problème rencontré'**
+  String get helpReportHint;
+
+  /// No description provided for @helpCopyReport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le signalement'**
+  String get helpCopyReport;
+
+  /// No description provided for @helpReportCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signalement copié. Vous pouvez l’envoyer à l’assistance.'**
+  String get helpReportCopied;
+
+  /// No description provided for @profilePrivacy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confidentialité'**
+  String get profilePrivacy;
+
+  /// No description provided for @profileEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le profil'**
+  String get profileEditTitle;
+
+  /// No description provided for @profileCityLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ville'**
+  String get profileCityLabel;
+
+  /// No description provided for @profileCityNotSet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune ville'**
+  String get profileCityNotSet;
+
+  /// No description provided for @profileChooseGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir dans la galerie'**
+  String get profileChooseGallery;
+
+  /// No description provided for @profileChooseCamera.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre une photo'**
+  String get profileChooseCamera;
+
+  /// No description provided for @profileChangePhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer la photo'**
+  String get profileChangePhoto;
+
+  /// No description provided for @profilePhotoError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de sélectionner ou d’enregistrer la photo.'**
+  String get profilePhotoError;
+
+  /// No description provided for @profilePhotoCleanupWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Profil enregistré, mais l’ancienne photo n’a pas pu être supprimée.'**
+  String get profilePhotoCleanupWarning;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Profil mis à jour.'**
+  String get profileUpdated;
+
+  /// No description provided for @profileUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Profil indisponible.'**
+  String get profileUnavailable;
+
+  /// No description provided for @profileSaveAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get profileSaveAction;
+
+  /// No description provided for @profilePhoneUpdated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro de téléphone mis à jour.'**
+  String get profilePhoneUpdated;
+
+  /// No description provided for @profileHelpBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes\n\nComment réserver un trajet ? Choisissez votre ville de départ et votre destination, puis sélectionnez un trajet disponible.\n\nComment modifier mon numéro ? Ouvrez Modifier le profil, puis choisissez Changer de numéro. Un code de vérification sera demandé.\n\nComment protéger mon compte ? Gardez votre téléphone et vos informations de connexion sous votre contrôle.'**
+  String get profileHelpBody;
+
+  /// No description provided for @deleteAccountAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte'**
+  String get deleteAccountAction;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le compte ?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive. Vos favoris, notifications et données de profil seront supprimés. Les réservations et avis seront conservés sous forme anonymisée.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer la suppression'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmationWord.
+  ///
+  /// In fr, this message translates to:
+  /// **'SUPPRIMER'**
+  String get deleteAccountConfirmationWord;
+
+  /// No description provided for @deleteAccountTypeConfirmation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez {word} pour confirmer.'**
+  String deleteAccountTypeConfirmation(String word);
+
+  /// No description provided for @deleteAccountConfirmationMismatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mot saisi ne correspond pas.'**
+  String get deleteAccountConfirmationMismatch;
+
+  /// No description provided for @deleteAccountCompleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre compte a été supprimé.'**
+  String get deleteAccountCompleted;
 
   /// No description provided for @pageNotFound.
   ///
@@ -1119,6 +1689,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Profil'**
   String get profileTitle;
+
+  /// No description provided for @profileChangePhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le numéro de téléphone'**
+  String get profileChangePhone;
+
+  /// No description provided for @profileNewPhoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau numéro de téléphone'**
+  String get profileNewPhoneLabel;
 
   /// No description provided for @profileHelp.
   ///
