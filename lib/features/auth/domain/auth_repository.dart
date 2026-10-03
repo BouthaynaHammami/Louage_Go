@@ -12,6 +12,13 @@ abstract interface class AuthRepository {
     required PhoneNumber phone,
     required String role,
     String? email,
+    String acceptedTermsVersion = '',
+    String acceptedTermsAt = '',
+  });
+
+  Future<AppUser> acceptTerms({
+    required String version,
+    required String acceptedAt,
   });
 
   Future<AppUser> loginWithPhone(PhoneNumber phone);
@@ -32,6 +39,8 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
     required String role,
+    String acceptedTermsVersion = '',
+    String acceptedTermsAt = '',
   });
 
   Future<AppUser> login({required String email, required String password});

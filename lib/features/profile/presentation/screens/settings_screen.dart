@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_preferences.dart';
+import '../../../../features/notifications/presentation/providers/notifications_provider.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../features/profile/presentation/widgets/profile_widgets.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -18,6 +19,7 @@ class SettingsScreen extends ConsumerWidget {
         .maybeWhen(data: (value) => value, orElse: () => null);
     final locale = ref.watch(localeProvider);
     final themeMode = ref.watch(themeModeProvider);
+    final notificationsEnabled = ref.watch(notificationsEnabledProvider);
     final languageLabel = switch (locale.languageCode) {
       'ar' => l10n.settingsLanguageArabic,
       'en' => l10n.settingsLanguageEnglish,
@@ -58,6 +60,15 @@ class SettingsScreen extends ConsumerWidget {
                   value: themeLabel,
                   onTap: () => showProfileThemePicker(context, ref),
                 ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  secondary: const Icon(Icons.notifications_active_outlined),
+                  title: Text(l10n.settingsNotifications),
+                  subtitle: Text(l10n.settingsNotificationsDescription),
+                  value: notificationsEnabled,
+                  onChanged: (enabled) =>
+                      _setNotifications(context, ref, enabled),
+                ),
                 const SizedBox(height: 20),
                 _SettingsSectionTitle(title: l10n.settingsSecuritySection),
                 DeleteAccountButton(user: user),
@@ -66,7 +77,7 @@ class SettingsScreen extends ConsumerWidget {
                 ProfileOptionRow(
                   icon: Icons.help_outline_rounded,
                   title: l10n.profileHelp,
-                  onTap: () => context.pushNamed('helpFaq'),
+                  onTap: () => context.pushNamed('supportHome'),
                 ),
                 ProfileOptionRow(
                   icon: Icons.description_outlined,
@@ -84,6 +95,56 @@ class SettingsScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _setNotifications(
+    BuildContext context,
+    WidgetRef ref,
+    bool enabled,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    if (!enabled) {
+      await ref.read(notificationsEnabledProvider.notifier).setEnabled(false);
+      return;
+    }
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.notificationsPermissionTitle),
+        content: Text(l10n.notificationsPermissionExplanation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(l10n.authCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(l10n.notificationsPermissionContinue),
+          ),
+        ],
+      ),
+    );
+    if (accepted != true || !context.mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final granted = await ref
+        .read(notificationServiceProvider)
+        .requestPermission();
+    if (!context.mounted) return;
+    if (granted) {
+      await ref.read(notificationsEnabledProvider.notifier).setEnabled(true);
+    } else {
+      await ref.read(notificationsEnabledProvider.notifier).setEnabled(false);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.notificationsPermissionDenied),
+          action: SnackBarAction(
+            label: l10n.notificationsOpenSettings,
+            onPressed: () =>
+                ref.read(notificationServiceProvider).openSettings(),
+          ),
+        ),
+      );
+    }
   }
 }
 

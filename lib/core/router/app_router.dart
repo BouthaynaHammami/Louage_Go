@@ -5,17 +5,28 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/auth_providers.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
-import '../../features/auth/presentation/screens/legal_document_screen.dart';
 import '../../features/auth/presentation/screens/otp_screen.dart';
 import '../../features/auth/presentation/otp_arguments.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
-import '../../features/profile/presentation/screens/help_support_screen.dart';
+import '../../features/legal/domain/legal_document.dart';
+import '../../features/legal/presentation/legal_document_screen.dart';
+import '../../features/support/presentation/screens/support_home_screen.dart';
+import '../../features/support/presentation/screens/support_faq_screen.dart';
+import '../../features/support/presentation/screens/support_contact_screen.dart';
+import '../../features/support/presentation/screens/support_requests_screen.dart';
+import '../../features/support/presentation/screens/support_request_detail_screen.dart';
+import '../../features/reviews/presentation/screens/driver_reviews_screen.dart';
+import '../../features/reviews/presentation/screens/rate_trip_screen.dart';
+import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/search/domain/trip_search_criteria.dart';
 import '../../features/search/presentation/screens/louage_detail_screen.dart';
 import '../../features/search/presentation/screens/louage_list_screen.dart';
 import '../../features/search/presentation/screens/passenger_home_screen.dart';
+import '../../features/search/presentation/screens/stations_screen.dart';
+import '../../features/search/presentation/screens/stations_map_screen.dart';
+import '../../features/favorites/presentation/screens/favorites_screen.dart';
 import '../../features/users/presentation/screens/passenger_profile_screen.dart';
 import '../../models/app_user.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -46,48 +57,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         }
       }
 
-      final location = state.matchedLocation;
-      if (location == '/splash') {
-        return user == null ? null : _homeForRole(user.role);
-      }
-      const publicLocations = {
-        '/splash',
-        '/onboarding',
-        '/login',
-        '/register',
-        '/otp',
-      };
-      const publicDocumentLocations = {'/legal/terms', '/legal/privacy'};
-      const publicHelpLocations = {'/help/faq'};
-
-      if (publicDocumentLocations.contains(location) ||
-          publicHelpLocations.contains(location)) {
-        return null;
-      }
-
-      if (user == null) {
-        return publicLocations.contains(location) ? null : '/login';
-      }
-
-      final home = _homeForRole(user.role);
-      if (publicLocations.contains(location)) return home;
-
-      if (user.role == 'passenger' &&
-          (location.startsWith('/driver/') || location.startsWith('/admin/'))) {
-        return home;
-      }
-      if (user.role == 'driver' &&
-          (location.startsWith('/passenger/') ||
-              location.startsWith('/admin/'))) {
-        return home;
-      }
-      if (user.role == 'admin' &&
-          (location.startsWith('/passenger/') ||
-              location.startsWith('/driver/'))) {
-        return home;
-      }
-
-      return null;
+      return routeRedirect(state.matchedLocation, user);
     },
     routes: [
       GoRoute(
@@ -118,6 +88,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
+        path: '/notifications',
+        name: 'notifications',
+        builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
         path: '/profile/edit',
         name: 'profileEdit',
         builder: (context, state) => const EditProfileScreen(),
@@ -142,18 +117,51 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/legal/terms',
         name: 'legalTerms',
         builder: (context, state) =>
-            const LegalDocumentScreen(document: LegalDocument.terms),
+            const LegalDocumentScreen(document: LegalDocumentType.terms),
       ),
       GoRoute(
         path: '/legal/privacy',
         name: 'legalPrivacy',
         builder: (context, state) =>
-            const LegalDocumentScreen(document: LegalDocument.privacy),
+            const LegalDocumentScreen(document: LegalDocumentType.privacy),
+      ),
+      GoRoute(
+        path: '/support',
+        name: 'supportHome',
+        builder: (context, state) => const SupportHomeScreen(),
+      ),
+      GoRoute(
+        path: '/support/faq',
+        name: 'supportFaq',
+        builder: (context, state) => const SupportFaqScreen(),
+      ),
+      GoRoute(
+        path: '/support/contact',
+        name: 'supportContact',
+        builder: (context, state) => const SupportContactScreen(),
+      ),
+      GoRoute(
+        path: '/support/requests',
+        name: 'supportRequests',
+        builder: (context, state) => const SupportRequestsScreen(),
+      ),
+      GoRoute(
+        path: '/support/requests/:requestId',
+        name: 'supportRequestDetail',
+        builder: (context, state) => SupportRequestDetailScreen(
+          requestId: state.pathParameters['requestId']!,
+        ),
+      ),
+      GoRoute(
+        path: '/drivers/:driverId/reviews',
+        name: 'driverReviewsForDriver',
+        builder: (context, state) =>
+            DriverReviewsScreen(driverId: state.pathParameters['driverId']!),
       ),
       GoRoute(
         path: '/help/faq',
         name: 'helpFaq',
-        builder: (context, state) => const HelpSupportScreen(),
+        redirect: (context, state) => '/support/faq',
       ),
       ShellRoute(
         builder: (context, state, child) =>
@@ -162,7 +170,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/passenger/home',
             name: 'passengerHome',
-            builder: (context, state) => const PassengerHomeScreen(),
+            builder: (context, state) => PassengerHomeScreen(
+              initialFromStationId: state.uri.queryParameters['fromStationId'],
+            ),
+          ),
+          GoRoute(
+            path: '/passenger/stations',
+            name: 'passengerStations',
+            builder: (context, state) => const StationsScreen(),
+          ),
+          GoRoute(
+            path: '/passenger/stations/map',
+            name: 'passengerStationsMap',
+            builder: (context, state) => StationsMapScreen(
+              stationId: state.uri.queryParameters['stationId'],
+            ),
           ),
           GoRoute(
             path: '/passenger/search-results',
@@ -186,6 +208,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 LouageDetailScreen(tripId: state.pathParameters['tripId']!),
           ),
           GoRoute(
+            path: '/passenger/rate/:tripId',
+            name: 'passengerRateTrip',
+            builder: (context, state) =>
+                RateTripScreen(tripId: state.pathParameters['tripId']!),
+          ),
+          GoRoute(
             path: '/passenger/trips',
             name: 'passengerTrips',
             builder: (context, state) => _SimplePage(
@@ -196,10 +224,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/passenger/favorites',
             name: 'passengerFavorites',
-            builder: (context, state) => _SimplePage(
-              title: AppLocalizations.of(context)!.passengerNavFavorites,
-              icon: Icons.favorite_border,
-            ),
+            builder: (context, state) => const FavoritesScreen(),
           ),
           GoRoute(
             path: '/passenger/profile',
@@ -245,6 +270,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/driver/profile',
             name: 'driverProfile',
             builder: (context, state) => const DriverProfileScreen(),
+          ),
+          GoRoute(
+            path: '/driver/reviews',
+            name: 'driverReviews',
+            builder: (context, state) => const DriverReviewsScreen(),
           ),
           GoRoute(
             path: '/driver/documents',
@@ -311,8 +341,52 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     router.dispose();
     refresh.dispose();
   });
+
   return router;
 });
+
+String? routeRedirect(String location, AppUser? user) {
+  const alwaysAccessible = {'/legal/terms', '/legal/privacy'};
+  const publicLocations = {
+    '/splash',
+    '/onboarding',
+    '/login',
+    '/register',
+    '/otp',
+  };
+  const publicHelpLocations = {
+    '/help/faq',
+    '/support',
+    '/support/faq',
+    '/support/contact',
+  };
+  if (alwaysAccessible.contains(location) ||
+      publicHelpLocations.contains(location)) {
+    return null;
+  }
+  if (location == '/splash') {
+    return user == null ? null : _homeForRole(user.role);
+  }
+  if (user == null) {
+    return publicLocations.contains(location) ? null : '/login';
+  }
+
+  final home = _homeForRole(user.role);
+  if (publicLocations.contains(location)) return home;
+  if (user.role == 'passenger' &&
+      (location.startsWith('/driver/') || location.startsWith('/admin/'))) {
+    return home;
+  }
+  if (user.role == 'driver' &&
+      (location.startsWith('/passenger/') || location.startsWith('/admin/'))) {
+    return home;
+  }
+  if (user.role == 'admin' &&
+      (location.startsWith('/passenger/') || location.startsWith('/driver/'))) {
+    return home;
+  }
+  return null;
+}
 
 String _homeForRole(String role) => switch (role) {
   'driver' => '/driver/home',

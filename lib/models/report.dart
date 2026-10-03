@@ -9,6 +9,13 @@ class Report {
   final String description;
   final String status;
   final String createdAt;
+  final String authorId;
+  final String tripId;
+  final String type;
+  final String subject;
+  final String category;
+  final String updatedAt;
+  final String adminReply;
 
   const Report({
     this.id = '',
@@ -19,6 +26,13 @@ class Report {
     this.description = '',
     this.status = 'pending',
     this.createdAt = '',
+    this.authorId = '',
+    this.tripId = '',
+    this.type = '',
+    this.subject = '',
+    this.category = '',
+    this.updatedAt = '',
+    this.adminReply = '',
   });
 
   Report copyWith({
@@ -30,6 +44,13 @@ class Report {
     String? description,
     String? status,
     String? createdAt,
+    String? authorId,
+    String? tripId,
+    String? type,
+    String? subject,
+    String? category,
+    String? updatedAt,
+    String? adminReply,
   }) =>
       Report(
         id: id ?? this.id,
@@ -40,6 +61,13 @@ class Report {
         description: description ?? this.description,
         status: status ?? this.status,
         createdAt: createdAt ?? this.createdAt,
+        authorId: authorId ?? this.authorId,
+        tripId: tripId ?? this.tripId,
+        type: type ?? this.type,
+        subject: subject ?? this.subject,
+        category: category ?? this.category,
+        updatedAt: updatedAt ?? this.updatedAt,
+        adminReply: adminReply ?? this.adminReply,
       );
 
   Map<String, dynamic> toMap() => {
@@ -51,6 +79,13 @@ class Report {
         'description': description,
         'status': status,
         'createdAt': createdAt,
+        'authorId': authorId.isEmpty ? reporterId : authorId,
+        'tripId': tripId.isEmpty ? targetId : tripId,
+        'type': type.isEmpty ? targetType : type,
+        'subject': subject,
+        'category': category,
+        'updatedAt': updatedAt,
+        'adminReply': adminReply,
       };
 
   factory Report.fromMap(Map<dynamic, dynamic> map) => Report(
@@ -62,5 +97,16 @@ class Report {
         description: ModelMap.text(map, 'description'),
         status: ModelMap.text(map, 'status', 'pending'),
         createdAt: ModelMap.date(map, 'createdAt'),
+        authorId: ModelMap.text(
+          map,
+          'authorId',
+          ModelMap.text(map, 'reporterId'),
+        ),
+        tripId: ModelMap.text(map, 'tripId', ModelMap.text(map, 'targetId')),
+        type: ModelMap.text(map, 'type', ModelMap.text(map, 'targetType')),
+        subject: ModelMap.text(map, 'subject'),
+        category: ModelMap.text(map, 'category'),
+        updatedAt: ModelMap.date(map, 'updatedAt'),
+        adminReply: ModelMap.text(map, 'adminReply'),
       );
 }

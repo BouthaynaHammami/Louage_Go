@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/empty_state.dart';
+import '../../../../core/widgets/favorite_button.dart';
 import '../../../../core/widgets/seat_dots.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../core/widgets/status_chip.dart';
+import '../../../../features/reviews/presentation/providers/reviews_provider.dart';
+import '../../../../features/reviews/presentation/widgets/review_stars.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../providers/trip_search_results_provider.dart';
 
@@ -83,11 +87,12 @@ class LouageDetailScreen extends ConsumerWidget {
     final driverName = detail.driverName.trim().isEmpty
         ? l10n.profileDriverFallback
         : detail.driverName;
-    final rating = driverProfile?.ratingAverage ?? 0;
-    final filledStars = rating.round().clamp(0, 5);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.louageDetailTitle)),
+      appBar: AppBar(
+        title: Text(l10n.louageDetailTitle),
+        actions: [FavoriteButton.route(routeId: route.id)],
+      ),
       body: SafeArea(
         bottom: false,
         child: Center(
@@ -106,8 +111,14 @@ class LouageDetailScreen extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               l10n.searchRoutePair(
-                                from?.city ?? l10n.searchDeparture,
-                                to?.city ?? l10n.searchDestination,
+                                from?.localizedCity(
+                                      Localizations.localeOf(context),
+                                    ) ??
+                                    l10n.searchDeparture,
+                                to?.localizedCity(
+                                      Localizations.localeOf(context),
+                                    ) ??
+                                    l10n.searchDestination,
                               ),
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
@@ -158,6 +169,12 @@ class LouageDetailScreen extends ConsumerWidget {
                                         ?.copyWith(
                                           color: colorScheme.onSurfaceVariant,
                                         ),
+                                  ),
+                                if (departure != null)
+                                  FavoriteButton.offer(
+                                    louageId: louage.id,
+                                    departureHm: _departureHm(departure),
+                                    routeId: route.id,
                                   ),
                               ],
                             ),
@@ -225,62 +242,11 @@ class LouageDetailScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                AppCard(
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundColor: colorScheme.secondary.withValues(
-                          alpha: 0.18,
-                        ),
-                        foregroundColor: colorScheme.primary,
-                        child: driverName.trim().isEmpty
-                            ? const Icon(Icons.person_outline, size: 32)
-                            : Text(
-                                driverName.trim().characters.first,
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              driverName,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: 6),
-                            Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              spacing: 8,
-                              children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    for (var index = 0; index < 5; index++)
-                                      Icon(
-                                        index < filledStars
-                                            ? Icons.star_rounded
-                                            : Icons.star_outline_rounded,
-                                        size: 18,
-                                        color: colorScheme.secondary,
-                                      ),
-                                  ],
-                                ),
-                                Text(
-                                  l10n.louageDriverRating(
-                                    rating.toStringAsFixed(1),
-                                  ),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                _DriverReviewsPreview(
+                  driverId: louage.driverId,
+                  driverName: driverName,
+                  initialAverage: driverProfile?.ratingAverage ?? 0,
+                  initialCount: driverProfile?.reviewCount ?? 0,
                 ),
               ],
             ),
@@ -303,6 +269,134 @@ class LouageDetailScreen extends ConsumerWidget {
   }
 }
 
+class _DriverReviewsPreview extends ConsumerWidget {
+  const _DriverReviewsPreview({
+    required this.driverId,
+    required this.driverName,
+    required this.initialAverage,
+    required this.initialCount,
+  });
+
+  final String driverId;
+  final String driverName;
+  final double initialAverage;
+  final int initialCount;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = Theme.of(context).colorScheme;
+    final summary = ref.watch(driverReviewSummaryProvider(driverId));
+    final reviews = ref.watch(driverReviewsProvider(driverId));
+    final average = summary.asData?.value.average ?? initialAverage;
+    final count = summary.asData?.value.total ?? initialCount;
+    final latest = reviews.asData?.value.take(3).toList() ?? const [];
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: colors.secondary.withValues(alpha: 0.18),
+                foregroundColor: colors.primary,
+                child: driverName.trim().isEmpty
+                    ? const Icon(Icons.person_outline, size: 32)
+                    : Text(
+                        driverName.trim().characters.first,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      driverName,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      children: [
+                        ReviewStars(rating: average.round(), size: 18),
+                        Text(
+                          l10n.louageDriverRating(average.toStringAsFixed(1)),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        Text(
+                          l10n.reviewsCount(count),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (latest.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              l10n.reviewsLatest,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
+            for (final entry in latest)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          entry.authorDisplayName.isEmpty
+                              ? l10n.reviewsAnonymous
+                              : entry.authorDisplayName,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        ReviewStars(
+                          rating: entry.review.rating.round(),
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                    if (entry.review.comment.isNotEmpty)
+                      Text(
+                        entry.review.comment,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                  ],
+                ),
+              ),
+          ],
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton(
+              onPressed: driverId.isEmpty
+                  ? null
+                  : () => context.pushNamed(
+                      'driverReviewsForDriver',
+                      pathParameters: {'driverId': driverId},
+                    ),
+              child: Text(l10n.reviewsSeeAll),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 String _formatPrice(double price) => price == price.roundToDouble()
     ? price.toStringAsFixed(0)
     : price.toStringAsFixed(2);
+
+String _departureHm(DateTime departure) =>
+    '${departure.hour.toString().padLeft(2, '0')}:${departure.minute.toString().padLeft(2, '0')}';

@@ -8,6 +8,7 @@ class Review {
   final double rating;
   final String comment;
   final String createdAt;
+  final String bookingId;
 
   const Review({
     this.id = '',
@@ -17,6 +18,7 @@ class Review {
     this.rating = 0,
     this.comment = '',
     this.createdAt = '',
+    this.bookingId = '',
   });
 
   Review copyWith({
@@ -27,6 +29,7 @@ class Review {
     double? rating,
     String? comment,
     String? createdAt,
+    String? bookingId,
   }) =>
       Review(
         id: id ?? this.id,
@@ -36,6 +39,7 @@ class Review {
         rating: rating ?? this.rating,
         comment: comment ?? this.comment,
         createdAt: createdAt ?? this.createdAt,
+        bookingId: bookingId ?? this.bookingId,
       );
 
   Map<String, dynamic> toMap() => {
@@ -46,6 +50,7 @@ class Review {
         'rating': rating,
         'comment': comment,
         'createdAt': createdAt,
+        'bookingId': bookingId,
       };
 
   factory Review.fromMap(Map<dynamic, dynamic> map) => Review(
@@ -56,5 +61,6 @@ class Review {
         rating: ModelMap.decimal(map, 'rating'),
         comment: ModelMap.text(map, 'comment'),
         createdAt: ModelMap.date(map, 'createdAt'),
+        bookingId: ModelMap.text(map, 'bookingId'),
       );
 }

@@ -203,10 +203,10 @@ void main() {
               const Scaffold(body: Text('Settings destination')),
         ),
         GoRoute(
-          path: '/help/faq',
-          name: 'helpFaq',
+          path: '/support',
+          name: 'supportHome',
           builder: (context, state) =>
-              const Scaffold(body: Text('Help destination')),
+              const Scaffold(body: Text('Support destination')),
         ),
         GoRoute(
           path: '/legal/terms',
@@ -249,7 +249,7 @@ void main() {
 
     for (final (label, destination) in [
       ('Modifier le profil', 'Edit profile destination'),
-      ('Aide', 'Help destination'),
+      ('Aide', 'Support destination'),
       ('Conditions d’utilisation', 'Terms destination'),
       ('Confidentialité', 'Privacy destination'),
     ]) {
@@ -618,6 +618,8 @@ class _FakeAuthRepository implements AuthRepository {
     required PhoneNumber phone,
     required String role,
     String? email,
+    String acceptedTermsVersion = '',
+    String acceptedTermsAt = '',
   }) async => AppUser(name: name, phone: phone.canonical, role: role);
 
   @override
@@ -644,12 +646,21 @@ class _FakeAuthRepository implements AuthRepository {
   );
 
   @override
+  Future<AppUser> acceptTerms({
+    required String version,
+    required String acceptedAt,
+  }) async =>
+      AppUser(acceptedTermsVersion: version, acceptedTermsAt: acceptedAt);
+
+  @override
   Future<AppUser> register({
     required String name,
     required String phone,
     required String email,
     required String password,
     required String role,
+    String acceptedTermsVersion = '',
+    String acceptedTermsAt = '',
   }) async => AppUser(name: name, role: role);
 
   @override

@@ -17,6 +17,8 @@ class AppTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final Iterable<String>? autofillHints;
   final TextDirection? textDirection;
+  final int? minLines;
+  final int? maxLines;
 
   const AppTextField({
     super.key,
@@ -33,6 +35,8 @@ class AppTextField extends StatefulWidget {
     this.onChanged,
     this.autofillHints,
     this.textDirection,
+    this.minLines,
+    this.maxLines = 1,
   });
 
   @override
@@ -91,6 +95,8 @@ class _AppTextFieldState extends State<AppTextField> {
         onChanged: widget.onChanged,
         autofillHints: widget.autofillHints,
         textDirection: widget.textDirection,
+        minLines: widget.minLines,
+        maxLines: widget.maxLines,
         buildCounter: widget.maxLength == null
             ? null
             : (

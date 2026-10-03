@@ -9,6 +9,7 @@ class DriverProfile {
   final String vehiclePhoto;
   final String validationStatus;
   final double ratingAverage;
+  final int reviewCount;
 
   const DriverProfile({
     this.userId = '',
@@ -19,6 +20,7 @@ class DriverProfile {
     this.vehiclePhoto = '',
     this.validationStatus = 'pending',
     this.ratingAverage = 0,
+    this.reviewCount = 0,
   });
 
   DriverProfile copyWith({
@@ -30,6 +32,7 @@ class DriverProfile {
     String? vehiclePhoto,
     String? validationStatus,
     double? ratingAverage,
+    int? reviewCount,
   }) =>
       DriverProfile(
         userId: userId ?? this.userId,
@@ -40,6 +43,7 @@ class DriverProfile {
         vehiclePhoto: vehiclePhoto ?? this.vehiclePhoto,
         validationStatus: validationStatus ?? this.validationStatus,
         ratingAverage: ratingAverage ?? this.ratingAverage,
+        reviewCount: reviewCount ?? this.reviewCount,
       );
 
   Map<String, dynamic> toMap() => {
@@ -51,6 +55,7 @@ class DriverProfile {
         'vehiclePhoto': vehiclePhoto,
         'validationStatus': validationStatus,
         'ratingAverage': ratingAverage,
+        'reviewCount': reviewCount,
       };
 
   factory DriverProfile.fromMap(Map<dynamic, dynamic> map) => DriverProfile(
@@ -62,5 +67,6 @@ class DriverProfile {
         vehiclePhoto: ModelMap.text(map, 'vehiclePhoto'),
         validationStatus: ModelMap.text(map, 'validationStatus', 'pending'),
         ratingAverage: ModelMap.decimal(map, 'ratingAverage'),
+        reviewCount: ModelMap.integer(map, 'reviewCount'),
       );
 }

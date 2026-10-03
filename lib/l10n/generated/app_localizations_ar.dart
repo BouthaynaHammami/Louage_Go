@@ -316,67 +316,40 @@ class AppLocalizationsAr extends AppLocalizations {
   String get legalTermsTitle => 'شروط الاستخدام';
 
   @override
-  String get legalTermsBody =>
-      'لواج غو مشروع جامعي لحجز سيارات الأجرة المشتركة. بإنشاء حساب، تؤكد صحة المعلومات المقدمة وتوافق على استخدام الخدمة وفقًا للقواعد المعمول بها.\n\nتخضع الحجوزات لتوفر الرحلات والمقاعد.';
+  String legalUpdatedAt(String date) {
+    return 'تاريخ التحديث: $date';
+  }
 
   @override
-  String get legalUpdatedAt => 'آخر تحديث: 3 أكتوبر 2026';
+  String legalDocumentVersion(String version) {
+    return 'الإصدار $version';
+  }
 
   @override
-  String get legalTermsSectionServiceTitle => 'استخدام الخدمة';
+  String get legalDemoDisclaimer =>
+      'نسخة تجريبية: يجب مراجعة هذا النص من قبل مختص قانوني قبل النشر.';
 
   @override
-  String get legalTermsSectionServiceBody =>
-      'يساعد تطبيق لواج غو المستخدمين على تصفح رحلات سيارات الأجرة المشتركة وحجزها. يلتزم المستخدم بتقديم معلومات صحيحة وحماية بيانات تسجيل الدخول واستخدام الخدمة وفق القوانين المعمول بها.';
+  String get legalTableOfContents => 'الفهرس';
 
   @override
-  String get legalTermsSectionBookingsTitle => 'الحجوزات والرحلات';
+  String get legalContactLabel => 'للتواصل:';
 
   @override
-  String get legalTermsSectionBookingsBody =>
-      'تعتمد الحجوزات على توفر الرحلات والمقاعد. قد تتغير الجداول والمعلومات المعروضة. تخضع الإلغاءات للشروط الموضحة في التطبيق.';
+  String get legalUpdateTitle => 'تحديث الشروط';
 
   @override
-  String get legalTermsSectionDemoTitle => 'النسخة التجريبية';
+  String get legalUpdateMessage =>
+      'تم تحديث الشروط وسياسة الخصوصية. يرجى قراءتهما وقبول هذا الإصدار للمتابعة.';
 
   @override
-  String get legalTermsSectionDemoBody =>
-      'هذا التطبيق مشروع جامعي. بعض الميزات تجريبية ولا تضمن النقل أو الدفع الفعلي.';
+  String get legalAcceptUpdate => 'قبول ومتابعة';
+
+  @override
+  String get legalSignOut => 'تسجيل الخروج';
 
   @override
   String get legalPrivacyTitle => 'سياسة الخصوصية';
-
-  @override
-  String get legalPrivacyBody =>
-      'في هذه النسخة التجريبية، تُخزّن معلومات الحساب محليًا على هذا الجهاز. لا تُرسل رسائل نصية حقيقية؛ رمز التحقق تجريبي.\n\nلا تُرسل بياناتك إلى Firebase.';
-
-  @override
-  String get legalPrivacySectionDataTitle => 'المعلومات المخزنة';
-
-  @override
-  String get legalPrivacySectionDataBody =>
-      'تُخزّن معلومات الملف الشخصي والتفضيلات والمفضلة والبيانات اللازمة لدعم ميزات الحجز محليًا في التطبيق.';
-
-  @override
-  String get legalPrivacySectionUseTitle => 'كيفية استخدام المعلومات';
-
-  @override
-  String get legalPrivacySectionUseBody =>
-      'تُستخدم المعلومات لعرض ملفك الشخصي وحفظ التفضيلات ودعم ميزات الحجز. لا ترسل هذه النسخة التجريبية البيانات إلى Firebase.';
-
-  @override
-  String get legalPrivacySectionControlTitle => 'خياراتك وحذف الحساب';
-
-  @override
-  String get legalPrivacySectionControlBody =>
-      'يمكنك تعديل ملفك الشخصي أو طلب حذف حسابك. قد تُحفظ الحجوزات والتقييمات السابقة بعد إخفاء الهوية.';
-
-  @override
-  String get legalPrivacySectionDemoTitle => 'رسائل التحقق';
-
-  @override
-  String get legalPrivacySectionDemoBody =>
-      'لا تُرسل رسائل SMS حقيقية في هذه النسخة؛ رموز التحقق تجريبية.';
 
   @override
   String get settingsAccountSection => 'الحساب';
@@ -404,6 +377,130 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpSupportTitle => 'المساعدة والدعم';
+
+  @override
+  String get supportTitle => 'دعم لواج غو';
+
+  @override
+  String get supportFaqTitle => 'الأسئلة الشائعة';
+
+  @override
+  String get supportContactTitle => 'الاتصال بالدعم';
+
+  @override
+  String get supportRequestsTitle => 'طلباتي';
+
+  @override
+  String get supportRequestDetailTitle => 'تفاصيل الطلب';
+
+  @override
+  String get supportQuickContact => 'اتصال سريع';
+
+  @override
+  String get supportCallAction => 'اتصال';
+
+  @override
+  String get supportEmailAction => 'بريد إلكتروني';
+
+  @override
+  String get supportWhatsappAction => 'واتساب';
+
+  @override
+  String get supportContactUnavailable =>
+      'لا يوجد تطبيق متاح لتنفيذ هذا الإجراء.';
+
+  @override
+  String get supportFaqSearch => 'البحث عن سؤال';
+
+  @override
+  String get supportClearSearch => 'مسح البحث';
+
+  @override
+  String get supportFaqAll => 'الكل';
+
+  @override
+  String get supportFaqEmpty => 'لا توجد نتائج. جرّب كلمات أو فئات أخرى.';
+
+  @override
+  String get supportCategoryBooking => 'الحجز';
+
+  @override
+  String get supportCategoryPayment => 'الدفع';
+
+  @override
+  String get supportCategoryTrip => 'الرحلة والمتابعة';
+
+  @override
+  String get supportCategoryAccount => 'الحساب';
+
+  @override
+  String get supportCategoryDrivers => 'السائقون';
+
+  @override
+  String get supportCategoryBug => 'مشكلة تقنية';
+
+  @override
+  String get supportCategoryOther => 'أخرى';
+
+  @override
+  String get supportCategoryLabel => 'الفئة';
+
+  @override
+  String get supportTripReference => 'مرجع الرحلة (اختياري)';
+
+  @override
+  String get supportMessageLabel => 'رسالتك';
+
+  @override
+  String get supportSendRequest => 'إرسال الطلب';
+
+  @override
+  String get supportRequestSent => 'تم إرسال طلبك.';
+
+  @override
+  String get supportTooManyOpenRequests => 'لديك بالفعل 3 طلبات دعم مفتوحة.';
+
+  @override
+  String get supportCategoryRequired => 'اختر فئة.';
+
+  @override
+  String get supportMessageInvalid => 'يجب أن تتراوح الرسالة بين 10 و1000 حرف.';
+
+  @override
+  String get supportSignInRequired => 'سجّل الدخول لإرسال طلباتك أو عرضها.';
+
+  @override
+  String get supportSubmissionFailed => 'تعذر إرسال الطلب. حاول مرة أخرى.';
+
+  @override
+  String get supportLoadFailed => 'تعذر تحميل الطلبات.';
+
+  @override
+  String get supportRetry => 'إعادة المحاولة';
+
+  @override
+  String get supportRequestsEmpty => 'ليس لديك أي طلبات دعم.';
+
+  @override
+  String get supportRequestNotFound => 'تعذر العثور على هذا الطلب.';
+
+  @override
+  String get supportAdminReply => 'رد الدعم';
+
+  @override
+  String get supportNoAdminReply => 'لا يوجد رد حتى الآن.';
+
+  @override
+  String get supportStatusOpen => 'مفتوح';
+
+  @override
+  String get supportStatusInProgress => 'قيد المعالجة';
+
+  @override
+  String get supportStatusResolved => 'تم الحل';
+
+  @override
+  String get supportEmailSubject => 'طلب دعم لواج غو';
 
   @override
   String get helpFaqSection => 'الأسئلة الشائعة';
@@ -601,6 +698,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverHomeTitle => 'مساحة السائق';
 
   @override
+  String driverHomeGreeting(String name) {
+    return 'مرحبًا، $name';
+  }
+
+  @override
+  String get driverHomeSubtitle => 'أدر اللواج ورحلاتك.';
+
+  @override
   String get driverProfileUnavailable => 'ملف السائق غير متاح';
 
   @override
@@ -645,6 +750,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get driverCurrentTrip => 'الرحلة الحالية';
+
+  @override
+  String driverSeatCounts(String reserved, String free) {
+    return '$reserved مقاعد مشغولة · $free متاحة';
+  }
+
+  @override
+  String driverDepartureTime(String time) {
+    return 'موعد الانطلاق $time';
+  }
 
   @override
   String get driverFillUpdatesNextTrip =>
@@ -752,6 +867,150 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchCityPickerTitle => 'اختر مدينة';
+
+  @override
+  String get stationsTitle => 'المحطات';
+
+  @override
+  String get stationsSearchLabel => 'ابحث عن محطة';
+
+  @override
+  String get stationsBrowsePrompt => 'تصفح محطات تونس';
+
+  @override
+  String get stationsLoadError => 'تعذر تحميل المحطات';
+
+  @override
+  String get stationsNoResults => 'لم يتم العثور على محطات';
+
+  @override
+  String get stationsSearchFrom => 'ابحث انطلاقا من هذه المحطة';
+
+  @override
+  String get locationUseMyPosition => 'استخدم موقعي';
+
+  @override
+  String get locationConsentTitle => 'استخدام موقعك؟';
+
+  @override
+  String get locationConsentMessage =>
+      'يُستخدم موقعك فقط للعثور على أقرب المحطات ولا تتم مشاركته.';
+
+  @override
+  String get locationConsentPrivacyLink => 'قراءة سياسة الخصوصية';
+
+  @override
+  String get locationConsentAccept => 'متابعة';
+
+  @override
+  String get locationDenied => 'تم رفض الوصول إلى الموقع.';
+
+  @override
+  String get locationDeniedForever =>
+      'اسمح بالوصول إلى الموقع من إعدادات التطبيق.';
+
+  @override
+  String get locationServiceDisabled => 'فعّل خدمات الموقع على جهازك.';
+
+  @override
+  String get locationError => 'تعذر الحصول على موقعك.';
+
+  @override
+  String get locationOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get locationNearestEmpty => 'لم يتم العثور على محطات ذات موقع معروف.';
+
+  @override
+  String get stationsMapTitle => 'خريطة المحطات';
+
+  @override
+  String get stationsMapUnavailable => 'الخريطة غير متاحة دون اتصال';
+
+  @override
+  String get stationsMapRecenter => 'إعادة توسيط الخريطة';
+
+  @override
+  String get stationsMapMyPosition => 'موقعي';
+
+  @override
+  String get stationsMapFavoritesSoon =>
+      'ستتوفر إضافة المحطات إلى المفضلة قريبًا';
+
+  @override
+  String stationsMapRouteCount(int count) {
+    return '$count مسارات تنطلق من هنا';
+  }
+
+  @override
+  String get favoriteAddRoute => 'أضف هذا المسار إلى المفضلة';
+
+  @override
+  String get favoriteRemoveRoute => 'أزل هذا المسار من المفضلة';
+
+  @override
+  String get favoriteAddStation => 'أضف هذه المحطة إلى المفضلة';
+
+  @override
+  String get favoriteRemoveStation => 'أزل هذه المحطة من المفضلة';
+
+  @override
+  String get favoriteUpdateError => 'تعذر تحديث المفضلة.';
+
+  @override
+  String get favoritesTabOffers => 'العروض';
+
+  @override
+  String get favoritesRoutesTab => 'المسارات';
+
+  @override
+  String get favoritesStationsTab => 'المحطات';
+
+  @override
+  String get favoritesEmptyOffers => 'لا توجد عروض مفضلة حتى الآن.';
+
+  @override
+  String get favoritesEmptyRoutes => 'لا توجد مسارات مفضلة حتى الآن.';
+
+  @override
+  String get favoritesEmptyStations => 'لا توجد محطات مفضلة حتى الآن.';
+
+  @override
+  String get favoritesUndo => 'تراجع';
+
+  @override
+  String get favoritesRemoved => 'تم حذف العنصر من المفضلة.';
+
+  @override
+  String get favoritesOfferAdd => 'أضف هذا العرض إلى المفضلة';
+
+  @override
+  String get favoritesOfferRemove => 'أزل هذا العرض من المفضلة';
+
+  @override
+  String get favoritesNoDeparture => 'لا يوجد موعد انطلاق متاح';
+
+  @override
+  String favoritesNextDeparture(String date) {
+    return 'موعد الانطلاق التالي: $date';
+  }
+
+  @override
+  String get favoritesOtherSchedules => 'عرض المواعيد الأخرى';
+
+  @override
+  String get favoritesMyOffers => 'عروضي';
+
+  @override
+  String get filtersReset => 'إعادة ضبط';
+
+  @override
+  String get filtersHideFull => 'إخفاء الرحلات المكتملة';
+
+  @override
+  String filtersActiveCount(int count) {
+    return '$count عوامل تصفية نشطة';
+  }
 
   @override
   String searchPricePerSeat(Object amount) {
@@ -882,10 +1141,147 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileDriverTitle => 'ملف السائق';
 
   @override
+  String get profileDriverReviews => 'تقييماتي';
+
+  @override
   String get profilePassengerFallback => 'مسافر';
 
   @override
   String get profileDriverFallback => 'سائق';
+
+  @override
+  String get reviewsTitle => 'تقييمات السائق';
+
+  @override
+  String get reviewsSeeAll => 'عرض كل التقييمات';
+
+  @override
+  String reviewsCount(int count) {
+    return '$count تقييم';
+  }
+
+  @override
+  String get reviewsLatest => 'أحدث التقييمات';
+
+  @override
+  String get reviewsNoReviews => 'لا توجد تقييمات بعد';
+
+  @override
+  String get reviewsAnonymous => 'مستخدم محذوف';
+
+  @override
+  String get reviewsWriteTitle => 'قيّم هذه الرحلة';
+
+  @override
+  String get reviewsEditTitle => 'تعديل تقييمي';
+
+  @override
+  String get reviewsRatingPrompt => 'اختر تقييماً';
+
+  @override
+  String get reviewsRating1 => 'مخيّب جداً';
+
+  @override
+  String get reviewsRating2 => 'مخيّب';
+
+  @override
+  String get reviewsRating3 => 'مقبول';
+
+  @override
+  String get reviewsRating4 => 'جيد جداً';
+
+  @override
+  String get reviewsRating5 => 'ممتاز';
+
+  @override
+  String reviewsStarSemantics(int count) {
+    return '$count من 5 نجوم';
+  }
+
+  @override
+  String get reviewsComment => 'تعليق (اختياري)';
+
+  @override
+  String get reviewsCommentHint => 'شاركنا تجربتك';
+
+  @override
+  String get reviewsSubmit => 'إرسال تقييمي';
+
+  @override
+  String get reviewsUpdate => 'حفظ التعديلات';
+
+  @override
+  String get reviewsDelete => 'حذف تقييمي';
+
+  @override
+  String get reviewsDeleteConfirm => 'هل تريد حذف هذا التقييم؟';
+
+  @override
+  String get reviewsSaved => 'تم إرسال تقييمك.';
+
+  @override
+  String get reviewsUpdated => 'تم تعديل تقييمك.';
+
+  @override
+  String get reviewsDeleted => 'تم حذف تقييمك.';
+
+  @override
+  String get reviewsNotEligible =>
+      'يمكنك تقييم الرحلات المكتملة التي حجزتها فقط.';
+
+  @override
+  String get reviewsAlreadyReviewed => 'لقد قيّمت هذه الرحلة بالفعل.';
+
+  @override
+  String get reviewsInvalidRating => 'اختر تقييماً من نجمة إلى خمس نجوم.';
+
+  @override
+  String get reviewsInvalidComment => 'يجب ألا يتجاوز التعليق 300 حرف.';
+
+  @override
+  String get reviewsNotFound => 'تعذر العثور على هذا التقييم.';
+
+  @override
+  String get reviewsWindowExpired => 'يمكن تعديل التقييم خلال 24 ساعة من نشره.';
+
+  @override
+  String get reviewsSignInRequired => 'سجّل الدخول للمتابعة.';
+
+  @override
+  String get reviewsLoadError => 'تعذر تحميل التقييمات.';
+
+  @override
+  String get reviewsReport => 'الإبلاغ عن هذا التقييم';
+
+  @override
+  String get reviewsReportTitle => 'الإبلاغ عن هذا التقييم؟';
+
+  @override
+  String get reviewsReportBody => 'سيتم إرسال البلاغ إلى فريق الإشراف.';
+
+  @override
+  String get reviewsReportSent => 'تم الإبلاغ عن التقييم.';
+
+  @override
+  String get reviewsDistribution => 'توزيع التقييمات';
+
+  @override
+  String get reviewsNoComment => 'لا يوجد تعليق';
+
+  @override
+  String get reviewsUnavailable => 'معلومات الرحلة غير متاحة.';
+
+  @override
+  String get reviewsAnonymousAuthor => 'مسافر';
+
+  @override
+  String get reviewsDeleteAction => 'حذف';
+
+  @override
+  String get reviewsCancelAction => 'إلغاء';
+
+  @override
+  String get reviewsLoadMore => 'عرض المزيد';
 
   @override
   String get widgetGalleryTitle => 'معرض المكونات';
@@ -974,4 +1370,82 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsLanguageArabic => 'العربية';
+
+  @override
+  String get settingsNotifications => 'الإشعارات';
+
+  @override
+  String get settingsNotificationsDescription =>
+      'تلقي التحديثات المهمة حول رحلاتك';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationsChannelName => 'إشعارات لواج غو';
+
+  @override
+  String get notificationsEmptyTitle => 'لا توجد إشعارات';
+
+  @override
+  String get notificationsEmptyBody => 'ستظهر تحديثاتك المهمة هنا.';
+
+  @override
+  String get notificationsLoadError => 'تعذر تحميل الإشعارات.';
+
+  @override
+  String get notificationsMarkAllRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get notificationsToday => 'اليوم';
+
+  @override
+  String get notificationsYesterday => 'أمس';
+
+  @override
+  String get notificationsOlder => 'أقدم';
+
+  @override
+  String get notificationsDeleted => 'تم حذف الإشعار';
+
+  @override
+  String get notificationsUnread => 'غير مقروء';
+
+  @override
+  String get notificationsTypeBooking => 'الحجز';
+
+  @override
+  String get notificationsTypeTrip => 'الرحلة';
+
+  @override
+  String get notificationsTypePromotion => 'عرض';
+
+  @override
+  String get notificationsTypeSystem => 'معلومة';
+
+  @override
+  String get notificationsPermissionTitle => 'تفعيل الإشعارات';
+
+  @override
+  String get notificationsPermissionExplanation =>
+      'يمكن لتطبيق لواج غو إرسال تحديثات مهمة حول حجوزاتك ورحلاتك. يمكنك تغيير هذا الإذن من إعدادات جهازك.';
+
+  @override
+  String get notificationsPermissionContinue => 'متابعة';
+
+  @override
+  String get notificationsPermissionDenied =>
+      'الإشعارات معطلة في إعدادات الجهاز.';
+
+  @override
+  String get notificationsOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get searchHideFull => 'إخفاء الرحلات المكتملة';
+
+  @override
+  String get searchUseMaximumPrice => 'تحديد السعر الأقصى';
+
+  @override
+  String get searchResetFilters => 'إعادة الضبط';
 }

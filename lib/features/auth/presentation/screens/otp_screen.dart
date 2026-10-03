@@ -223,6 +223,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           phone: arguments.phone,
           role: arguments.role ?? 'passenger',
           email: arguments.email,
+          acceptedTermsVersion: arguments.acceptedTermsVersion,
+          acceptedTermsAt: arguments.acceptedTermsAt,
         ),
         OtpPurpose.changePhone => await controller.changePhone(arguments.phone),
       };

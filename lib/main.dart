@@ -6,6 +6,8 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/app_preferences.dart';
 import 'core/storage/hive_service.dart';
 import 'core/storage/seed_data.dart';
+import 'core/widgets/notification_lifecycle.dart';
+import 'features/legal/presentation/legal_consent_gate.dart';
 import 'l10n/generated/app_localizations.dart';
 
 Future<void> main() async {
@@ -30,10 +32,17 @@ class LouageGoApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
 
-    Widget appBuilder(BuildContext context, Widget? child) => Theme(
-      data: AppTheme.withLocale(Theme.of(context), locale),
-      child: child ?? const SizedBox.shrink(),
-    );
+    Widget appBuilder(BuildContext context, Widget? child) {
+      final routedChild = child ?? const SizedBox.shrink();
+      return Theme(
+        data: AppTheme.withLocale(Theme.of(context), locale),
+        child: LegalConsentGate(
+          child: router == null
+              ? routedChild
+              : NotificationLifecycle(child: routedChild),
+        ),
+      );
+    }
 
     if (router == null) {
       return MaterialApp(

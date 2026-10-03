@@ -682,113 +682,65 @@ abstract class AppLocalizations {
   /// **'Conditions d’utilisation'**
   String get legalTermsTitle;
 
-  /// No description provided for @legalTermsBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'LouageGo est un projet universitaire de réservation de louages. En créant un compte, vous confirmez l’exactitude des informations fournies et vous engagez à utiliser le service dans le respect des règles applicables.\n\nLes réservations sont soumises à la disponibilité des trajets et des places.'**
-  String get legalTermsBody;
-
   /// No description provided for @legalUpdatedAt.
   ///
   /// In fr, this message translates to:
-  /// **'Mis à jour le 3 octobre 2026'**
-  String get legalUpdatedAt;
+  /// **'Mis à jour le {date}'**
+  String legalUpdatedAt(String date);
 
-  /// No description provided for @legalTermsSectionServiceTitle.
+  /// No description provided for @legalDocumentVersion.
   ///
   /// In fr, this message translates to:
-  /// **'Utilisation du service'**
-  String get legalTermsSectionServiceTitle;
+  /// **'Version {version}'**
+  String legalDocumentVersion(String version);
 
-  /// No description provided for @legalTermsSectionServiceBody.
+  /// No description provided for @legalDemoDisclaimer.
   ///
   /// In fr, this message translates to:
-  /// **'LouageGo facilite la consultation et la réservation de trajets en louage. L’utilisateur s’engage à fournir des informations exactes, à protéger ses identifiants et à utiliser le service conformément aux lois applicables.'**
-  String get legalTermsSectionServiceBody;
+  /// **'Version de démonstration : ce texte doit être validé par un juriste avant publication.'**
+  String get legalDemoDisclaimer;
 
-  /// No description provided for @legalTermsSectionBookingsTitle.
+  /// No description provided for @legalTableOfContents.
   ///
   /// In fr, this message translates to:
-  /// **'Réservations et trajets'**
-  String get legalTermsSectionBookingsTitle;
+  /// **'Sommaire'**
+  String get legalTableOfContents;
 
-  /// No description provided for @legalTermsSectionBookingsBody.
+  /// No description provided for @legalContactLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Les réservations dépendent de la disponibilité des trajets et des places. Les horaires et informations affichés peuvent être mis à jour. Toute annulation reste soumise aux conditions indiquées dans l’application.'**
-  String get legalTermsSectionBookingsBody;
+  /// **'Contact :'**
+  String get legalContactLabel;
 
-  /// No description provided for @legalTermsSectionDemoTitle.
+  /// No description provided for @legalUpdateTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Version de démonstration'**
-  String get legalTermsSectionDemoTitle;
+  /// **'Mise à jour des conditions'**
+  String get legalUpdateTitle;
 
-  /// No description provided for @legalTermsSectionDemoBody.
+  /// No description provided for @legalUpdateMessage.
   ///
   /// In fr, this message translates to:
-  /// **'Cette application est un projet universitaire. Certaines fonctionnalités sont simulées et ne constituent pas une garantie de transport ou de paiement réel.'**
-  String get legalTermsSectionDemoBody;
+  /// **'Les conditions et la politique de confidentialité ont été mises à jour. Veuillez les lire et accepter cette version pour continuer.'**
+  String get legalUpdateMessage;
+
+  /// No description provided for @legalAcceptUpdate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accepter et continuer'**
+  String get legalAcceptUpdate;
+
+  /// No description provided for @legalSignOut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter'**
+  String get legalSignOut;
 
   /// No description provided for @legalPrivacyTitle.
   ///
   /// In fr, this message translates to:
   /// **'Politique de confidentialité'**
   String get legalPrivacyTitle;
-
-  /// No description provided for @legalPrivacyBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'Dans cette version de démonstration, les informations du compte sont stockées localement sur cet appareil. Aucun SMS réel n’est envoyé : le code de vérification est simulé.\n\nLes données ne sont pas transmises à Firebase.'**
-  String get legalPrivacyBody;
-
-  /// No description provided for @legalPrivacySectionDataTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Données enregistrées'**
-  String get legalPrivacySectionDataTitle;
-
-  /// No description provided for @legalPrivacySectionDataBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'Les informations de profil, préférences, favoris et données nécessaires au fonctionnement des réservations sont enregistrées dans le stockage local de l’application.'**
-  String get legalPrivacySectionDataBody;
-
-  /// No description provided for @legalPrivacySectionUseTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Utilisation des données'**
-  String get legalPrivacySectionUseTitle;
-
-  /// No description provided for @legalPrivacySectionUseBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'Les données servent à afficher le profil, gérer les préférences et faciliter l’utilisation des fonctions de réservation. Cette version de démonstration ne transmet pas les données à Firebase.'**
-  String get legalPrivacySectionUseBody;
-
-  /// No description provided for @legalPrivacySectionControlTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Contrôle et suppression'**
-  String get legalPrivacySectionControlTitle;
-
-  /// No description provided for @legalPrivacySectionControlBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'Vous pouvez modifier vos informations depuis votre profil ou demander la suppression de votre compte. Les réservations et avis historiques peuvent être conservés sous forme anonymisée.'**
-  String get legalPrivacySectionControlBody;
-
-  /// No description provided for @legalPrivacySectionDemoTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'SMS de vérification'**
-  String get legalPrivacySectionDemoTitle;
-
-  /// No description provided for @legalPrivacySectionDemoBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'Aucun SMS réel n’est envoyé dans cette version : le code de vérification est simulé.'**
-  String get legalPrivacySectionDemoBody;
 
   /// No description provided for @settingsAccountSection.
   ///
@@ -843,6 +795,252 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aide et assistance'**
   String get helpSupportTitle;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Support LouageGo'**
+  String get supportTitle;
+
+  /// No description provided for @supportFaqTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes'**
+  String get supportFaqTitle;
+
+  /// No description provided for @supportContactTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contacter le support'**
+  String get supportContactTitle;
+
+  /// No description provided for @supportRequestsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes demandes'**
+  String get supportRequestsTitle;
+
+  /// No description provided for @supportRequestDetailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détail de la demande'**
+  String get supportRequestDetailTitle;
+
+  /// No description provided for @supportQuickContact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contact rapide'**
+  String get supportQuickContact;
+
+  /// No description provided for @supportCallAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appeler'**
+  String get supportCallAction;
+
+  /// No description provided for @supportEmailAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail'**
+  String get supportEmailAction;
+
+  /// No description provided for @supportWhatsappAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'WhatsApp'**
+  String get supportWhatsappAction;
+
+  /// No description provided for @supportContactUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune application disponible pour cette action.'**
+  String get supportContactUnavailable;
+
+  /// No description provided for @supportFaqSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une question'**
+  String get supportFaqSearch;
+
+  /// No description provided for @supportClearSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer la recherche'**
+  String get supportClearSearch;
+
+  /// No description provided for @supportFaqAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes'**
+  String get supportFaqAll;
+
+  /// No description provided for @supportFaqEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun résultat. Essayez d’autres mots-clés ou catégories.'**
+  String get supportFaqEmpty;
+
+  /// No description provided for @supportCategoryBooking.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservation'**
+  String get supportCategoryBooking;
+
+  /// No description provided for @supportCategoryPayment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement'**
+  String get supportCategoryPayment;
+
+  /// No description provided for @supportCategoryTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trajet et suivi'**
+  String get supportCategoryTrip;
+
+  /// No description provided for @supportCategoryAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get supportCategoryAccount;
+
+  /// No description provided for @supportCategoryDrivers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chauffeurs'**
+  String get supportCategoryDrivers;
+
+  /// No description provided for @supportCategoryBug.
+  ///
+  /// In fr, this message translates to:
+  /// **'Problème technique'**
+  String get supportCategoryBug;
+
+  /// No description provided for @supportCategoryOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get supportCategoryOther;
+
+  /// No description provided for @supportCategoryLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégorie'**
+  String get supportCategoryLabel;
+
+  /// No description provided for @supportTripReference.
+  ///
+  /// In fr, this message translates to:
+  /// **'Référence du trajet (facultatif)'**
+  String get supportTripReference;
+
+  /// No description provided for @supportMessageLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre message'**
+  String get supportMessageLabel;
+
+  /// No description provided for @supportSendRequest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer la demande'**
+  String get supportSendRequest;
+
+  /// No description provided for @supportRequestSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre demande a été envoyée.'**
+  String get supportRequestSent;
+
+  /// No description provided for @supportTooManyOpenRequests.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez déjà 3 demandes de support ouvertes.'**
+  String get supportTooManyOpenRequests;
+
+  /// No description provided for @supportCategoryRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez une catégorie.'**
+  String get supportCategoryRequired;
+
+  /// No description provided for @supportMessageInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le message doit contenir entre 10 et 1000 caractères.'**
+  String get supportMessageInvalid;
+
+  /// No description provided for @supportSignInRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour envoyer ou consulter vos demandes.'**
+  String get supportSignInRequired;
+
+  /// No description provided for @supportSubmissionFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d’envoyer la demande. Réessayez.'**
+  String get supportSubmissionFailed;
+
+  /// No description provided for @supportLoadFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les demandes.'**
+  String get supportLoadFailed;
+
+  /// No description provided for @supportRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get supportRetry;
+
+  /// No description provided for @supportRequestsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous n’avez aucune demande de support.'**
+  String get supportRequestsEmpty;
+
+  /// No description provided for @supportRequestNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette demande est introuvable.'**
+  String get supportRequestNotFound;
+
+  /// No description provided for @supportAdminReply.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réponse du support'**
+  String get supportAdminReply;
+
+  /// No description provided for @supportNoAdminReply.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune réponse pour le moment.'**
+  String get supportNoAdminReply;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouverte'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusInProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get supportStatusInProgress;
+
+  /// No description provided for @supportStatusResolved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Résolue'**
+  String get supportStatusResolved;
+
+  /// No description provided for @supportEmailSubject.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande d’assistance LouageGo'**
+  String get supportEmailSubject;
 
   /// No description provided for @helpFaqSection.
   ///
@@ -1216,6 +1414,18 @@ abstract class AppLocalizations {
   /// **'Espace chauffeur'**
   String get driverHomeTitle;
 
+  /// No description provided for @driverHomeGreeting.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bonjour {name}'**
+  String driverHomeGreeting(String name);
+
+  /// No description provided for @driverHomeSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérez votre louage et vos départs.'**
+  String get driverHomeSubtitle;
+
   /// No description provided for @driverProfileUnavailable.
   ///
   /// In fr, this message translates to:
@@ -1305,6 +1515,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Voyage en cours'**
   String get driverCurrentTrip;
+
+  /// No description provided for @driverSeatCounts.
+  ///
+  /// In fr, this message translates to:
+  /// **'{reserved} places occupées · {free} libres'**
+  String driverSeatCounts(String reserved, String free);
+
+  /// No description provided for @driverDepartureTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Départ à {time}'**
+  String driverDepartureTime(String time);
 
   /// No description provided for @driverFillUpdatesNextTrip.
   ///
@@ -1503,6 +1725,276 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Choisir une ville'**
   String get searchCityPickerTitle;
+
+  /// No description provided for @stationsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stations'**
+  String get stationsTitle;
+
+  /// No description provided for @stationsSearchLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une station'**
+  String get stationsSearchLabel;
+
+  /// No description provided for @stationsBrowsePrompt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parcourez les stations de Tunisie'**
+  String get stationsBrowsePrompt;
+
+  /// No description provided for @stationsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les stations'**
+  String get stationsLoadError;
+
+  /// No description provided for @stationsNoResults.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune station trouvée'**
+  String get stationsNoResults;
+
+  /// No description provided for @stationsSearchFrom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher depuis cette station'**
+  String get stationsSearchFrom;
+
+  /// No description provided for @locationUseMyPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser ma position'**
+  String get locationUseMyPosition;
+
+  /// No description provided for @locationConsentTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser votre position ?'**
+  String get locationConsentTitle;
+
+  /// No description provided for @locationConsentMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre position sert uniquement à trouver les stations les plus proches. Elle n’est pas partagée.'**
+  String get locationConsentMessage;
+
+  /// No description provided for @locationConsentPrivacyLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire la politique de confidentialité'**
+  String get locationConsentPrivacyLink;
+
+  /// No description provided for @locationConsentAccept.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get locationConsentAccept;
+
+  /// No description provided for @locationDenied.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’accès à la position a été refusé.'**
+  String get locationDenied;
+
+  /// No description provided for @locationDeniedForever.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autorisez la position dans les réglages de l’application.'**
+  String get locationDeniedForever;
+
+  /// No description provided for @locationServiceDisabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activez les services de localisation de votre appareil.'**
+  String get locationServiceDisabled;
+
+  /// No description provided for @locationError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d’obtenir votre position.'**
+  String get locationError;
+
+  /// No description provided for @locationOpenSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir les réglages'**
+  String get locationOpenSettings;
+
+  /// No description provided for @locationNearestEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune station avec une position connue.'**
+  String get locationNearestEmpty;
+
+  /// No description provided for @stationsMapTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte des stations'**
+  String get stationsMapTitle;
+
+  /// No description provided for @stationsMapUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte indisponible hors connexion'**
+  String get stationsMapUnavailable;
+
+  /// No description provided for @stationsMapRecenter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recentrer la carte'**
+  String get stationsMapRecenter;
+
+  /// No description provided for @stationsMapMyPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma position'**
+  String get stationsMapMyPosition;
+
+  /// No description provided for @stationsMapFavoritesSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter aux favoris sera bientôt disponible'**
+  String get stationsMapFavoritesSoon;
+
+  /// No description provided for @stationsMapRouteCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} lignes au départ'**
+  String stationsMapRouteCount(int count);
+
+  /// No description provided for @favoriteAddRoute.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter ce trajet aux favoris'**
+  String get favoriteAddRoute;
+
+  /// No description provided for @favoriteRemoveRoute.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer ce trajet des favoris'**
+  String get favoriteRemoveRoute;
+
+  /// No description provided for @favoriteAddStation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter cette station aux favoris'**
+  String get favoriteAddStation;
+
+  /// No description provided for @favoriteRemoveStation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer cette station des favoris'**
+  String get favoriteRemoveStation;
+
+  /// No description provided for @favoriteUpdateError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de mettre à jour les favoris.'**
+  String get favoriteUpdateError;
+
+  /// No description provided for @favoritesTabOffers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Offres'**
+  String get favoritesTabOffers;
+
+  /// No description provided for @favoritesRoutesTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trajets'**
+  String get favoritesRoutesTab;
+
+  /// No description provided for @favoritesStationsTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stations'**
+  String get favoritesStationsTab;
+
+  /// No description provided for @favoritesEmptyOffers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune offre favorite pour le moment.'**
+  String get favoritesEmptyOffers;
+
+  /// No description provided for @favoritesEmptyRoutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun trajet favori pour le moment.'**
+  String get favoritesEmptyRoutes;
+
+  /// No description provided for @favoritesEmptyStations.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune station favorite pour le moment.'**
+  String get favoritesEmptyStations;
+
+  /// No description provided for @favoritesUndo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get favoritesUndo;
+
+  /// No description provided for @favoritesRemoved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Favori supprimé.'**
+  String get favoritesRemoved;
+
+  /// No description provided for @favoritesOfferAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter cette offre aux favoris'**
+  String get favoritesOfferAdd;
+
+  /// No description provided for @favoritesOfferRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer cette offre des favoris'**
+  String get favoritesOfferRemove;
+
+  /// No description provided for @favoritesNoDeparture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun départ disponible'**
+  String get favoritesNoDeparture;
+
+  /// No description provided for @favoritesNextDeparture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochain départ : {date}'**
+  String favoritesNextDeparture(String date);
+
+  /// No description provided for @favoritesOtherSchedules.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les autres horaires'**
+  String get favoritesOtherSchedules;
+
+  /// No description provided for @favoritesMyOffers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes offres'**
+  String get favoritesMyOffers;
+
+  /// No description provided for @filtersReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réinitialiser'**
+  String get filtersReset;
+
+  /// No description provided for @filtersHideFull.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer les trajets complets'**
+  String get filtersHideFull;
+
+  /// No description provided for @filtersActiveCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} filtres actifs'**
+  String filtersActiveCount(int count);
 
   /// No description provided for @searchPricePerSeat.
   ///
@@ -1720,6 +2212,12 @@ abstract class AppLocalizations {
   /// **'Profil chauffeur'**
   String get profileDriverTitle;
 
+  /// No description provided for @profileDriverReviews.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes avis'**
+  String get profileDriverReviews;
+
   /// No description provided for @profilePassengerFallback.
   ///
   /// In fr, this message translates to:
@@ -1731,6 +2229,264 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Chauffeur'**
   String get profileDriverFallback;
+
+  /// No description provided for @reviewsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avis du chauffeur'**
+  String get reviewsTitle;
+
+  /// No description provided for @reviewsSeeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir tous les avis'**
+  String get reviewsSeeAll;
+
+  /// No description provided for @reviewsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} avis'**
+  String reviewsCount(int count);
+
+  /// No description provided for @reviewsLatest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avis récents'**
+  String get reviewsLatest;
+
+  /// No description provided for @reviewsNoReviews.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun avis pour le moment'**
+  String get reviewsNoReviews;
+
+  /// No description provided for @reviewsAnonymous.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilisateur supprimé'**
+  String get reviewsAnonymous;
+
+  /// No description provided for @reviewsWriteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Noter ce trajet'**
+  String get reviewsWriteTitle;
+
+  /// No description provided for @reviewsEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier mon avis'**
+  String get reviewsEditTitle;
+
+  /// No description provided for @reviewsRatingPrompt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez une note'**
+  String get reviewsRatingPrompt;
+
+  /// No description provided for @reviewsRating1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Très décevant'**
+  String get reviewsRating1;
+
+  /// No description provided for @reviewsRating2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décevant'**
+  String get reviewsRating2;
+
+  /// No description provided for @reviewsRating3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Correct'**
+  String get reviewsRating3;
+
+  /// No description provided for @reviewsRating4.
+  ///
+  /// In fr, this message translates to:
+  /// **'Très bien'**
+  String get reviewsRating4;
+
+  /// No description provided for @reviewsRating5.
+  ///
+  /// In fr, this message translates to:
+  /// **'Excellent'**
+  String get reviewsRating5;
+
+  /// No description provided for @reviewsStarSemantics.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} sur 5 étoiles'**
+  String reviewsStarSemantics(int count);
+
+  /// No description provided for @reviewsComment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commentaire (facultatif)'**
+  String get reviewsComment;
+
+  /// No description provided for @reviewsCommentHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partagez votre expérience'**
+  String get reviewsCommentHint;
+
+  /// No description provided for @reviewsSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer mon avis'**
+  String get reviewsSubmit;
+
+  /// No description provided for @reviewsUpdate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer les modifications'**
+  String get reviewsUpdate;
+
+  /// No description provided for @reviewsDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon avis'**
+  String get reviewsDelete;
+
+  /// No description provided for @reviewsDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voulez-vous supprimer cet avis ?'**
+  String get reviewsDeleteConfirm;
+
+  /// No description provided for @reviewsSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre avis a été enregistré.'**
+  String get reviewsSaved;
+
+  /// No description provided for @reviewsUpdated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre avis a été modifié.'**
+  String get reviewsUpdated;
+
+  /// No description provided for @reviewsDeleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre avis a été supprimé.'**
+  String get reviewsDeleted;
+
+  /// No description provided for @reviewsNotEligible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seuls les trajets terminés que vous avez réservés peuvent être notés.'**
+  String get reviewsNotEligible;
+
+  /// No description provided for @reviewsAlreadyReviewed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez déjà noté ce trajet.'**
+  String get reviewsAlreadyReviewed;
+
+  /// No description provided for @reviewsInvalidRating.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez une note de 1 à 5 étoiles.'**
+  String get reviewsInvalidRating;
+
+  /// No description provided for @reviewsInvalidComment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le commentaire ne peut pas dépasser 300 caractères.'**
+  String get reviewsInvalidComment;
+
+  /// No description provided for @reviewsNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cet avis est introuvable.'**
+  String get reviewsNotFound;
+
+  /// No description provided for @reviewsWindowExpired.
+  ///
+  /// In fr, this message translates to:
+  /// **'La modification est possible pendant 24 heures après la publication.'**
+  String get reviewsWindowExpired;
+
+  /// No description provided for @reviewsSignInRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous pour continuer.'**
+  String get reviewsSignInRequired;
+
+  /// No description provided for @reviewsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les avis.'**
+  String get reviewsLoadError;
+
+  /// No description provided for @reviewsReport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler cet avis'**
+  String get reviewsReport;
+
+  /// No description provided for @reviewsReportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler cet avis ?'**
+  String get reviewsReportTitle;
+
+  /// No description provided for @reviewsReportBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le signalement sera transmis à l’équipe de modération.'**
+  String get reviewsReportBody;
+
+  /// No description provided for @reviewsReportSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’avis a été signalé.'**
+  String get reviewsReportSent;
+
+  /// No description provided for @reviewsDistribution.
+  ///
+  /// In fr, this message translates to:
+  /// **'Répartition des notes'**
+  String get reviewsDistribution;
+
+  /// No description provided for @reviewsNoComment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun commentaire'**
+  String get reviewsNoComment;
+
+  /// No description provided for @reviewsUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les informations du trajet ne sont pas disponibles.'**
+  String get reviewsUnavailable;
+
+  /// No description provided for @reviewsAnonymousAuthor.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voyageur'**
+  String get reviewsAnonymousAuthor;
+
+  /// No description provided for @reviewsDeleteAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get reviewsDeleteAction;
+
+  /// No description provided for @reviewsCancelAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get reviewsCancelAction;
+
+  /// No description provided for @reviewsLoadMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir plus'**
+  String get reviewsLoadMore;
 
   /// No description provided for @widgetGalleryTitle.
   ///
@@ -1905,6 +2661,156 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Arabe'**
   String get settingsLanguageArabic;
+
+  /// No description provided for @settingsNotifications.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications'**
+  String get settingsNotifications;
+
+  /// No description provided for @settingsNotificationsDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir les mises à jour importantes de vos trajets'**
+  String get settingsNotificationsDescription;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsChannelName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications LouageGo'**
+  String get notificationsChannelName;
+
+  /// No description provided for @notificationsEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune notification'**
+  String get notificationsEmptyTitle;
+
+  /// No description provided for @notificationsEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos mises à jour importantes apparaîtront ici.'**
+  String get notificationsEmptyBody;
+
+  /// No description provided for @notificationsLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les notifications.'**
+  String get notificationsLoadError;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout marquer comme lu'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @notificationsToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd’hui'**
+  String get notificationsToday;
+
+  /// No description provided for @notificationsYesterday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hier'**
+  String get notificationsYesterday;
+
+  /// No description provided for @notificationsOlder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus ancien'**
+  String get notificationsOlder;
+
+  /// No description provided for @notificationsDeleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notification supprimée'**
+  String get notificationsDeleted;
+
+  /// No description provided for @notificationsUnread.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non lue'**
+  String get notificationsUnread;
+
+  /// No description provided for @notificationsTypeBooking.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservation'**
+  String get notificationsTypeBooking;
+
+  /// No description provided for @notificationsTypeTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trajet'**
+  String get notificationsTypeTrip;
+
+  /// No description provided for @notificationsTypePromotion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Promotion'**
+  String get notificationsTypePromotion;
+
+  /// No description provided for @notificationsTypeSystem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Information'**
+  String get notificationsTypeSystem;
+
+  /// No description provided for @notificationsPermissionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer les notifications'**
+  String get notificationsPermissionTitle;
+
+  /// No description provided for @notificationsPermissionExplanation.
+  ///
+  /// In fr, this message translates to:
+  /// **'LouageGo peut vous envoyer des mises à jour sur vos réservations et vos trajets. Vous pourrez modifier cette autorisation dans les réglages de votre appareil.'**
+  String get notificationsPermissionExplanation;
+
+  /// No description provided for @notificationsPermissionContinue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get notificationsPermissionContinue;
+
+  /// No description provided for @notificationsPermissionDenied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les notifications sont désactivées dans les réglages de l’appareil.'**
+  String get notificationsPermissionDenied;
+
+  /// No description provided for @notificationsOpenSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir les réglages'**
+  String get notificationsOpenSettings;
+
+  /// No description provided for @searchHideFull.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer les trajets complets'**
+  String get searchHideFull;
+
+  /// No description provided for @searchUseMaximumPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limiter le prix'**
+  String get searchUseMaximumPrice;
+
+  /// No description provided for @searchResetFilters.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réinitialiser'**
+  String get searchResetFilters;
 }
 
 class _AppLocalizationsDelegate

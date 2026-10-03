@@ -322,67 +322,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String get legalTermsTitle => 'Conditions d’utilisation';
 
   @override
-  String get legalTermsBody =>
-      'LouageGo est un projet universitaire de réservation de louages. En créant un compte, vous confirmez l’exactitude des informations fournies et vous engagez à utiliser le service dans le respect des règles applicables.\n\nLes réservations sont soumises à la disponibilité des trajets et des places.';
+  String legalUpdatedAt(String date) {
+    return 'Mis à jour le $date';
+  }
 
   @override
-  String get legalUpdatedAt => 'Mis à jour le 3 octobre 2026';
+  String legalDocumentVersion(String version) {
+    return 'Version $version';
+  }
 
   @override
-  String get legalTermsSectionServiceTitle => 'Utilisation du service';
+  String get legalDemoDisclaimer =>
+      'Version de démonstration : ce texte doit être validé par un juriste avant publication.';
 
   @override
-  String get legalTermsSectionServiceBody =>
-      'LouageGo facilite la consultation et la réservation de trajets en louage. L’utilisateur s’engage à fournir des informations exactes, à protéger ses identifiants et à utiliser le service conformément aux lois applicables.';
+  String get legalTableOfContents => 'Sommaire';
 
   @override
-  String get legalTermsSectionBookingsTitle => 'Réservations et trajets';
+  String get legalContactLabel => 'Contact :';
 
   @override
-  String get legalTermsSectionBookingsBody =>
-      'Les réservations dépendent de la disponibilité des trajets et des places. Les horaires et informations affichés peuvent être mis à jour. Toute annulation reste soumise aux conditions indiquées dans l’application.';
+  String get legalUpdateTitle => 'Mise à jour des conditions';
 
   @override
-  String get legalTermsSectionDemoTitle => 'Version de démonstration';
+  String get legalUpdateMessage =>
+      'Les conditions et la politique de confidentialité ont été mises à jour. Veuillez les lire et accepter cette version pour continuer.';
 
   @override
-  String get legalTermsSectionDemoBody =>
-      'Cette application est un projet universitaire. Certaines fonctionnalités sont simulées et ne constituent pas une garantie de transport ou de paiement réel.';
+  String get legalAcceptUpdate => 'Accepter et continuer';
+
+  @override
+  String get legalSignOut => 'Se déconnecter';
 
   @override
   String get legalPrivacyTitle => 'Politique de confidentialité';
-
-  @override
-  String get legalPrivacyBody =>
-      'Dans cette version de démonstration, les informations du compte sont stockées localement sur cet appareil. Aucun SMS réel n’est envoyé : le code de vérification est simulé.\n\nLes données ne sont pas transmises à Firebase.';
-
-  @override
-  String get legalPrivacySectionDataTitle => 'Données enregistrées';
-
-  @override
-  String get legalPrivacySectionDataBody =>
-      'Les informations de profil, préférences, favoris et données nécessaires au fonctionnement des réservations sont enregistrées dans le stockage local de l’application.';
-
-  @override
-  String get legalPrivacySectionUseTitle => 'Utilisation des données';
-
-  @override
-  String get legalPrivacySectionUseBody =>
-      'Les données servent à afficher le profil, gérer les préférences et faciliter l’utilisation des fonctions de réservation. Cette version de démonstration ne transmet pas les données à Firebase.';
-
-  @override
-  String get legalPrivacySectionControlTitle => 'Contrôle et suppression';
-
-  @override
-  String get legalPrivacySectionControlBody =>
-      'Vous pouvez modifier vos informations depuis votre profil ou demander la suppression de votre compte. Les réservations et avis historiques peuvent être conservés sous forme anonymisée.';
-
-  @override
-  String get legalPrivacySectionDemoTitle => 'SMS de vérification';
-
-  @override
-  String get legalPrivacySectionDemoBody =>
-      'Aucun SMS réel n’est envoyé dans cette version : le code de vérification est simulé.';
 
   @override
   String get settingsAccountSection => 'Compte';
@@ -410,6 +383,135 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpSupportTitle => 'Aide et assistance';
+
+  @override
+  String get supportTitle => 'Support LouageGo';
+
+  @override
+  String get supportFaqTitle => 'Questions fréquentes';
+
+  @override
+  String get supportContactTitle => 'Contacter le support';
+
+  @override
+  String get supportRequestsTitle => 'Mes demandes';
+
+  @override
+  String get supportRequestDetailTitle => 'Détail de la demande';
+
+  @override
+  String get supportQuickContact => 'Contact rapide';
+
+  @override
+  String get supportCallAction => 'Appeler';
+
+  @override
+  String get supportEmailAction => 'E-mail';
+
+  @override
+  String get supportWhatsappAction => 'WhatsApp';
+
+  @override
+  String get supportContactUnavailable =>
+      'Aucune application disponible pour cette action.';
+
+  @override
+  String get supportFaqSearch => 'Rechercher une question';
+
+  @override
+  String get supportClearSearch => 'Effacer la recherche';
+
+  @override
+  String get supportFaqAll => 'Toutes';
+
+  @override
+  String get supportFaqEmpty =>
+      'Aucun résultat. Essayez d’autres mots-clés ou catégories.';
+
+  @override
+  String get supportCategoryBooking => 'Réservation';
+
+  @override
+  String get supportCategoryPayment => 'Paiement';
+
+  @override
+  String get supportCategoryTrip => 'Trajet et suivi';
+
+  @override
+  String get supportCategoryAccount => 'Compte';
+
+  @override
+  String get supportCategoryDrivers => 'Chauffeurs';
+
+  @override
+  String get supportCategoryBug => 'Problème technique';
+
+  @override
+  String get supportCategoryOther => 'Autre';
+
+  @override
+  String get supportCategoryLabel => 'Catégorie';
+
+  @override
+  String get supportTripReference => 'Référence du trajet (facultatif)';
+
+  @override
+  String get supportMessageLabel => 'Votre message';
+
+  @override
+  String get supportSendRequest => 'Envoyer la demande';
+
+  @override
+  String get supportRequestSent => 'Votre demande a été envoyée.';
+
+  @override
+  String get supportTooManyOpenRequests =>
+      'Vous avez déjà 3 demandes de support ouvertes.';
+
+  @override
+  String get supportCategoryRequired => 'Choisissez une catégorie.';
+
+  @override
+  String get supportMessageInvalid =>
+      'Le message doit contenir entre 10 et 1000 caractères.';
+
+  @override
+  String get supportSignInRequired =>
+      'Connectez-vous pour envoyer ou consulter vos demandes.';
+
+  @override
+  String get supportSubmissionFailed =>
+      'Impossible d’envoyer la demande. Réessayez.';
+
+  @override
+  String get supportLoadFailed => 'Impossible de charger les demandes.';
+
+  @override
+  String get supportRetry => 'Réessayer';
+
+  @override
+  String get supportRequestsEmpty => 'Vous n’avez aucune demande de support.';
+
+  @override
+  String get supportRequestNotFound => 'Cette demande est introuvable.';
+
+  @override
+  String get supportAdminReply => 'Réponse du support';
+
+  @override
+  String get supportNoAdminReply => 'Aucune réponse pour le moment.';
+
+  @override
+  String get supportStatusOpen => 'Ouverte';
+
+  @override
+  String get supportStatusInProgress => 'En cours';
+
+  @override
+  String get supportStatusResolved => 'Résolue';
+
+  @override
+  String get supportEmailSubject => 'Demande d’assistance LouageGo';
 
   @override
   String get helpFaqSection => 'Questions fréquentes';
@@ -610,6 +712,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get driverHomeTitle => 'Espace chauffeur';
 
   @override
+  String driverHomeGreeting(String name) {
+    return 'Bonjour $name';
+  }
+
+  @override
+  String get driverHomeSubtitle => 'Gérez votre louage et vos départs.';
+
+  @override
   String get driverProfileUnavailable => 'Profil chauffeur indisponible';
 
   @override
@@ -655,6 +765,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get driverCurrentTrip => 'Voyage en cours';
+
+  @override
+  String driverSeatCounts(String reserved, String free) {
+    return '$reserved places occupées · $free libres';
+  }
+
+  @override
+  String driverDepartureTime(String time) {
+    return 'Départ à $time';
+  }
 
   @override
   String get driverFillUpdatesNextTrip =>
@@ -764,6 +884,153 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get searchCityPickerTitle => 'Choisir une ville';
+
+  @override
+  String get stationsTitle => 'Stations';
+
+  @override
+  String get stationsSearchLabel => 'Rechercher une station';
+
+  @override
+  String get stationsBrowsePrompt => 'Parcourez les stations de Tunisie';
+
+  @override
+  String get stationsLoadError => 'Impossible de charger les stations';
+
+  @override
+  String get stationsNoResults => 'Aucune station trouvée';
+
+  @override
+  String get stationsSearchFrom => 'Rechercher depuis cette station';
+
+  @override
+  String get locationUseMyPosition => 'Utiliser ma position';
+
+  @override
+  String get locationConsentTitle => 'Utiliser votre position ?';
+
+  @override
+  String get locationConsentMessage =>
+      'Votre position sert uniquement à trouver les stations les plus proches. Elle n’est pas partagée.';
+
+  @override
+  String get locationConsentPrivacyLink =>
+      'Lire la politique de confidentialité';
+
+  @override
+  String get locationConsentAccept => 'Continuer';
+
+  @override
+  String get locationDenied => 'L’accès à la position a été refusé.';
+
+  @override
+  String get locationDeniedForever =>
+      'Autorisez la position dans les réglages de l’application.';
+
+  @override
+  String get locationServiceDisabled =>
+      'Activez les services de localisation de votre appareil.';
+
+  @override
+  String get locationError => 'Impossible d’obtenir votre position.';
+
+  @override
+  String get locationOpenSettings => 'Ouvrir les réglages';
+
+  @override
+  String get locationNearestEmpty => 'Aucune station avec une position connue.';
+
+  @override
+  String get stationsMapTitle => 'Carte des stations';
+
+  @override
+  String get stationsMapUnavailable => 'Carte indisponible hors connexion';
+
+  @override
+  String get stationsMapRecenter => 'Recentrer la carte';
+
+  @override
+  String get stationsMapMyPosition => 'Ma position';
+
+  @override
+  String get stationsMapFavoritesSoon =>
+      'Ajouter aux favoris sera bientôt disponible';
+
+  @override
+  String stationsMapRouteCount(int count) {
+    return '$count lignes au départ';
+  }
+
+  @override
+  String get favoriteAddRoute => 'Ajouter ce trajet aux favoris';
+
+  @override
+  String get favoriteRemoveRoute => 'Retirer ce trajet des favoris';
+
+  @override
+  String get favoriteAddStation => 'Ajouter cette station aux favoris';
+
+  @override
+  String get favoriteRemoveStation => 'Retirer cette station des favoris';
+
+  @override
+  String get favoriteUpdateError => 'Impossible de mettre à jour les favoris.';
+
+  @override
+  String get favoritesTabOffers => 'Offres';
+
+  @override
+  String get favoritesRoutesTab => 'Trajets';
+
+  @override
+  String get favoritesStationsTab => 'Stations';
+
+  @override
+  String get favoritesEmptyOffers => 'Aucune offre favorite pour le moment.';
+
+  @override
+  String get favoritesEmptyRoutes => 'Aucun trajet favori pour le moment.';
+
+  @override
+  String get favoritesEmptyStations =>
+      'Aucune station favorite pour le moment.';
+
+  @override
+  String get favoritesUndo => 'Annuler';
+
+  @override
+  String get favoritesRemoved => 'Favori supprimé.';
+
+  @override
+  String get favoritesOfferAdd => 'Ajouter cette offre aux favoris';
+
+  @override
+  String get favoritesOfferRemove => 'Retirer cette offre des favoris';
+
+  @override
+  String get favoritesNoDeparture => 'Aucun départ disponible';
+
+  @override
+  String favoritesNextDeparture(String date) {
+    return 'Prochain départ : $date';
+  }
+
+  @override
+  String get favoritesOtherSchedules => 'Voir les autres horaires';
+
+  @override
+  String get favoritesMyOffers => 'Mes offres';
+
+  @override
+  String get filtersReset => 'Réinitialiser';
+
+  @override
+  String get filtersHideFull => 'Masquer les trajets complets';
+
+  @override
+  String filtersActiveCount(int count) {
+    return '$count filtres actifs';
+  }
 
   @override
   String searchPricePerSeat(Object amount) {
@@ -894,10 +1161,151 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileDriverTitle => 'Profil chauffeur';
 
   @override
+  String get profileDriverReviews => 'Mes avis';
+
+  @override
   String get profilePassengerFallback => 'Passager';
 
   @override
   String get profileDriverFallback => 'Chauffeur';
+
+  @override
+  String get reviewsTitle => 'Avis du chauffeur';
+
+  @override
+  String get reviewsSeeAll => 'Voir tous les avis';
+
+  @override
+  String reviewsCount(int count) {
+    return '$count avis';
+  }
+
+  @override
+  String get reviewsLatest => 'Avis récents';
+
+  @override
+  String get reviewsNoReviews => 'Aucun avis pour le moment';
+
+  @override
+  String get reviewsAnonymous => 'Utilisateur supprimé';
+
+  @override
+  String get reviewsWriteTitle => 'Noter ce trajet';
+
+  @override
+  String get reviewsEditTitle => 'Modifier mon avis';
+
+  @override
+  String get reviewsRatingPrompt => 'Choisissez une note';
+
+  @override
+  String get reviewsRating1 => 'Très décevant';
+
+  @override
+  String get reviewsRating2 => 'Décevant';
+
+  @override
+  String get reviewsRating3 => 'Correct';
+
+  @override
+  String get reviewsRating4 => 'Très bien';
+
+  @override
+  String get reviewsRating5 => 'Excellent';
+
+  @override
+  String reviewsStarSemantics(int count) {
+    return '$count sur 5 étoiles';
+  }
+
+  @override
+  String get reviewsComment => 'Commentaire (facultatif)';
+
+  @override
+  String get reviewsCommentHint => 'Partagez votre expérience';
+
+  @override
+  String get reviewsSubmit => 'Envoyer mon avis';
+
+  @override
+  String get reviewsUpdate => 'Enregistrer les modifications';
+
+  @override
+  String get reviewsDelete => 'Supprimer mon avis';
+
+  @override
+  String get reviewsDeleteConfirm => 'Voulez-vous supprimer cet avis ?';
+
+  @override
+  String get reviewsSaved => 'Votre avis a été enregistré.';
+
+  @override
+  String get reviewsUpdated => 'Votre avis a été modifié.';
+
+  @override
+  String get reviewsDeleted => 'Votre avis a été supprimé.';
+
+  @override
+  String get reviewsNotEligible =>
+      'Seuls les trajets terminés que vous avez réservés peuvent être notés.';
+
+  @override
+  String get reviewsAlreadyReviewed => 'Vous avez déjà noté ce trajet.';
+
+  @override
+  String get reviewsInvalidRating => 'Choisissez une note de 1 à 5 étoiles.';
+
+  @override
+  String get reviewsInvalidComment =>
+      'Le commentaire ne peut pas dépasser 300 caractères.';
+
+  @override
+  String get reviewsNotFound => 'Cet avis est introuvable.';
+
+  @override
+  String get reviewsWindowExpired =>
+      'La modification est possible pendant 24 heures après la publication.';
+
+  @override
+  String get reviewsSignInRequired => 'Connectez-vous pour continuer.';
+
+  @override
+  String get reviewsLoadError => 'Impossible de charger les avis.';
+
+  @override
+  String get reviewsReport => 'Signaler cet avis';
+
+  @override
+  String get reviewsReportTitle => 'Signaler cet avis ?';
+
+  @override
+  String get reviewsReportBody =>
+      'Le signalement sera transmis à l’équipe de modération.';
+
+  @override
+  String get reviewsReportSent => 'L’avis a été signalé.';
+
+  @override
+  String get reviewsDistribution => 'Répartition des notes';
+
+  @override
+  String get reviewsNoComment => 'Aucun commentaire';
+
+  @override
+  String get reviewsUnavailable =>
+      'Les informations du trajet ne sont pas disponibles.';
+
+  @override
+  String get reviewsAnonymousAuthor => 'Voyageur';
+
+  @override
+  String get reviewsDeleteAction => 'Supprimer';
+
+  @override
+  String get reviewsCancelAction => 'Annuler';
+
+  @override
+  String get reviewsLoadMore => 'Voir plus';
 
   @override
   String get widgetGalleryTitle => 'Catalogue des widgets';
@@ -986,4 +1394,84 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsLanguageArabic => 'Arabe';
+
+  @override
+  String get settingsNotifications => 'Notifications';
+
+  @override
+  String get settingsNotificationsDescription =>
+      'Recevoir les mises à jour importantes de vos trajets';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsChannelName => 'Notifications LouageGo';
+
+  @override
+  String get notificationsEmptyTitle => 'Aucune notification';
+
+  @override
+  String get notificationsEmptyBody =>
+      'Vos mises à jour importantes apparaîtront ici.';
+
+  @override
+  String get notificationsLoadError =>
+      'Impossible de charger les notifications.';
+
+  @override
+  String get notificationsMarkAllRead => 'Tout marquer comme lu';
+
+  @override
+  String get notificationsToday => 'Aujourd’hui';
+
+  @override
+  String get notificationsYesterday => 'Hier';
+
+  @override
+  String get notificationsOlder => 'Plus ancien';
+
+  @override
+  String get notificationsDeleted => 'Notification supprimée';
+
+  @override
+  String get notificationsUnread => 'Non lue';
+
+  @override
+  String get notificationsTypeBooking => 'Réservation';
+
+  @override
+  String get notificationsTypeTrip => 'Trajet';
+
+  @override
+  String get notificationsTypePromotion => 'Promotion';
+
+  @override
+  String get notificationsTypeSystem => 'Information';
+
+  @override
+  String get notificationsPermissionTitle => 'Activer les notifications';
+
+  @override
+  String get notificationsPermissionExplanation =>
+      'LouageGo peut vous envoyer des mises à jour sur vos réservations et vos trajets. Vous pourrez modifier cette autorisation dans les réglages de votre appareil.';
+
+  @override
+  String get notificationsPermissionContinue => 'Continuer';
+
+  @override
+  String get notificationsPermissionDenied =>
+      'Les notifications sont désactivées dans les réglages de l’appareil.';
+
+  @override
+  String get notificationsOpenSettings => 'Ouvrir les réglages';
+
+  @override
+  String get searchHideFull => 'Masquer les trajets complets';
+
+  @override
+  String get searchUseMaximumPrice => 'Limiter le prix';
+
+  @override
+  String get searchResetFilters => 'Réinitialiser';
 }

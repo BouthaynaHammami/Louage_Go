@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/app_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
@@ -115,6 +116,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             name: name,
             role: role,
             email: email.isEmpty ? null : email,
+            acceptedTermsVersion: AppConfig.legalVersion,
+            acceptedTermsAt: DateTime.now().toIso8601String(),
           ),
         );
       } else {
@@ -124,6 +127,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           email: email,
           password: password,
           role: role,
+          acceptedTermsVersion: AppConfig.legalVersion,
+          acceptedTermsAt: DateTime.now().toIso8601String(),
         );
         if (!mounted) return;
 

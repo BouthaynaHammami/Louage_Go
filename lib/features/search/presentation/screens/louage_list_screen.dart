@@ -7,11 +7,13 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/empty_state.dart';
+import '../../../../core/widgets/favorite_button.dart';
 import '../../../../core/widgets/seat_dots.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../core/widgets/status_chip.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/trip_search_criteria.dart';
+import '../../domain/trip_filter.dart';
 import '../providers/trip_search_results_provider.dart';
 
 class LouageListScreen extends ConsumerStatefulWidget {
@@ -25,10 +27,17 @@ class LouageListScreen extends ConsumerStatefulWidget {
 
 class _LouageListScreenState extends ConsumerState<LouageListScreen> {
   late DateTime _selectedDate;
-  _TripSort _sort = _TripSort.time;
+  TripSortMode _sort = TripSortMode.time;
   double? _maximumPrice;
   int _minimumSeats = 1;
   RangeValues _timeRange = const RangeValues(0, 1440);
+  bool _hideFull = false;
+
+  int get _activeFilterCount =>
+      (_maximumPrice == null ? 0 : 1) +
+      (_minimumSeats != 1 ? 1 : 0) +
+      (_timeRange.start > 0 || _timeRange.end < 1440 ? 1 : 0) +
+      (_hideFull ? 1 : 0);
 
   @override
   void initState() {
@@ -51,10 +60,11 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
       isScrollControlled: true,
       useSafeArea: true,
       builder: (context) => _TripFiltersSheet(
+        initialPrice: _maximumPrice,
         maxPrice: highestPrice > 0 ? highestPrice : 100,
-        initialPrice: _maximumPrice ?? (highestPrice > 0 ? highestPrice : 100),
         initialMinimumSeats: _minimumSeats,
         initialTimeRange: _timeRange,
+        initialHideFull: _hideFull,
       ),
     );
     if (updated == null || !mounted) return;
@@ -62,35 +72,31 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
       _maximumPrice = updated.maximumPrice;
       _minimumSeats = updated.minimumSeats;
       _timeRange = updated.timeRange;
+      _hideFull = updated.hideFull;
+    });
+  }
+
+  void _resetFilters() {
+    setState(() {
+      _maximumPrice = null;
+      _minimumSeats = 1;
+      _timeRange = const RangeValues(0, 1440);
+      _hideFull = false;
     });
   }
 
   List<TripSearchResult> _visibleTrips(List<TripSearchResult> results) {
-    final selectedDay = DateUtils.dateOnly(_selectedDate);
-    final visible = results.where((result) {
-      final departure = result.departure;
-      final sameDay =
-          departure.year == selectedDay.year &&
-          departure.month == selectedDay.month &&
-          departure.day == selectedDay.day;
-      final minute = departure.hour * 60 + departure.minute;
-      return sameDay &&
-          result.trip.status != 'cancelled' &&
-          result.price <= (_maximumPrice ?? double.infinity) &&
-          result.freeSeats >= _minimumSeats &&
-          minute >= _timeRange.start &&
-          minute <= _timeRange.end;
-    }).toList();
-
-    switch (_sort) {
-      case _TripSort.time:
-        visible.sort((a, b) => a.departure.compareTo(b.departure));
-      case _TripSort.price:
-        visible.sort((a, b) => a.price.compareTo(b.price));
-      case _TripSort.seats:
-        visible.sort((a, b) => b.freeSeats.compareTo(a.freeSeats));
-    }
-    return visible;
+    return filterTripResults(
+      results,
+      TripFilterOptions(
+        selectedDate: _selectedDate,
+        maximumPrice: _maximumPrice,
+        minimumSeats: _minimumSeats,
+        timeRange: _timeRange,
+        hideFull: _hideFull,
+        sortMode: _sort,
+      ),
+    );
   }
 
   DateTime _requestedDateTime(DateTime day) => DateTime(
@@ -113,10 +119,23 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
           l10n.searchRoutePair(widget.criteria.from, widget.criteria.to),
         ),
         actions: [
+          if (resultsAsync.asData?.value.isNotEmpty ?? false)
+            FavoriteButton.route(
+              routeId: resultsAsync.asData!.value.first.route.id,
+            ),
+          if (_activeFilterCount > 0)
+            TextButton(
+              onPressed: _resetFilters,
+              child: Text(l10n.searchResetFilters),
+            ),
           IconButton(
             tooltip: l10n.searchFilterButton,
             onPressed: () => resultsAsync.whenData(_openFilters),
-            icon: const Icon(Icons.tune),
+            icon: Badge(
+              isLabelVisible: _activeFilterCount > 0,
+              label: Text('$_activeFilterCount'),
+              child: const Icon(Icons.tune),
+            ),
           ),
           const SizedBox(width: 8),
         ],
@@ -137,22 +156,22 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const Spacer(),
-                  DropdownButton<_TripSort>(
+                  DropdownButton<TripSortMode>(
                     value: _sort,
                     onChanged: (value) {
                       if (value != null) setState(() => _sort = value);
                     },
                     items: [
                       DropdownMenuItem(
-                        value: _TripSort.time,
+                        value: TripSortMode.time,
                         child: Text(l10n.searchSortTime),
                       ),
                       DropdownMenuItem(
-                        value: _TripSort.price,
+                        value: TripSortMode.price,
                         child: Text(l10n.searchSortPrice),
                       ),
                       DropdownMenuItem(
-                        value: _TripSort.seats,
+                        value: TripSortMode.seats,
                         child: Text(l10n.searchSortSeats),
                       ),
                     ],
@@ -294,31 +313,33 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
   }
 }
 
-enum _TripSort { time, price, seats }
-
 class _TripFilters {
-  final double maximumPrice;
+  final double? maximumPrice;
   final int minimumSeats;
   final RangeValues timeRange;
+  final bool hideFull;
 
   const _TripFilters({
     required this.maximumPrice,
     required this.minimumSeats,
     required this.timeRange,
+    required this.hideFull,
   });
 }
 
 class _TripFiltersSheet extends StatefulWidget {
   final double maxPrice;
-  final double initialPrice;
+  final double? initialPrice;
   final int initialMinimumSeats;
   final RangeValues initialTimeRange;
+  final bool initialHideFull;
 
   const _TripFiltersSheet({
     required this.maxPrice,
     required this.initialPrice,
     required this.initialMinimumSeats,
     required this.initialTimeRange,
+    required this.initialHideFull,
   });
 
   @override
@@ -329,13 +350,20 @@ class _TripFiltersSheetState extends State<_TripFiltersSheet> {
   late double _maximumPrice;
   late int _minimumSeats;
   late RangeValues _timeRange;
+  late bool _priceEnabled;
+  late bool _hideFull;
 
   @override
   void initState() {
     super.initState();
-    _maximumPrice = widget.initialPrice.clamp(0, widget.maxPrice);
-    _minimumSeats = widget.initialMinimumSeats.clamp(1, 8);
+    _maximumPrice = (widget.initialPrice ?? widget.maxPrice).clamp(
+      0,
+      widget.maxPrice,
+    );
+    _minimumSeats = widget.initialMinimumSeats.clamp(0, 8);
     _timeRange = widget.initialTimeRange;
+    _priceEnabled = widget.initialPrice != null;
+    _hideFull = widget.initialHideFull;
   }
 
   String _timeLabel(double minuteValue) {
@@ -363,6 +391,19 @@ class _TripFiltersSheetState extends State<_TripFiltersSheet> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.searchHideFull),
+              value: _hideFull,
+              onChanged: (value) => setState(() => _hideFull = value),
+            ),
+            const SizedBox(height: 8),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.searchUseMaximumPrice),
+              value: _priceEnabled,
+              onChanged: (value) => setState(() => _priceEnabled = value),
+            ),
             Text(l10n.searchMaxPrice(_maximumPrice.round().toString())),
             Slider(
               value: _maximumPrice,
@@ -370,15 +411,17 @@ class _TripFiltersSheetState extends State<_TripFiltersSheet> {
               max: widget.maxPrice,
               divisions: 20,
               label: '${_maximumPrice.round()} DT',
-              onChanged: (value) => setState(() => _maximumPrice = value),
+              onChanged: _priceEnabled
+                  ? (value) => setState(() => _maximumPrice = value)
+                  : null,
             ),
             const SizedBox(height: 12),
             Text(l10n.searchMinimumSeats(_minimumSeats.toString())),
             Slider(
               value: _minimumSeats.toDouble(),
-              min: 1,
+              min: 0,
               max: 8,
-              divisions: 7,
+              divisions: 8,
               label: '$_minimumSeats',
               onChanged: (value) =>
                   setState(() => _minimumSeats = value.round()),
@@ -403,12 +446,25 @@ class _TripFiltersSheetState extends State<_TripFiltersSheet> {
             ),
             const SizedBox(height: 12),
             AppButton(
+              label: l10n.searchResetFilters,
+              variant: AppButtonVariant.secondary,
+              onPressed: () => setState(() {
+                _maximumPrice = widget.maxPrice;
+                _minimumSeats = 1;
+                _timeRange = const RangeValues(0, 1440);
+                _priceEnabled = false;
+                _hideFull = false;
+              }),
+            ),
+            const SizedBox(height: 10),
+            AppButton(
               label: l10n.searchApplyFilters,
               onPressed: () => Navigator.of(context).pop(
                 _TripFilters(
-                  maximumPrice: _maximumPrice,
+                  maximumPrice: _priceEnabled ? _maximumPrice : null,
                   minimumSeats: _minimumSeats,
                   timeRange: _timeRange,
+                  hideFull: _hideFull,
                 ),
               ),
             ),
@@ -481,6 +537,16 @@ class _StaggeredTripCardState extends State<_StaggeredTripCard>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FavoriteButton.offer(
+                    louageId: result.louage.id,
+                    departureHm: _departureHm(result.departure),
+                    routeId: result.route.id,
+                  ),
+                ],
+              ),
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
@@ -505,8 +571,12 @@ class _StaggeredTripCardState extends State<_StaggeredTripCard>
                   Expanded(
                     child: Text(
                       l10n.searchRoutePair(
-                        result.fromStation.city,
-                        result.toStation.city,
+                        result.fromStation.localizedCity(
+                          Localizations.localeOf(context),
+                        ),
+                        result.toStation.localizedCity(
+                          Localizations.localeOf(context),
+                        ),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -573,3 +643,6 @@ class _StaggeredTripCardState extends State<_StaggeredTripCard>
 String _formatTripPrice(double price) => price == price.roundToDouble()
     ? price.toStringAsFixed(0)
     : price.toStringAsFixed(2);
+
+String _departureHm(DateTime departure) =>
+    '${departure.hour.toString().padLeft(2, '0')}:${departure.minute.toString().padLeft(2, '0')}';

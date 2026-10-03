@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/app_config.dart';
 import '../../core/storage/hive_service.dart';
 import '../../models/app_user.dart';
 import 'data/auth_repository_impl.dart';
@@ -43,6 +44,8 @@ class AuthController extends AsyncNotifier<AppUser?> {
     required String email,
     required String password,
     required String role,
+    String acceptedTermsVersion = '',
+    String acceptedTermsAt = '',
   }) => _run(
     () => _repository.register(
       name: name,
@@ -50,6 +53,8 @@ class AuthController extends AsyncNotifier<AppUser?> {
       email: email,
       password: password,
       role: role,
+      acceptedTermsVersion: acceptedTermsVersion,
+      acceptedTermsAt: acceptedTermsAt,
     ),
   );
 
@@ -64,12 +69,16 @@ class AuthController extends AsyncNotifier<AppUser?> {
     required PhoneNumber phone,
     required String role,
     String? email,
+    String acceptedTermsVersion = '',
+    String acceptedTermsAt = '',
   }) => _run(
     () => _repository.registerWithPhone(
       name: name,
       phone: phone,
       role: role,
       email: email,
+      acceptedTermsVersion: acceptedTermsVersion,
+      acceptedTermsAt: acceptedTermsAt,
     ),
   );
 
@@ -96,6 +105,17 @@ class AuthController extends AsyncNotifier<AppUser?> {
         city: city,
         photo: photo,
         language: language,
+      ),
+    );
+    ref.invalidate(currentUserProvider);
+    return user;
+  }
+
+  Future<AppUser> acceptTerms({String version = AppConfig.legalVersion}) async {
+    final user = await _run(
+      () => _repository.acceptTerms(
+        version: version,
+        acceptedAt: DateTime.now().toIso8601String(),
       ),
     );
     ref.invalidate(currentUserProvider);

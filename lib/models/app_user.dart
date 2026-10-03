@@ -14,6 +14,8 @@ class AppUser {
   final String salt;
   final String createdAt;
   final bool phoneVerified;
+  final String acceptedTermsVersion;
+  final String acceptedTermsAt;
 
   const AppUser({
     this.id = '',
@@ -29,6 +31,8 @@ class AppUser {
     this.salt = '',
     this.createdAt = '',
     this.phoneVerified = false,
+    this.acceptedTermsVersion = '',
+    this.acceptedTermsAt = '',
   });
 
   AppUser copyWith({
@@ -45,6 +49,8 @@ class AppUser {
     String? salt,
     String? createdAt,
     bool? phoneVerified,
+    String? acceptedTermsVersion,
+    String? acceptedTermsAt,
   }) => AppUser(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -59,6 +65,8 @@ class AppUser {
     salt: salt ?? this.salt,
     createdAt: createdAt ?? this.createdAt,
     phoneVerified: phoneVerified ?? this.phoneVerified,
+    acceptedTermsVersion: acceptedTermsVersion ?? this.acceptedTermsVersion,
+    acceptedTermsAt: acceptedTermsAt ?? this.acceptedTermsAt,
   );
 
   Map<String, dynamic> toMap() => {
@@ -75,6 +83,8 @@ class AppUser {
     'salt': salt,
     'createdAt': createdAt,
     'phoneVerified': phoneVerified,
+    'acceptedTermsVersion': acceptedTermsVersion,
+    'acceptedTermsAt': acceptedTermsAt,
   };
 
   factory AppUser.fromMap(Map<dynamic, dynamic> map) {
@@ -96,6 +106,8 @@ class AppUser {
       salt: ModelMap.text(map, 'salt'),
       createdAt: ModelMap.date(map, 'createdAt'),
       phoneVerified: ModelMap.boolean(map, 'phoneVerified'),
+      acceptedTermsVersion: ModelMap.text(map, 'acceptedTermsVersion'),
+      acceptedTermsAt: ModelMap.date(map, 'acceptedTermsAt'),
     );
   }
 }

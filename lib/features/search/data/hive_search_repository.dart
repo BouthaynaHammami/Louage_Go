@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:hive_ce/hive.dart';
 
 import '../../../core/storage/hive_service.dart';
-import '../../../models/favorite.dart';
 import '../../../models/driver_profile.dart';
 import '../../../models/louage.dart';
 import '../../../models/model_map.dart';
@@ -11,6 +10,7 @@ import '../../../models/route_line.dart';
 import '../../../models/station.dart';
 import '../../../models/trip.dart';
 import '../domain/entities/louage_detail_data.dart';
+import '../domain/entities/governorate_stations.dart';
 import '../domain/entities/passenger_home_data.dart';
 import '../domain/entities/search_route_shortcut.dart';
 import '../domain/entities/trip_search_result.dart';
@@ -31,7 +31,6 @@ class HiveSearchRepository implements SearchRepository {
        _routesBox = routesBox ?? HiveService.routes,
        _louagesBox = louagesBox ?? HiveService.louages,
        _tripsBox = tripsBox ?? HiveService.trips,
-       _favoritesBox = favoritesBox ?? HiveService.favorites,
        _sessionBox = sessionBox ?? HiveService.session,
        _driversBox = driversBox ?? HiveService.drivers,
        _usersBox = usersBox ?? HiveService.users;
@@ -40,7 +39,6 @@ class HiveSearchRepository implements SearchRepository {
   final Box<Map> _routesBox;
   final Box<Map> _louagesBox;
   final Box<Map> _tripsBox;
-  final Box<Map> _favoritesBox;
   final Box<Map> _sessionBox;
   final Box<Map> _driversBox;
   final Box<Map> _usersBox;
@@ -55,7 +53,6 @@ class HiveSearchRepository implements SearchRepository {
         subscriptions
           ..add(_stationsBox.watch().listen((_) => reload()))
           ..add(_routesBox.watch().listen((_) => reload()))
-          ..add(_favoritesBox.watch().listen((_) => reload()))
           ..add(_sessionBox.watch(key: 'lastTrips').listen((_) => reload()));
 
         controller.onCancel = () async {
@@ -65,6 +62,72 @@ class HiveSearchRepository implements SearchRepository {
         };
         reload();
       });
+
+  @override
+  Stream<List<GovernorateStations>> watchStationsByGovernorate() =>
+      Stream<List<GovernorateStations>>.multi((controller) {
+        void reload() {
+          try {
+            final stations = _stationsBox.values
+                .map(Station.fromMap)
+                .where((station) => station.id.isNotEmpty)
+                .toList();
+            final grouped = <String, List<Station>>{};
+            for (final station in stations) {
+              grouped.putIfAbsent(station.governorate, () => []).add(station);
+            }
+            final groups =
+                grouped.entries
+                    .map(
+                      (entry) => GovernorateStations(
+                        governorate: entry.key,
+                        governorateAr:
+                            entry.value.first.governorateAr.isNotEmpty
+                            ? entry.value.first.governorateAr
+                            : entry.key,
+                        stations: List.unmodifiable(
+                          entry.value..sort((a, b) => a.name.compareTo(b.name)),
+                        ),
+                      ),
+                    )
+                    .toList()
+                  ..sort((a, b) => a.governorate.compareTo(b.governorate));
+            controller.add(groups);
+          } catch (error, stackTrace) {
+            controller.addError(error, stackTrace);
+          }
+        }
+
+        final subscription = _stationsBox.watch().listen((_) => reload());
+        controller.onCancel = subscription.cancel;
+        reload();
+      });
+
+  @override
+  Station? getStation(String id) {
+    final map = _stationsBox.get(id);
+    return map == null ? null : Station.fromMap(map);
+  }
+
+  @override
+  List<Station> searchStations(String query) {
+    final normalizedQuery = _normalizeStationText(query);
+    final stations = _stationsBox.values.map(Station.fromMap).toList();
+    if (normalizedQuery.isEmpty) return stations;
+    return stations.where((station) {
+      final searchable = _normalizeStationText(
+        '${station.name} ${station.city} ${station.governorate} '
+        '${station.nameAr} ${station.cityAr} ${station.governorateAr}',
+      );
+      return searchable.contains(normalizedQuery);
+    }).toList();
+  }
+
+  @override
+  int countRoutesFromStation(String stationId) => _routesBox.values
+      .map(RouteLine.fromMap)
+      .where((route) => route.fromStationId == stationId)
+      .length;
 
   @override
   Future<void> rememberSearch(String from, String to) async {
@@ -140,7 +203,14 @@ class HiveSearchRepository implements SearchRepository {
       final fromStation = stations[route.fromStationId];
       final toStation = stations[route.toStationId];
       if (fromStation == null || toStation == null) continue;
-      if (fromStation.city != criteria.from || toStation.city != criteria.to) {
+      if (criteria.fromStationId != null
+          ? fromStation.id != criteria.fromStationId
+          : fromStation.city != criteria.from) {
+        continue;
+      }
+      if (criteria.toStationId != null
+          ? toStation.id != criteria.toStationId
+          : toStation.city != criteria.to) {
         continue;
       }
 
@@ -155,7 +225,64 @@ class HiveSearchRepository implements SearchRepository {
         ),
       );
     }
+
     return results;
+  }
+
+  String _normalizeStationText(String value) {
+    const latin = {
+      'à': 'a',
+      'á': 'a',
+      'â': 'a',
+      'ä': 'a',
+      'ã': 'a',
+      'å': 'a',
+      'ç': 'c',
+      'è': 'e',
+      'é': 'e',
+      'ê': 'e',
+      'ë': 'e',
+      'ì': 'i',
+      'í': 'i',
+      'î': 'i',
+      'ï': 'i',
+      'ñ': 'n',
+      'ò': 'o',
+      'ó': 'o',
+      'ô': 'o',
+      'ö': 'o',
+      'õ': 'o',
+      'ù': 'u',
+      'ú': 'u',
+      'û': 'u',
+      'ü': 'u',
+      'ý': 'y',
+      'ÿ': 'y',
+      'œ': 'oe',
+      'æ': 'ae',
+    };
+    final normalized = StringBuffer();
+    for (final rune in value.toLowerCase().runes) {
+      final char = String.fromCharCode(rune);
+      if (rune == 0x0640 ||
+          (rune >= 0x0300 && rune <= 0x036F) ||
+          (rune >= 0x064B && rune <= 0x065F) ||
+          rune == 0x0670) {
+        continue;
+      }
+      final replacement = latin[char];
+      if (replacement != null) {
+        normalized.write(replacement);
+      } else {
+        normalized.write(switch (rune) {
+          0x0622 || 0x0623 || 0x0625 || 0x0671 => 'ا',
+          0x0649 => 'ي',
+          0x0629 => 'ه',
+          _ => char,
+        });
+      }
+    }
+    return normalized.toString();
   }
 
   @override
@@ -210,14 +337,10 @@ class HiveSearchRepository implements SearchRepository {
               route.fromStationId.isNotEmpty && route.toStationId.isNotEmpty,
         )
         .toList();
-    final stationsById = {for (final station in stations) station.id: station};
-    final routesById = {for (final route in routes) route.id: route};
-
     return PassengerHomeData(
       stations: stations,
       routes: routes,
       recentTrips: _readRecentTrips(),
-      favorites: _readFavorites(userId, routesById, stationsById),
     );
   }
 
@@ -234,25 +357,4 @@ class HiveSearchRepository implements SearchRepository {
     ];
   }
 
-  List<SearchRouteShortcut> _readFavorites(
-    String? userId,
-    Map<String, RouteLine> routes,
-    Map<String, Station> stations,
-  ) {
-    if (userId == null) return const [];
-    final shortcuts = <SearchRouteShortcut>[];
-    for (final raw in _favoritesBox.values) {
-      final favorite = Favorite.fromMap(raw);
-      if (favorite.userId != userId) continue;
-      final route = routes[favorite.routeId];
-      final from = route == null ? null : stations[route.fromStationId]?.city;
-      final to = route == null ? null : stations[route.toStationId]?.city;
-      if (from != null && to != null) {
-        shortcuts.add(
-          SearchRouteShortcut(from: from, to: to, isFavorite: true),
-        );
-      }
-    }
-    return shortcuts;
-  }
 }

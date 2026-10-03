@@ -17,6 +17,17 @@ class StatusChip extends StatelessWidget {
       'departed' => (l10n.statusDeparted, Icons.directions_bus_outlined, false),
       'arrived' => (l10n.statusArrived, Icons.check_circle_outline, false),
       'cancelled' => (l10n.statusCancelled, Icons.cancel_outlined, true),
+      'open' => (l10n.supportStatusOpen, Icons.mark_email_unread_outlined, false),
+      'inprogress' || 'in_progress' => (
+        l10n.supportStatusInProgress,
+        Icons.hourglass_top_rounded,
+        false,
+      ),
+      'resolved' => (
+        l10n.supportStatusResolved,
+        Icons.task_alt_rounded,
+        false,
+      ),
       _ => (l10n.statusWaiting, Icons.schedule_outlined, false),
     };
     final foreground = isError ? colorScheme.error : colorScheme.onSurface;

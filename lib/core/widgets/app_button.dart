@@ -56,9 +56,9 @@ class _AppButtonState extends State<AppButton> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final foreground = switch (widget.variant) {
-      AppButtonVariant.primary => colorScheme.onPrimary,
+      AppButtonVariant.primary => AppColors.textOnAccent,
       AppButtonVariant.secondary => colorScheme.onSurface,
-      AppButtonVariant.accent => colorScheme.onSecondary,
+      AppButtonVariant.accent => AppColors.textOnAccent,
     };
     final callback = widget.isLoading ? null : widget.onPressed;
     final shape = RoundedRectangleBorder(

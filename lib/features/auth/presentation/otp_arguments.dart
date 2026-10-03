@@ -9,6 +9,8 @@ class OtpArguments {
     this.name,
     this.role,
     this.email,
+    this.acceptedTermsVersion = '',
+    this.acceptedTermsAt = '',
   });
 
   final PhoneNumber phone;
@@ -17,4 +19,6 @@ class OtpArguments {
   final String? name;
   final String? role;
   final String? email;
+  final String acceptedTermsVersion;
+  final String acceptedTermsAt;
 }

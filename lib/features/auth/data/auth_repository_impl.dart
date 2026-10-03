@@ -127,6 +127,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required PhoneNumber phone,
     required String role,
     String? email,
+    String acceptedTermsVersion = '',
+    String acceptedTermsAt = '',
   }) async {
     _requireVerified(phone, OtpPurpose.register);
     if (!_isRegistrationRole(role)) {
@@ -151,6 +153,8 @@ class AuthRepositoryImpl implements AuthRepository {
       status: 'active',
       createdAt: _now().toIso8601String(),
       phoneVerified: true,
+      acceptedTermsVersion: acceptedTermsVersion,
+      acceptedTermsAt: acceptedTermsAt,
     );
     await _usersBox.put(user.id, user.toMap());
     await _setSession(user.id);
@@ -215,6 +219,7 @@ class AuthRepositoryImpl implements AuthRepository {
     if (userId is! String) {
       throw const AuthException(AuthException.profileUnavailable);
     }
+
     final storedUser = _usersBox.get(userId);
     if (storedUser == null) {
       throw const AuthException(AuthException.profileUnavailable);
@@ -248,6 +253,27 @@ class AuthRepositoryImpl implements AuthRepository {
     return _publicUser(updated);
   }
 
+  @override
+  Future<AppUser> acceptTerms({
+    required String version,
+    required String acceptedAt,
+  }) async {
+    final userId = _sessionBox.get('current')?['userId'];
+    if (userId is! String) {
+      throw const AuthException(AuthException.invalidCredentials);
+    }
+    final stored = _usersBox.get(userId);
+    if (stored == null) {
+      throw const AuthException(AuthException.invalidCredentials);
+    }
+    final user = AppUser.fromMap(stored).copyWith(
+      acceptedTermsVersion: version,
+      acceptedTermsAt: acceptedAt,
+    );
+    await _usersBox.put(userId, user.toMap());
+    return _publicUser(user);
+  }
+
   static String generateSalt() =>
       base64Url.encode(List<int>.generate(32, (_) => _random.nextInt(256)));
 
@@ -261,6 +287,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
     required String role,
+    String acceptedTermsVersion = '',
+    String acceptedTermsAt = '',
   }) async {
     final normalizedEmail = email.trim().toLowerCase();
     if (!_emailPattern.hasMatch(normalizedEmail)) {
@@ -298,6 +326,8 @@ class AuthRepositoryImpl implements AuthRepository {
       passwordHash: hashPassword(password, salt),
       salt: salt,
       createdAt: DateTime.now().toIso8601String(),
+      acceptedTermsVersion: acceptedTermsVersion,
+      acceptedTermsAt: acceptedTermsAt,
     );
     await _usersBox.put(user.id, user.toMap());
     await _setSession(user.id);

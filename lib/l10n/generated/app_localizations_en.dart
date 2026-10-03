@@ -319,67 +319,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legalTermsTitle => 'Terms of service';
 
   @override
-  String get legalTermsBody =>
-      'LouageGo is a university project for booking shared taxis. By creating an account, you confirm that the information you provide is accurate and agree to use the service in accordance with applicable rules.\n\nBookings depend on trip and seat availability.';
+  String legalUpdatedAt(String date) {
+    return 'Updated $date';
+  }
 
   @override
-  String get legalUpdatedAt => 'Updated October 3, 2026';
+  String legalDocumentVersion(String version) {
+    return 'Version $version';
+  }
 
   @override
-  String get legalTermsSectionServiceTitle => 'Using the service';
+  String get legalDemoDisclaimer =>
+      'Demonstration version: this text must be reviewed by legal counsel before publication.';
 
   @override
-  String get legalTermsSectionServiceBody =>
-      'LouageGo helps users browse and book shared taxi trips. Users agree to provide accurate information, protect their sign-in details, and use the service in accordance with applicable laws.';
+  String get legalTableOfContents => 'Table of contents';
 
   @override
-  String get legalTermsSectionBookingsTitle => 'Bookings and trips';
+  String get legalContactLabel => 'Contact:';
 
   @override
-  String get legalTermsSectionBookingsBody =>
-      'Bookings depend on trip and seat availability. Schedules and displayed information may change. Cancellations are subject to the conditions shown in the app.';
+  String get legalUpdateTitle => 'Updated terms';
 
   @override
-  String get legalTermsSectionDemoTitle => 'Demo version';
+  String get legalUpdateMessage =>
+      'The terms and privacy policy have been updated. Please read and accept this version to continue.';
 
   @override
-  String get legalTermsSectionDemoBody =>
-      'This application is a university project. Some features are simulated and do not guarantee real transportation or payment.';
+  String get legalAcceptUpdate => 'Accept and continue';
+
+  @override
+  String get legalSignOut => 'Sign out';
 
   @override
   String get legalPrivacyTitle => 'Privacy policy';
-
-  @override
-  String get legalPrivacyBody =>
-      'In this demo version, account information is stored locally on this device. No real SMS is sent; the verification code is simulated.\n\nYour data is not sent to Firebase.';
-
-  @override
-  String get legalPrivacySectionDataTitle => 'Information stored';
-
-  @override
-  String get legalPrivacySectionDataBody =>
-      'Profile information, preferences, favorites, and data needed to support booking features are stored locally by the application.';
-
-  @override
-  String get legalPrivacySectionUseTitle => 'How information is used';
-
-  @override
-  String get legalPrivacySectionUseBody =>
-      'Information is used to display your profile, save preferences, and support booking features. This demo version does not send data to Firebase.';
-
-  @override
-  String get legalPrivacySectionControlTitle => 'Your choices and deletion';
-
-  @override
-  String get legalPrivacySectionControlBody =>
-      'You can edit your profile or request account deletion. Historical bookings and reviews may be retained in anonymized form.';
-
-  @override
-  String get legalPrivacySectionDemoTitle => 'Verification messages';
-
-  @override
-  String get legalPrivacySectionDemoBody =>
-      'No real SMS is sent in this version; verification codes are simulated.';
 
   @override
   String get settingsAccountSection => 'Account';
@@ -407,6 +380,134 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpSupportTitle => 'Help & support';
+
+  @override
+  String get supportTitle => 'LouageGo support';
+
+  @override
+  String get supportFaqTitle => 'Frequently asked questions';
+
+  @override
+  String get supportContactTitle => 'Contact support';
+
+  @override
+  String get supportRequestsTitle => 'My requests';
+
+  @override
+  String get supportRequestDetailTitle => 'Request details';
+
+  @override
+  String get supportQuickContact => 'Quick contact';
+
+  @override
+  String get supportCallAction => 'Call';
+
+  @override
+  String get supportEmailAction => 'Email';
+
+  @override
+  String get supportWhatsappAction => 'WhatsApp';
+
+  @override
+  String get supportContactUnavailable =>
+      'No app is available for this action.';
+
+  @override
+  String get supportFaqSearch => 'Search questions';
+
+  @override
+  String get supportClearSearch => 'Clear search';
+
+  @override
+  String get supportFaqAll => 'All';
+
+  @override
+  String get supportFaqEmpty =>
+      'No results. Try different keywords or categories.';
+
+  @override
+  String get supportCategoryBooking => 'Booking';
+
+  @override
+  String get supportCategoryPayment => 'Payment';
+
+  @override
+  String get supportCategoryTrip => 'Trip and tracking';
+
+  @override
+  String get supportCategoryAccount => 'Account';
+
+  @override
+  String get supportCategoryDrivers => 'Drivers';
+
+  @override
+  String get supportCategoryBug => 'Technical issue';
+
+  @override
+  String get supportCategoryOther => 'Other';
+
+  @override
+  String get supportCategoryLabel => 'Category';
+
+  @override
+  String get supportTripReference => 'Trip reference (optional)';
+
+  @override
+  String get supportMessageLabel => 'Your message';
+
+  @override
+  String get supportSendRequest => 'Send request';
+
+  @override
+  String get supportRequestSent => 'Your request has been sent.';
+
+  @override
+  String get supportTooManyOpenRequests =>
+      'You already have 3 open support requests.';
+
+  @override
+  String get supportCategoryRequired => 'Choose a category.';
+
+  @override
+  String get supportMessageInvalid =>
+      'The message must contain 10 to 1000 characters.';
+
+  @override
+  String get supportSignInRequired => 'Sign in to send or view your requests.';
+
+  @override
+  String get supportSubmissionFailed =>
+      'Could not send the request. Please try again.';
+
+  @override
+  String get supportLoadFailed => 'Could not load requests.';
+
+  @override
+  String get supportRetry => 'Try again';
+
+  @override
+  String get supportRequestsEmpty => 'You have no support requests.';
+
+  @override
+  String get supportRequestNotFound => 'This request could not be found.';
+
+  @override
+  String get supportAdminReply => 'Support reply';
+
+  @override
+  String get supportNoAdminReply => 'There is no reply yet.';
+
+  @override
+  String get supportStatusOpen => 'Open';
+
+  @override
+  String get supportStatusInProgress => 'In progress';
+
+  @override
+  String get supportStatusResolved => 'Resolved';
+
+  @override
+  String get supportEmailSubject => 'LouageGo support request';
 
   @override
   String get helpFaqSection => 'Frequently asked questions';
@@ -605,6 +706,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverHomeTitle => 'Driver area';
 
   @override
+  String driverHomeGreeting(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get driverHomeSubtitle => 'Manage your louage and departures.';
+
+  @override
   String get driverProfileUnavailable => 'Driver profile unavailable';
 
   @override
@@ -649,6 +758,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverCurrentTrip => 'Current trip';
+
+  @override
+  String driverSeatCounts(String reserved, String free) {
+    return '$reserved seats occupied · $free free';
+  }
+
+  @override
+  String driverDepartureTime(String time) {
+    return 'Departure at $time';
+  }
 
   @override
   String get driverFillUpdatesNextTrip =>
@@ -758,6 +877,152 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchCityPickerTitle => 'Choose a city';
+
+  @override
+  String get stationsTitle => 'Stations';
+
+  @override
+  String get stationsSearchLabel => 'Search stations';
+
+  @override
+  String get stationsBrowsePrompt => 'Browse stations across Tunisia';
+
+  @override
+  String get stationsLoadError => 'Could not load stations';
+
+  @override
+  String get stationsNoResults => 'No stations found';
+
+  @override
+  String get stationsSearchFrom => 'Search from this station';
+
+  @override
+  String get locationUseMyPosition => 'Use my location';
+
+  @override
+  String get locationConsentTitle => 'Use your location?';
+
+  @override
+  String get locationConsentMessage =>
+      'Your location is only used to find nearby stations. It is not shared.';
+
+  @override
+  String get locationConsentPrivacyLink => 'Read the privacy policy';
+
+  @override
+  String get locationConsentAccept => 'Continue';
+
+  @override
+  String get locationDenied => 'Location access was denied.';
+
+  @override
+  String get locationDeniedForever =>
+      'Allow location access in the app settings.';
+
+  @override
+  String get locationServiceDisabled =>
+      'Turn on your device location services.';
+
+  @override
+  String get locationError => 'Could not get your location.';
+
+  @override
+  String get locationOpenSettings => 'Open settings';
+
+  @override
+  String get locationNearestEmpty =>
+      'No stations with a known location were found.';
+
+  @override
+  String get stationsMapTitle => 'Station map';
+
+  @override
+  String get stationsMapUnavailable => 'Map unavailable offline';
+
+  @override
+  String get stationsMapRecenter => 'Recenter map';
+
+  @override
+  String get stationsMapMyPosition => 'My location';
+
+  @override
+  String get stationsMapFavoritesSoon =>
+      'Adding favorites will be available soon';
+
+  @override
+  String stationsMapRouteCount(int count) {
+    return '$count routes departing here';
+  }
+
+  @override
+  String get favoriteAddRoute => 'Add this route to favorites';
+
+  @override
+  String get favoriteRemoveRoute => 'Remove this route from favorites';
+
+  @override
+  String get favoriteAddStation => 'Add this station to favorites';
+
+  @override
+  String get favoriteRemoveStation => 'Remove this station from favorites';
+
+  @override
+  String get favoriteUpdateError => 'Could not update favorites.';
+
+  @override
+  String get favoritesTabOffers => 'Offers';
+
+  @override
+  String get favoritesRoutesTab => 'Routes';
+
+  @override
+  String get favoritesStationsTab => 'Stations';
+
+  @override
+  String get favoritesEmptyOffers => 'No favorite offers yet.';
+
+  @override
+  String get favoritesEmptyRoutes => 'No favorite routes yet.';
+
+  @override
+  String get favoritesEmptyStations => 'No favorite stations yet.';
+
+  @override
+  String get favoritesUndo => 'Undo';
+
+  @override
+  String get favoritesRemoved => 'Favorite removed.';
+
+  @override
+  String get favoritesOfferAdd => 'Add this offer to favorites';
+
+  @override
+  String get favoritesOfferRemove => 'Remove this offer from favorites';
+
+  @override
+  String get favoritesNoDeparture => 'No departure available';
+
+  @override
+  String favoritesNextDeparture(String date) {
+    return 'Next departure: $date';
+  }
+
+  @override
+  String get favoritesOtherSchedules => 'See other schedules';
+
+  @override
+  String get favoritesMyOffers => 'My offers';
+
+  @override
+  String get filtersReset => 'Reset';
+
+  @override
+  String get filtersHideFull => 'Hide full trips';
+
+  @override
+  String filtersActiveCount(int count) {
+    return '$count active filters';
+  }
 
   @override
   String searchPricePerSeat(Object amount) {
@@ -888,10 +1153,150 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileDriverTitle => 'Driver profile';
 
   @override
+  String get profileDriverReviews => 'My reviews';
+
+  @override
   String get profilePassengerFallback => 'Passenger';
 
   @override
   String get profileDriverFallback => 'Driver';
+
+  @override
+  String get reviewsTitle => 'Driver reviews';
+
+  @override
+  String get reviewsSeeAll => 'See all reviews';
+
+  @override
+  String reviewsCount(int count) {
+    return '$count reviews';
+  }
+
+  @override
+  String get reviewsLatest => 'Recent reviews';
+
+  @override
+  String get reviewsNoReviews => 'No reviews yet';
+
+  @override
+  String get reviewsAnonymous => 'Deleted user';
+
+  @override
+  String get reviewsWriteTitle => 'Rate this trip';
+
+  @override
+  String get reviewsEditTitle => 'Edit my review';
+
+  @override
+  String get reviewsRatingPrompt => 'Choose a rating';
+
+  @override
+  String get reviewsRating1 => 'Very disappointing';
+
+  @override
+  String get reviewsRating2 => 'Disappointing';
+
+  @override
+  String get reviewsRating3 => 'Fair';
+
+  @override
+  String get reviewsRating4 => 'Very good';
+
+  @override
+  String get reviewsRating5 => 'Excellent';
+
+  @override
+  String reviewsStarSemantics(int count) {
+    return '$count out of 5 stars';
+  }
+
+  @override
+  String get reviewsComment => 'Comment (optional)';
+
+  @override
+  String get reviewsCommentHint => 'Share your experience';
+
+  @override
+  String get reviewsSubmit => 'Submit review';
+
+  @override
+  String get reviewsUpdate => 'Save changes';
+
+  @override
+  String get reviewsDelete => 'Delete my review';
+
+  @override
+  String get reviewsDeleteConfirm => 'Do you want to delete this review?';
+
+  @override
+  String get reviewsSaved => 'Your review was submitted.';
+
+  @override
+  String get reviewsUpdated => 'Your review was updated.';
+
+  @override
+  String get reviewsDeleted => 'Your review was deleted.';
+
+  @override
+  String get reviewsNotEligible =>
+      'Only completed trips you booked can be reviewed.';
+
+  @override
+  String get reviewsAlreadyReviewed => 'You have already reviewed this trip.';
+
+  @override
+  String get reviewsInvalidRating => 'Choose a rating from 1 to 5 stars.';
+
+  @override
+  String get reviewsInvalidComment =>
+      'The comment cannot be longer than 300 characters.';
+
+  @override
+  String get reviewsNotFound => 'This review could not be found.';
+
+  @override
+  String get reviewsWindowExpired =>
+      'Reviews can be edited for 24 hours after submission.';
+
+  @override
+  String get reviewsSignInRequired => 'Sign in to continue.';
+
+  @override
+  String get reviewsLoadError => 'Couldn\'t load reviews.';
+
+  @override
+  String get reviewsReport => 'Report this review';
+
+  @override
+  String get reviewsReportTitle => 'Report this review?';
+
+  @override
+  String get reviewsReportBody =>
+      'Your report will be sent to the moderation team.';
+
+  @override
+  String get reviewsReportSent => 'The review was reported.';
+
+  @override
+  String get reviewsDistribution => 'Rating breakdown';
+
+  @override
+  String get reviewsNoComment => 'No comment';
+
+  @override
+  String get reviewsUnavailable => 'Trip information is unavailable.';
+
+  @override
+  String get reviewsAnonymousAuthor => 'Traveler';
+
+  @override
+  String get reviewsDeleteAction => 'Delete';
+
+  @override
+  String get reviewsCancelAction => 'Cancel';
+
+  @override
+  String get reviewsLoadMore => 'Load more';
 
   @override
   String get widgetGalleryTitle => 'Widget gallery';
@@ -980,4 +1385,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsLanguageArabic => 'Arabic';
+
+  @override
+  String get settingsNotifications => 'Notifications';
+
+  @override
+  String get settingsNotificationsDescription =>
+      'Receive important updates about your trips';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsChannelName => 'LouageGo notifications';
+
+  @override
+  String get notificationsEmptyTitle => 'No notifications';
+
+  @override
+  String get notificationsEmptyBody => 'Important updates will appear here.';
+
+  @override
+  String get notificationsLoadError => 'Could not load notifications.';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get notificationsToday => 'Today';
+
+  @override
+  String get notificationsYesterday => 'Yesterday';
+
+  @override
+  String get notificationsOlder => 'Older';
+
+  @override
+  String get notificationsDeleted => 'Notification deleted';
+
+  @override
+  String get notificationsUnread => 'Unread';
+
+  @override
+  String get notificationsTypeBooking => 'Booking';
+
+  @override
+  String get notificationsTypeTrip => 'Trip';
+
+  @override
+  String get notificationsTypePromotion => 'Promotion';
+
+  @override
+  String get notificationsTypeSystem => 'Information';
+
+  @override
+  String get notificationsPermissionTitle => 'Enable notifications';
+
+  @override
+  String get notificationsPermissionExplanation =>
+      'LouageGo can send you important updates about your bookings and trips. You can change this permission in your device settings.';
+
+  @override
+  String get notificationsPermissionContinue => 'Continue';
+
+  @override
+  String get notificationsPermissionDenied =>
+      'Notifications are disabled in your device settings.';
+
+  @override
+  String get notificationsOpenSettings => 'Open settings';
+
+  @override
+  String get searchHideFull => 'Hide full trips';
+
+  @override
+  String get searchUseMaximumPrice => 'Set a maximum price';
+
+  @override
+  String get searchResetFilters => 'Reset';
 }

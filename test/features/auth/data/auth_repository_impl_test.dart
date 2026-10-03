@@ -79,6 +79,25 @@ void main() {
     expect(AppUser.fromMap({'id': 'legacy-user'}).phoneVerified, isFalse);
   });
 
+  test('legal acceptance version and timestamp persist on the user', () async {
+    final registered = await repository.register(
+      name: 'Legal User',
+      phone: '20000050',
+      email: 'legal@example.com',
+      password: 'secret123',
+      role: 'passenger',
+    );
+    await repository.acceptTerms(
+      version: '2.0',
+      acceptedAt: currentTime.toIso8601String(),
+    );
+
+    final stored = AppUser.fromMap(usersBox.get(registered.id)!);
+    expect(stored.acceptedTermsVersion, '2.0');
+    expect(stored.acceptedTermsAt, currentTime.toIso8601String());
+    expect((await repository.currentUser())?.acceptedTermsVersion, '2.0');
+  });
+
   test('OTP expires after five minutes', () async {
     final phone = PhoneNumber('20000011');
     final challenge = await repository.requestOtp(phone, OtpPurpose.register);
