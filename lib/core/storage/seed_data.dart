@@ -172,7 +172,7 @@ class SeedData {
           matricule: matricule,
           capacity: 8,
           currentStationId: route.fromStationId,
-          status: 'active',
+          statut: LouageStatus.disponible,
         );
         if (!louagesBox.containsKey(louage.id)) {
           await louagesBox.put(louage.id, louage.toMap());
@@ -252,6 +252,38 @@ class SeedData {
           createdAt: departure
               .subtract(const Duration(days: 1))
               .toIso8601String(),
+        );
+        if (!bookingsBox.containsKey(booking.id)) {
+          await bookingsBox.put(booking.id, booking.toMap());
+        }
+      }
+      for (var index = 1; index <= 2; index++) {
+        final tripId = 'demo_driver_trip_$index';
+        final departure = now.add(Duration(hours: index + 1));
+        final trip = Trip(
+          id: tripId,
+          louageId: 'tunis_sfax_01',
+          routeId: 'tunis_sfax',
+          totalSeats: 8,
+          reservedSeats: 1,
+          status: 'waiting',
+          departureTime: departure.toIso8601String(),
+          arrivalTime: departure.add(const Duration(hours: 3)).toIso8601String(),
+        );
+        if (!tripsBox.containsKey(trip.id)) {
+          await tripsBox.put(trip.id, trip.toMap());
+        }
+        final bookingId = 'demo_driver_booking_$index';
+        final booking = Booking(
+          id: bookingId,
+          userId: passenger.id,
+          tripId: trip.id,
+          seats: 1,
+          totalPrice: 18,
+          status: 'confirmed',
+          createdAt: now.toIso8601String(),
+          paymentStatus: 'cashOnBoard',
+          qrCode: 'louagego://ticket/$bookingId',
         );
         if (!bookingsBox.containsKey(booking.id)) {
           await bookingsBox.put(booking.id, booking.toMap());

@@ -766,13 +766,37 @@ encore un système de paiement ou de réservation de production.
 - Il n'y a pas de remboursement bancaire réel.
 - Les réservations sont locales à l'appareil.
 - La disponibilité n'est pas synchronisée entre plusieurs téléphones.
-- Le QR code est généré localement et n'est pas encore vérifié par un serveur.
+- Le QR code et sa validation restent locaux ; ils ne sont pas vérifiés par un
+  serveur et ne peuvent pas empêcher les doublons entre plusieurs appareils.
 - Certains textes du nouvel écran sont encore écrits directement en anglais et
   devraient être déplacés dans les traductions `.arb`.
 
 ---
 
-## 13. Résumé pour une soutenance
+## 13. Module 4 — Gestion chauffeur et louage
+
+Le module chauffeur s'appuie sur les fonctionnalités existantes sous
+`lib/features/driver/` et sur l'entité partagée `lib/models/louage.dart`.
+L'entité conserve la lecture des anciennes maps Hive (`driverId`, `capacity`,
+`currentStationId` et `status`) et expose désormais les informations de
+capacité, de modèle, de station, de statut, de note et de trajets effectués.
+
+`HiveLouageRepository` relie le profil du chauffeur aux louages, trajets,
+réservations, passagers et avis déjà stockés. Il permet de gérer le statut et
+les places disponibles, de lister les trajets et passagers, de calculer les
+statistiques et de valider un ticket pour le bon chauffeur et le bon trajet.
+Les tickets annulés, invalides ou déjà utilisés sont refusés. Cette validation
+est utile pour la démonstration, mais reste locale à l'appareil.
+
+Les écrans de profil louage, trajets, détail des réservations, scan QR et note
+moyenne sont accessibles dans l'espace réservé au rôle chauffeur. Les textes
+sont définis dans les fichiers ARB français, arabe et anglais. Le package
+`mobile_scanner` et la permission caméra Android existaient déjà ; iOS utilise
+`NSCameraUsageDescription` pour expliquer l'accès caméra.
+
+---
+
+## 14. Résumé pour une soutenance
 
 Réponse courte possible :
 
@@ -814,4 +838,3 @@ fois.
 `ref.watch` écoute une donnée et reconstruit l'interface lorsqu'elle change.
 `ref.read` lit ou appelle une dépendance sans écouter ses changements pour
 reconstruire l'écran.
-

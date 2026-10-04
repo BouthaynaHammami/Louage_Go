@@ -10,6 +10,7 @@ import '../../features/auth/presentation/otp_arguments.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/legal/domain/legal_document.dart';
 import '../../features/legal/presentation/legal_document_screen.dart';
 import '../../features/support/presentation/screens/support_home_screen.dart';
@@ -35,6 +36,10 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/driver/presentation/screens/driver_home_screen.dart';
 import '../../features/driver/presentation/screens/driver_placeholder_screen.dart';
 import '../../features/driver/presentation/screens/driver_profile_screen.dart';
+import '../../features/driver/presentation/screens/driver_qr_scanner_screen.dart';
+import '../../features/driver/presentation/screens/driver_rating_screen.dart';
+import '../../features/driver/presentation/screens/driver_trip_detail_screen.dart';
+import '../../features/driver/presentation/screens/driver_trips_screen.dart';
 import '../../l10n/generated/app_localizations.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -250,18 +255,25 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/driver/queue',
             name: 'driverQueue',
-            builder: (context, state) => DriverPlaceholderScreen(
-              title: AppLocalizations.of(context)!.driverQueueTitle,
-              icon: Icons.format_list_numbered,
-            ),
+            builder: (context, state) => const DriverTripsScreen(),
+          ),
+          GoRoute(
+            path: '/driver/trips/:tripId',
+            name: 'driverTripDetail',
+            builder: (context, state) =>
+                DriverTripDetailScreen(tripId: state.pathParameters['tripId']!),
           ),
           GoRoute(
             path: '/driver/scan',
             name: 'driverScan',
-            builder: (context, state) => DriverPlaceholderScreen(
-              title: AppLocalizations.of(context)!.driverScanTitle,
-              icon: Icons.qr_code_scanner,
+            builder: (context, state) => DriverQrScannerScreen(
+              initialTripId: state.uri.queryParameters['tripId'],
             ),
+          ),
+          GoRoute(
+            path: '/driver/rating',
+            name: 'driverRating',
+            builder: (context, state) => const DriverRatingScreen(),
           ),
           GoRoute(
             path: '/driver/earnings',
@@ -275,6 +287,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/driver/profile',
             name: 'driverProfile',
             builder: (context, state) => const DriverProfileScreen(),
+          ),
+          GoRoute(
+            path: '/driver/account',
+            name: 'driverAccount',
+            builder: (context, state) => ProfileScreen(
+              fallbackName: (l10n) => l10n.profileDriverFallback,
+            ),
           ),
           GoRoute(
             path: '/driver/reviews',

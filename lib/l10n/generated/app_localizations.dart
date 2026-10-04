@@ -2350,6 +2350,258 @@ abstract class AppLocalizations {
   /// **'Note du chauffeur : {rating} / 5'**
   String louageDriverRating(String rating);
 
+  /// No description provided for @driverLouageProfileTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Profil chauffeur et louage'**
+  String get driverLouageProfileTitle;
+
+  /// No description provided for @driverLouageProfileSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseignez les informations de votre véhicule.'**
+  String get driverLouageProfileSubtitle;
+
+  /// No description provided for @driverVehicleModel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marque et modèle'**
+  String get driverVehicleModel;
+
+  /// No description provided for @driverMatricule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Matricule'**
+  String get driverMatricule;
+
+  /// No description provided for @driverTotalSeats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre total de places'**
+  String get driverTotalSeats;
+
+  /// No description provided for @driverAvailableSeats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Places disponibles'**
+  String get driverAvailableSeats;
+
+  /// No description provided for @driverCurrentStation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Station actuelle'**
+  String get driverCurrentStation;
+
+  /// No description provided for @driverRatingAverage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note moyenne'**
+  String get driverRatingAverage;
+
+  /// No description provided for @driverCompletedTrips.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trajets effectués'**
+  String get driverCompletedTrips;
+
+  /// No description provided for @driverSaveLouage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer le louage'**
+  String get driverSaveLouage;
+
+  /// No description provided for @driverLouageSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Profil du louage enregistré.'**
+  String get driverLouageSaved;
+
+  /// No description provided for @driverChangeStatus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le statut'**
+  String get driverChangeStatus;
+
+  /// No description provided for @driverStatusAvailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible'**
+  String get driverStatusAvailable;
+
+  /// No description provided for @driverStatusWaiting.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente'**
+  String get driverStatusWaiting;
+
+  /// No description provided for @driverStatusInTransit.
+  ///
+  /// In fr, this message translates to:
+  /// **'En déplacement'**
+  String get driverStatusInTransit;
+
+  /// No description provided for @driverStatusOutOfService.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors service'**
+  String get driverStatusOutOfService;
+
+  /// No description provided for @driverConfirmStatus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer le changement de statut ?'**
+  String get driverConfirmStatus;
+
+  /// No description provided for @driverTripsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes trajets'**
+  String get driverTripsTitle;
+
+  /// No description provided for @driverTripsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun trajet pour le moment'**
+  String get driverTripsEmpty;
+
+  /// No description provided for @driverTripDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détail du trajet'**
+  String get driverTripDetail;
+
+  /// No description provided for @driverTripDateTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date et heure'**
+  String get driverTripDateTime;
+
+  /// No description provided for @driverTripPrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix par place'**
+  String get driverTripPrice;
+
+  /// No description provided for @driverTripSeatsAvailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Places libres : {available} / {total}'**
+  String driverTripSeatsAvailable(String available, String total);
+
+  /// No description provided for @driverBookingsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservations et passagers'**
+  String get driverBookingsTitle;
+
+  /// No description provided for @driverBookingPayment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement : {status}'**
+  String driverBookingPayment(String status);
+
+  /// No description provided for @driverBookingStatus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservation : {status}'**
+  String driverBookingStatus(String status);
+
+  /// No description provided for @driverUpdateSeats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre à jour les places'**
+  String get driverUpdateSeats;
+
+  /// No description provided for @driverScanInstructions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scannez le QR code du billet du trajet sélectionné.'**
+  String get driverScanInstructions;
+
+  /// No description provided for @driverScanSelectTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionnez le trajet à contrôler'**
+  String get driverScanSelectTrip;
+
+  /// No description provided for @driverScanValid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Billet valide — réservation marquée comme utilisée.'**
+  String get driverScanValid;
+
+  /// No description provided for @driverScanUsed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce billet a déjà été utilisé.'**
+  String get driverScanUsed;
+
+  /// No description provided for @driverScanInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Billet invalide, annulé ou associé à un autre trajet.'**
+  String get driverScanInvalid;
+
+  /// No description provided for @driverRatingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note moyenne du chauffeur'**
+  String get driverRatingTitle;
+
+  /// No description provided for @driverRatingsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} avis'**
+  String driverRatingsCount(String count);
+
+  /// No description provided for @driverOperationFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’opération a échoué. Réessayez.'**
+  String get driverOperationFailed;
+
+  /// No description provided for @driverPaymentPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente'**
+  String get driverPaymentPending;
+
+  /// No description provided for @driverPaymentPaid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Payé'**
+  String get driverPaymentPaid;
+
+  /// No description provided for @driverPaymentCash.
+  ///
+  /// In fr, this message translates to:
+  /// **'À payer à bord'**
+  String get driverPaymentCash;
+
+  /// No description provided for @driverBookingConfirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmée'**
+  String get driverBookingConfirmed;
+
+  /// No description provided for @driverBookingValidated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validée'**
+  String get driverBookingValidated;
+
+  /// No description provided for @driverBookingCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annulée'**
+  String get driverBookingCancelled;
+
+  /// No description provided for @driverBookingRejected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refusée'**
+  String get driverBookingRejected;
+
   /// No description provided for @profileTitle.
   ///
   /// In fr, this message translates to:

@@ -1239,6 +1239,144 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get driverLouageProfileTitle => 'Profil chauffeur et louage';
+
+  @override
+  String get driverLouageProfileSubtitle =>
+      'Renseignez les informations de votre véhicule.';
+
+  @override
+  String get driverVehicleModel => 'Marque et modèle';
+
+  @override
+  String get driverMatricule => 'Matricule';
+
+  @override
+  String get driverTotalSeats => 'Nombre total de places';
+
+  @override
+  String get driverAvailableSeats => 'Places disponibles';
+
+  @override
+  String get driverCurrentStation => 'Station actuelle';
+
+  @override
+  String get driverRatingAverage => 'Note moyenne';
+
+  @override
+  String get driverCompletedTrips => 'Trajets effectués';
+
+  @override
+  String get driverSaveLouage => 'Enregistrer le louage';
+
+  @override
+  String get driverLouageSaved => 'Profil du louage enregistré.';
+
+  @override
+  String get driverChangeStatus => 'Modifier le statut';
+
+  @override
+  String get driverStatusAvailable => 'Disponible';
+
+  @override
+  String get driverStatusWaiting => 'En attente';
+
+  @override
+  String get driverStatusInTransit => 'En déplacement';
+
+  @override
+  String get driverStatusOutOfService => 'Hors service';
+
+  @override
+  String get driverConfirmStatus => 'Confirmer le changement de statut ?';
+
+  @override
+  String get driverTripsTitle => 'Mes trajets';
+
+  @override
+  String get driverTripsEmpty => 'Aucun trajet pour le moment';
+
+  @override
+  String get driverTripDetail => 'Détail du trajet';
+
+  @override
+  String get driverTripDateTime => 'Date et heure';
+
+  @override
+  String get driverTripPrice => 'Prix par place';
+
+  @override
+  String driverTripSeatsAvailable(String available, String total) {
+    return 'Places libres : $available / $total';
+  }
+
+  @override
+  String get driverBookingsTitle => 'Réservations et passagers';
+
+  @override
+  String driverBookingPayment(String status) {
+    return 'Paiement : $status';
+  }
+
+  @override
+  String driverBookingStatus(String status) {
+    return 'Réservation : $status';
+  }
+
+  @override
+  String get driverUpdateSeats => 'Mettre à jour les places';
+
+  @override
+  String get driverScanInstructions =>
+      'Scannez le QR code du billet du trajet sélectionné.';
+
+  @override
+  String get driverScanSelectTrip => 'Sélectionnez le trajet à contrôler';
+
+  @override
+  String get driverScanValid =>
+      'Billet valide — réservation marquée comme utilisée.';
+
+  @override
+  String get driverScanUsed => 'Ce billet a déjà été utilisé.';
+
+  @override
+  String get driverScanInvalid =>
+      'Billet invalide, annulé ou associé à un autre trajet.';
+
+  @override
+  String get driverRatingTitle => 'Note moyenne du chauffeur';
+
+  @override
+  String driverRatingsCount(String count) {
+    return '$count avis';
+  }
+
+  @override
+  String get driverOperationFailed => 'L’opération a échoué. Réessayez.';
+
+  @override
+  String get driverPaymentPending => 'En attente';
+
+  @override
+  String get driverPaymentPaid => 'Payé';
+
+  @override
+  String get driverPaymentCash => 'À payer à bord';
+
+  @override
+  String get driverBookingConfirmed => 'Confirmée';
+
+  @override
+  String get driverBookingValidated => 'Validée';
+
+  @override
+  String get driverBookingCancelled => 'Annulée';
+
+  @override
+  String get driverBookingRejected => 'Refusée';
+
+  @override
   String get profileTitle => 'Profil';
 
   @override

@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Votre position sert à trouver les stations de louage les plus proches.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>La caméra sert à scanner les billets QR des passagers.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

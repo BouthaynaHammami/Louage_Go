@@ -1219,6 +1219,140 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get driverLouageProfileTitle => 'ملف السائق واللواج';
+
+  @override
+  String get driverLouageProfileSubtitle => 'أدخل معلومات مركبتك.';
+
+  @override
+  String get driverVehicleModel => 'العلامة التجارية والطراز';
+
+  @override
+  String get driverMatricule => 'رقم التسجيل';
+
+  @override
+  String get driverTotalSeats => 'إجمالي المقاعد';
+
+  @override
+  String get driverAvailableSeats => 'المقاعد المتاحة';
+
+  @override
+  String get driverCurrentStation => 'المحطة الحالية';
+
+  @override
+  String get driverRatingAverage => 'متوسط التقييم';
+
+  @override
+  String get driverCompletedTrips => 'الرحلات المنجزة';
+
+  @override
+  String get driverSaveLouage => 'حفظ بيانات اللواج';
+
+  @override
+  String get driverLouageSaved => 'تم حفظ بيانات اللواج.';
+
+  @override
+  String get driverChangeStatus => 'تغيير الحالة';
+
+  @override
+  String get driverStatusAvailable => 'متاح';
+
+  @override
+  String get driverStatusWaiting => 'في الانتظار';
+
+  @override
+  String get driverStatusInTransit => 'في الطريق';
+
+  @override
+  String get driverStatusOutOfService => 'خارج الخدمة';
+
+  @override
+  String get driverConfirmStatus => 'هل تؤكد تغيير الحالة؟';
+
+  @override
+  String get driverTripsTitle => 'رحلاتي';
+
+  @override
+  String get driverTripsEmpty => 'لا توجد رحلات حالياً';
+
+  @override
+  String get driverTripDetail => 'تفاصيل الرحلة';
+
+  @override
+  String get driverTripDateTime => 'التاريخ والوقت';
+
+  @override
+  String get driverTripPrice => 'السعر لكل مقعد';
+
+  @override
+  String driverTripSeatsAvailable(String available, String total) {
+    return 'المقاعد المتاحة: $available من $total';
+  }
+
+  @override
+  String get driverBookingsTitle => 'الحجوزات والركاب';
+
+  @override
+  String driverBookingPayment(String status) {
+    return 'الدفع: $status';
+  }
+
+  @override
+  String driverBookingStatus(String status) {
+    return 'الحجز: $status';
+  }
+
+  @override
+  String get driverUpdateSeats => 'تحديث المقاعد المتاحة';
+
+  @override
+  String get driverScanInstructions => 'امسح رمز التذكرة للرحلة المحددة.';
+
+  @override
+  String get driverScanSelectTrip => 'اختر الرحلة للتحقق';
+
+  @override
+  String get driverScanValid => 'تذكرة صالحة — تم تسجيل الحجز كمستخدم.';
+
+  @override
+  String get driverScanUsed => 'تم استخدام هذه التذكرة من قبل.';
+
+  @override
+  String get driverScanInvalid => 'تذكرة غير صالحة أو ملغاة أو تخص رحلة أخرى.';
+
+  @override
+  String get driverRatingTitle => 'متوسط تقييم السائق';
+
+  @override
+  String driverRatingsCount(String count) {
+    return '$count تقييم';
+  }
+
+  @override
+  String get driverOperationFailed => 'تعذرت العملية. حاول مرة أخرى.';
+
+  @override
+  String get driverPaymentPending => 'قيد الانتظار';
+
+  @override
+  String get driverPaymentPaid => 'مدفوع';
+
+  @override
+  String get driverPaymentCash => 'الدفع على متن المركبة';
+
+  @override
+  String get driverBookingConfirmed => 'مؤكد';
+
+  @override
+  String get driverBookingValidated => 'تم التحقق';
+
+  @override
+  String get driverBookingCancelled => 'ملغى';
+
+  @override
+  String get driverBookingRejected => 'مرفوض';
+
+  @override
   String get profileTitle => 'الملف الشخصي';
 
   @override

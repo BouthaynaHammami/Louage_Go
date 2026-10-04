@@ -1231,6 +1231,142 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get driverLouageProfileTitle => 'Driver and louage profile';
+
+  @override
+  String get driverLouageProfileSubtitle => 'Enter your vehicle information.';
+
+  @override
+  String get driverVehicleModel => 'Make and model';
+
+  @override
+  String get driverMatricule => 'License plate';
+
+  @override
+  String get driverTotalSeats => 'Total seats';
+
+  @override
+  String get driverAvailableSeats => 'Available seats';
+
+  @override
+  String get driverCurrentStation => 'Current station';
+
+  @override
+  String get driverRatingAverage => 'Average rating';
+
+  @override
+  String get driverCompletedTrips => 'Completed trips';
+
+  @override
+  String get driverSaveLouage => 'Save louage';
+
+  @override
+  String get driverLouageSaved => 'Louage profile saved.';
+
+  @override
+  String get driverChangeStatus => 'Change status';
+
+  @override
+  String get driverStatusAvailable => 'Available';
+
+  @override
+  String get driverStatusWaiting => 'Waiting';
+
+  @override
+  String get driverStatusInTransit => 'In transit';
+
+  @override
+  String get driverStatusOutOfService => 'Out of service';
+
+  @override
+  String get driverConfirmStatus => 'Confirm status change?';
+
+  @override
+  String get driverTripsTitle => 'My trips';
+
+  @override
+  String get driverTripsEmpty => 'There are no trips yet';
+
+  @override
+  String get driverTripDetail => 'Trip details';
+
+  @override
+  String get driverTripDateTime => 'Date and time';
+
+  @override
+  String get driverTripPrice => 'Price per seat';
+
+  @override
+  String driverTripSeatsAvailable(String available, String total) {
+    return '$available / $total seats available';
+  }
+
+  @override
+  String get driverBookingsTitle => 'Bookings and passengers';
+
+  @override
+  String driverBookingPayment(String status) {
+    return 'Payment: $status';
+  }
+
+  @override
+  String driverBookingStatus(String status) {
+    return 'Booking: $status';
+  }
+
+  @override
+  String get driverUpdateSeats => 'Update available seats';
+
+  @override
+  String get driverScanInstructions =>
+      'Scan the ticket QR code for the selected trip.';
+
+  @override
+  String get driverScanSelectTrip => 'Select the trip to check';
+
+  @override
+  String get driverScanValid => 'Valid ticket — booking marked as used.';
+
+  @override
+  String get driverScanUsed => 'This ticket has already been used.';
+
+  @override
+  String get driverScanInvalid =>
+      'Invalid, cancelled, or belongs to another trip.';
+
+  @override
+  String get driverRatingTitle => 'Driver average rating';
+
+  @override
+  String driverRatingsCount(String count) {
+    return '$count reviews';
+  }
+
+  @override
+  String get driverOperationFailed => 'The operation failed. Please try again.';
+
+  @override
+  String get driverPaymentPending => 'Pending';
+
+  @override
+  String get driverPaymentPaid => 'Paid';
+
+  @override
+  String get driverPaymentCash => 'Pay on board';
+
+  @override
+  String get driverBookingConfirmed => 'Confirmed';
+
+  @override
+  String get driverBookingValidated => 'Validated';
+
+  @override
+  String get driverBookingCancelled => 'Cancelled';
+
+  @override
+  String get driverBookingRejected => 'Rejected';
+
+  @override
   String get profileTitle => 'Profile';
 
   @override
