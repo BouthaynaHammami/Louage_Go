@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../../../core/services/location_service.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/favorite_button.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/station.dart';
@@ -186,7 +187,7 @@ class _StationsMapScreenState extends ConsumerState<StationsMapScreen> {
               if (Theme.of(context).brightness == Brightness.dark)
                 ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                    Colors.black.withValues(alpha: 0.42),
+                    AppColors.darkMapOverlay,
                     BlendMode.darken,
                   ),
                   child: TileLayer(

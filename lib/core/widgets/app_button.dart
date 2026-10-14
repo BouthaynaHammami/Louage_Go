@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-
 enum AppButtonVariant { primary, secondary, accent }
 
 class AppButton extends StatefulWidget {
@@ -56,14 +54,13 @@ class _AppButtonState extends State<AppButton> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final foreground = switch (widget.variant) {
-      AppButtonVariant.primary => AppColors.textOnAccent,
+      AppButtonVariant.primary => colorScheme.onPrimary,
       AppButtonVariant.secondary => colorScheme.onSurface,
-      AppButtonVariant.accent => AppColors.textOnAccent,
+      AppButtonVariant.accent => colorScheme.onPrimary,
     };
     final callback = widget.isLoading ? null : widget.onPressed;
-    final shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    );
+    final borderRadius = BorderRadius.circular(16);
+    final shape = RoundedRectangleBorder(borderRadius: borderRadius);
 
     if (widget.variant == AppButtonVariant.secondary) {
       return OutlinedButton(
@@ -84,25 +81,22 @@ class _AppButtonState extends State<AppButton> {
         scale: _pressed ? 0.97 : 1,
         duration: const Duration(milliseconds: 120),
         child: Material(
-          color: colorScheme.surface.withValues(alpha: 0),
-          child: Ink(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  colorScheme.secondary,
-                  Color.lerp(colorScheme.secondary, colorScheme.primary, 0.25)!,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: InkWell(
-              onTap: callback,
-              onHighlightChanged: (pressed) =>
-                  setState(() => _pressed = pressed),
-              borderRadius: BorderRadius.circular(16),
-              child: SizedBox(
-                height: widget.height,
-                child: Center(child: _content(AppColors.textOnAccent)),
+          color: callback == null
+              ? colorScheme.onSurface.withValues(alpha: 0.12)
+              : colorScheme.primary,
+          borderRadius: borderRadius,
+          child: InkWell(
+            onTap: callback,
+            onHighlightChanged: (pressed) => setState(() => _pressed = pressed),
+            borderRadius: borderRadius,
+            child: SizedBox(
+              height: widget.height,
+              child: Center(
+                child: _content(
+                  callback == null
+                      ? colorScheme.onSurface.withValues(alpha: 0.38)
+                      : colorScheme.onPrimary,
+                ),
               ),
             ),
           ),

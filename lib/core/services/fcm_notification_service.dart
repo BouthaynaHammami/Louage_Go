@@ -9,7 +9,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../storage/hive_service.dart';
-import '../../firebase_options.dart';
 import '../../models/app_notification.dart';
 import '../../models/app_user.dart';
 import 'notification_service.dart';
@@ -21,9 +20,7 @@ typedef AndroidChannelInitializer = Future<void> Function(String channelName);
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    await Firebase.initializeApp();
   } on Object {
     return;
   }
@@ -41,9 +38,7 @@ class FcmNotificationService
   }) : _initializeFirebase =
            initializeFirebase ??
            (() async {
-             await Firebase.initializeApp(
-               options: DefaultFirebaseOptions.currentPlatform,
-             );
+             await Firebase.initializeApp();
            }),
        _messagingOverride = messaging,
        _localNotifications =
@@ -97,6 +92,7 @@ class FcmNotificationService
       _localReady = false;
     }
 
+    if (kIsWeb) return;
     try {
       await _initializeFirebase();
       _firebaseReady = true;

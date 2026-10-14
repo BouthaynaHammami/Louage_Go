@@ -85,10 +85,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _pageController,
                 itemCount: _pageCount,
                 onPageChanged: (page) => setState(() => _page = page),
-                itemBuilder: (context, index) => _OnboardingPage(
-                  slide: slides[index],
-                  showLogo: index == 0,
-                ),
+                itemBuilder: (context, index) =>
+                    _OnboardingPage(slide: slides[index]),
               ),
             ),
             Row(
@@ -147,9 +145,8 @@ class _OnboardingSlide {
 
 class _OnboardingPage extends StatelessWidget {
   final _OnboardingSlide slide;
-  final bool showLogo;
 
-  const _OnboardingPage({required this.slide, required this.showLogo});
+  const _OnboardingPage({required this.slide});
 
   @override
   Widget build(BuildContext context) {
@@ -159,10 +156,8 @@ class _OnboardingPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (showLogo) ...[
-            const AppLogo(size: 56),
-            const SizedBox(height: 16),
-          ],
+          const AppLogoMark(width: 168, height: 56, showBackground: false),
+          const SizedBox(height: 16),
           Container(
             width: 196,
             height: 196,

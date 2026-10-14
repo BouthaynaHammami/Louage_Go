@@ -340,7 +340,11 @@ class _Ticket extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          const Icon(Icons.check_circle, color: Colors.green, size: 72),
+          Icon(
+            Icons.check_circle,
+            color: Theme.of(context).colorScheme.tertiary,
+            size: 72,
+          ),
           const SizedBox(height: 12),
           Text(
             l10n.bookingTicketReady,

@@ -45,14 +45,14 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/louagego_mark.png"
-  adaptive_icon_background: "#FAF6F0"
+  adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/images/louagego_mark.png"
   remove_alpha_ios: true
   web:
     generate: true
     image_path: "assets/images/louagego_mark.png"
-    background_color: "#FAF6F0"
-    theme_color: "#3C2415"
+    background_color: "#FFFFFF"
+    theme_color: "#E53935"
 
 flutter:
   uses-material-design: true

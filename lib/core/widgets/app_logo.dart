@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-
 class AppLogoMark extends StatelessWidget {
   final double size;
+  final double? width;
+  final double? height;
   final bool showBackground;
 
-  const AppLogoMark({super.key, this.size = 120, this.showBackground = true});
+  const AppLogoMark({
+    super.key,
+    this.size = 120,
+    this.width,
+    this.height,
+    this.showBackground = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +32,7 @@ class AppLogoMark extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: colorScheme.surface,
               shape: BoxShape.circle,
               border: Border.all(color: colorScheme.secondary, width: 1),
               boxShadow: [
@@ -39,7 +45,7 @@ class AppLogoMark extends StatelessWidget {
             ),
             child: Padding(padding: EdgeInsets.all(size * 0.18), child: image),
           )
-        : SizedBox.square(dimension: size, child: image);
+        : SizedBox(width: width ?? size, height: height ?? size, child: image);
 
     return Hero(tag: 'app-logo', child: mark);
   }

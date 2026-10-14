@@ -17,7 +17,7 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
     final stored = _readPreference('themeMode');
     return ThemeMode.values.firstWhere(
       (mode) => mode.name == stored,
-      orElse: () => ThemeMode.system,
+      orElse: () => ThemeMode.light,
     );
   }
 

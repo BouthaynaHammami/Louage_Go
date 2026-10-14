@@ -1,10 +1,8 @@
 import 'dart:math' as math;
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
-import '../theme/app_colors.dart';
 import 'app_logo.dart';
 
 class AuthScaffold extends StatefulWidget {
@@ -91,33 +89,17 @@ class _AuthScaffoldState extends State<AuthScaffold>
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final gradientColors = isDark
-        ? [AppColors.darkBackground, AppColors.primary]
-        : [AppColors.background, colorScheme.surface];
     final isWide = MediaQuery.sizeOf(context).width >= 800;
 
     return _AuthStaggerScope(
       animations: _staggerAnimations,
       disabled: _motionDisabled ?? false,
       child: Scaffold(
-        backgroundColor: gradientColors.first,
         body: SafeArea(
           child: Stack(
             children: [
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: AlignmentDirectional.topCenter,
-                      end: AlignmentDirectional.bottomCenter,
-                      colors: gradientColors,
-                    ),
-                  ),
-                ),
-              ),
               if (isWide)
-                _buildWideLayout(context, gradientColors)
+                _buildWideLayout(context)
               else
                 _buildMobileLayout(context),
               if (widget.showBackButton)
@@ -126,7 +108,8 @@ class _AuthScaffoldState extends State<AuthScaffold>
                   start: 8,
                   child: IconButton(
                     onPressed: widget.onBack ?? Navigator.of(context).maybePop,
-                    tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                    tooltip: MaterialLocalizations.of(context)
+                        .backButtonTooltip,
                     constraints: const BoxConstraints.tightFor(
                       width: 48,
                       height: 48,
@@ -183,9 +166,7 @@ class _AuthScaffoldState extends State<AuthScaffold>
                             subtitle,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ],
@@ -223,17 +204,11 @@ class _AuthScaffoldState extends State<AuthScaffold>
     );
   }
 
-  Widget _buildWideLayout(BuildContext context, List<Color> gradientColors) {
+  Widget _buildWideLayout(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Expanded(
-          flex: 45,
-          child: _BrandPanel(
-            controller: _routeController,
-            colors: gradientColors,
-          ),
-        ),
+        Expanded(flex: 45, child: _BrandPanel(controller: _routeController)),
         Expanded(
           flex: 55,
           child: Center(
@@ -255,9 +230,8 @@ class _AuthScaffoldState extends State<AuthScaffold>
                       Text(
                         subtitle,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium
+                            ?.copyWith(color: colorScheme.onSurfaceVariant),
                       ),
                     ],
                     const SizedBox(height: 28),
@@ -284,9 +258,8 @@ class AuthStaggerItem extends StatelessWidget {
     final scope = _AuthStaggerScope.maybeOf(context);
     if (scope == null || scope.disabled) return child;
 
-    final animation = scope.animations[
-      index.clamp(0, scope.animations.length - 1).toInt()
-    ];
+    final animation =
+        scope.animations[index.clamp(0, scope.animations.length - 1).toInt()];
     final slide = Tween<Offset>(
       begin: const Offset(0, 0.035),
       end: Offset.zero,
@@ -327,25 +300,13 @@ class _GlassCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
-      child: BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surface.withValues(alpha: 0.86),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: colorScheme.secondary.withValues(alpha: 0.25),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: colorScheme.shadow.withValues(alpha: 0.12),
-                blurRadius: 24,
-                offset: const Offset(0, 12),
-              ),
-            ],
-          ),
-          child: child,
+      child: Container(
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: colorScheme.outlineVariant),
         ),
+        child: child,
       ),
     );
   }
@@ -377,10 +338,12 @@ class _AuthRouteAnimation extends StatelessWidget {
             final path = _routePath(size, rtl);
             final metric = path.computeMetrics().first;
             final progress = reducedMotion ? 0.35 : controller.value;
-            final tangent =
-                metric.getTangentForOffset(metric.length * progress)!;
-            final destination =
-                metric.getTangentForOffset(metric.length)!.position;
+            final tangent = metric.getTangentForOffset(
+              metric.length * progress,
+            )!;
+            final destination = metric
+                .getTangentForOffset(metric.length)!
+                .position;
             final vehicleStart = rtl
                 ? size.width - tangent.position.dx - 14
                 : tangent.position.dx - 14;
@@ -401,7 +364,7 @@ class _AuthRouteAnimation extends StatelessWidget {
                       painter: _AuthRoutePainter(
                         path: path,
                         accent: colorScheme.secondary,
-                        dash: AppColors.background,
+                        dash: colorScheme.outlineVariant,
                       ),
                     ),
                   ),
@@ -498,9 +461,8 @@ class _AuthRoutePainter extends CustomPainter {
 
 class _BrandPanel extends StatelessWidget {
   final AnimationController controller;
-  final List<Color> colors;
 
-  const _BrandPanel({required this.controller, required this.colors});
+  const _BrandPanel({required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -513,13 +475,7 @@ class _BrandPanel extends StatelessWidget {
     ];
 
     return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: AlignmentDirectional.topStart,
-          end: AlignmentDirectional.bottomEnd,
-          colors: colors,
-        ),
-      ),
+      decoration: BoxDecoration(color: colorScheme.surfaceContainerLow),
       child: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsetsDirectional.all(48),
@@ -528,10 +484,7 @@ class _BrandPanel extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const AuthStaggerItem(
-                  index: 0,
-                  child: AppLogoMark(size: 160),
-                ),
+                const AuthStaggerItem(index: 0, child: AppLogoMark(size: 160)),
                 const SizedBox(height: 20),
                 const AuthStaggerItem(
                   index: 1,
@@ -541,9 +494,8 @@ class _BrandPanel extends StatelessWidget {
                 Text(
                   l10n.splashSlogan,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium
+                      ?.copyWith(color: colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 40),
                 for (var index = 0; index < features.length; index++) ...[
@@ -555,8 +507,7 @@ class _BrandPanel extends StatelessWidget {
                       color: colorScheme,
                     ),
                   ),
-                  if (index != features.length - 1)
-                    const SizedBox(height: 20),
+                  if (index != features.length - 1) const SizedBox(height: 20),
                 ],
               ],
             ),
@@ -588,13 +539,11 @@ class _BrandFeature extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: color.onSurface,
-            ),
+            style: Theme.of(context).textTheme.titleMedium
+                ?.copyWith(color: color.onSurface),
           ),
         ),
       ],
     );
   }
 }
-

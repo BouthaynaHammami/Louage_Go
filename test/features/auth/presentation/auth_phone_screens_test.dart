@@ -452,11 +452,12 @@ void main() {
 
         expect(find.text(l10n.registerPassengerRole), findsOneWidget);
         expect(find.text(l10n.registerDriverRole), findsOneWidget);
-        expect(tester.takeException(), isNull);
-
-        await tester.tap(find.text(l10n.registerUseEmail));
-        await tester.pumpAndSettle();
+        expect(find.byType(TextFormField), findsNWidgets(5));
+        expect(find.text(l10n.registerEmailLabel), findsOneWidget);
         expect(find.text(l10n.registerPasswordLabel), findsOneWidget);
+        expect(find.text(l10n.registerConfirmPasswordLabel), findsOneWidget);
+        expect(find.text(l10n.registerUsePhone), findsNothing);
+        expect(find.text(l10n.registerUseEmail), findsNothing);
         expect(tester.takeException(), isNull);
       }
     }

@@ -107,9 +107,7 @@ class _AppTextFieldState extends State<AppTextField> {
               }) => null,
         decoration: InputDecoration(
           filled: true,
-          fillColor: colorScheme.surfaceContainerHighest.withValues(
-            alpha: 0.58,
-          ),
+          fillColor: colorScheme.surfaceContainerHighest,
           labelText: widget.label,
           prefix: widget.prefixText == null
               ? null
