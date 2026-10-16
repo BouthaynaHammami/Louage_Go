@@ -34,6 +34,8 @@ import '../../features/users/presentation/screens/passenger_profile_screen.dart'
 import '../../models/app_user.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/driver/presentation/screens/driver_home_screen.dart';
+import '../../features/driver/presentation/screens/driver_actions_screen.dart';
+import '../../features/driver/presentation/screens/driver_pending_screen.dart';
 import '../../features/driver/presentation/screens/driver_placeholder_screen.dart';
 import '../../features/driver/presentation/screens/driver_profile_screen.dart';
 import '../../features/driver/presentation/screens/driver_qr_scanner_screen.dart';
@@ -63,10 +65,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           user = null;
         }
       }
-
       return routeRedirect(state.matchedLocation, user);
     },
     routes: [
+      // ── Auth / common ──────────────────────────────────────────────────────
       GoRoute(
         path: '/splash',
         name: 'splash',
@@ -170,6 +172,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'helpFaq',
         redirect: (context, state) => '/support/faq',
       ),
+
+      // ── Passenger shell ────────────────────────────────────────────────────
       ShellRoute(
         builder: (context, state, child) =>
             _PassengerShell(state: state, child: child),
@@ -204,8 +208,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   icon: Icons.search_off,
                 );
               }
-              final criteria = extra;
-              return LouageListScreen(criteria: criteria);
+              return LouageListScreen(criteria: extra);
             },
           ),
           GoRoute(
@@ -243,6 +246,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+
+      // ── Driver shell ───────────────────────────────────────────────────────
       ShellRoute(
         builder: (context, state, child) =>
             _DriverShell(state: state, child: child),
@@ -301,59 +306,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const DriverReviewsScreen(),
           ),
           GoRoute(
+            path: '/driver/actions',
+            name: 'driverActions',
+            builder: (context, state) => DriverActionsScreen(
+              tripId: state.uri.queryParameters['tripId'],
+            ),
+          ),
+          GoRoute(
             path: '/driver/documents',
             name: 'driverDocuments',
-            builder: (context, state) => DriverPlaceholderScreen(
-              title: AppLocalizations.of(context)!.driverDocumentsTitle,
-              icon: Icons.upload_file_outlined,
-            ),
-          ),
-        ],
-      ),
-      ShellRoute(
-        builder: (context, state, child) =>
-            _AdminShell(state: state, child: child),
-        routes: [
-          GoRoute(
-            path: '/admin/dashboard',
-            name: 'adminDashboard',
-            builder: (context, state) => _AdminPage(
-              title: AppLocalizations.of(context)!.adminNavDashboard,
-            ),
-          ),
-          GoRoute(
-            path: '/admin/stations',
-            name: 'adminStations',
-            builder: (context, state) => _AdminPage(
-              title: AppLocalizations.of(context)!.adminNavStations,
-            ),
-          ),
-          GoRoute(
-            path: '/admin/drivers',
-            name: 'adminDrivers',
-            builder: (context, state) => _AdminPage(
-              title: AppLocalizations.of(context)!.adminNavDrivers,
-            ),
-          ),
-          GoRoute(
-            path: '/admin/users',
-            name: 'adminUsers',
-            builder: (context, state) =>
-                _AdminPage(title: AppLocalizations.of(context)!.adminNavUsers),
-          ),
-          GoRoute(
-            path: '/admin/reports',
-            name: 'adminReports',
-            builder: (context, state) => _AdminPage(
-              title: AppLocalizations.of(context)!.adminNavReports,
-            ),
-          ),
-          GoRoute(
-            path: '/admin/notifications',
-            name: 'adminNotifications',
-            builder: (context, state) => _AdminPage(
-              title: AppLocalizations.of(context)!.adminNavNotifications,
-            ),
+            builder: (context, state) => const DriverPendingScreen(),
           ),
         ],
       ),
@@ -368,6 +330,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
   return router;
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Redirect logic  (no admin role)
+// ─────────────────────────────────────────────────────────────────────────────
 
 String? routeRedirect(String location, AppUser? user) {
   const alwaysAccessible = {'/legal/terms', '/legal/privacy'};
@@ -384,6 +350,7 @@ String? routeRedirect(String location, AppUser? user) {
     '/support/faq',
     '/support/contact',
   };
+
   if (alwaysAccessible.contains(location) ||
       publicHelpLocations.contains(location)) {
     return null;
@@ -397,26 +364,25 @@ String? routeRedirect(String location, AppUser? user) {
 
   final home = _homeForRole(user.role);
   if (publicLocations.contains(location)) return home;
-  if (user.role == 'passenger' &&
-      (location.startsWith('/driver/') || location.startsWith('/admin/'))) {
+
+  // Passengers cannot access driver routes
+  if (user.role == 'passenger' && location.startsWith('/driver/')) {
     return home;
   }
-  if (user.role == 'driver' &&
-      (location.startsWith('/passenger/') || location.startsWith('/admin/'))) {
+  // Drivers cannot access passenger routes
+  if (user.role == 'driver' && location.startsWith('/passenger/')) {
     return home;
   }
-  if (user.role == 'admin' &&
-      (location.startsWith('/passenger/') || location.startsWith('/driver/'))) {
-    return home;
-  }
+
   return null;
 }
 
-String _homeForRole(String role) => switch (role) {
-  'driver' => '/driver/home',
-  'admin' => '/admin/dashboard',
-  _ => '/passenger/home',
-};
+String _homeForRole(String role) =>
+    role == 'driver' ? '/driver/home' : '/passenger/home';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auth transition
+// ─────────────────────────────────────────────────────────────────────────────
 
 CustomTransitionPage<void> _authTransitionPage({
   required GoRouterState state,
@@ -442,9 +408,17 @@ CustomTransitionPage<void> _authTransitionPage({
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Router refresh notifier
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _RouterRefreshNotifier extends ChangeNotifier {
   void refresh() => notifyListeners();
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Navigation destinations
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _NavDestination {
   final String name;
@@ -531,77 +505,34 @@ List<_NavDestination> _driverDestinations(AppLocalizations l10n) => [
   ),
 ];
 
-List<_NavDestination> _adminDestinations(AppLocalizations l10n) => [
-  _NavDestination(
-    name: 'adminDashboard',
-    path: '/admin/dashboard',
-    label: l10n.adminNavDashboard,
-    icon: Icons.dashboard_outlined,
-    selectedIcon: Icons.dashboard,
-  ),
-  _NavDestination(
-    name: 'adminStations',
-    path: '/admin/stations',
-    label: l10n.adminNavStations,
-    icon: Icons.location_on_outlined,
-    selectedIcon: Icons.location_on,
-  ),
-  _NavDestination(
-    name: 'adminDrivers',
-    path: '/admin/drivers',
-    label: l10n.adminNavDrivers,
-    icon: Icons.badge_outlined,
-    selectedIcon: Icons.badge,
-  ),
-  _NavDestination(
-    name: 'adminUsers',
-    path: '/admin/users',
-    label: l10n.adminNavUsers,
-    icon: Icons.people_outline,
-    selectedIcon: Icons.people,
-  ),
-  _NavDestination(
-    name: 'adminReports',
-    path: '/admin/reports',
-    label: l10n.adminNavReports,
-    icon: Icons.flag_outlined,
-    selectedIcon: Icons.flag,
-  ),
-  _NavDestination(
-    name: 'adminNotifications',
-    path: '/admin/notifications',
-    label: l10n.adminNavNotifications,
-    icon: Icons.notifications_outlined,
-    selectedIcon: Icons.notifications,
-  ),
-];
+// ─────────────────────────────────────────────────────────────────────────────
+// Shell widgets
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _PassengerShell extends StatelessWidget {
   final GoRouterState state;
   final Widget child;
-
   const _PassengerShell({required this.state, required this.child});
 
   @override
   Widget build(BuildContext context) => _BottomNavigationShell(
-    destinations: _passengerDestinations(AppLocalizations.of(context)!),
-    state: state,
-    child: child,
-  );
+        destinations: _passengerDestinations(AppLocalizations.of(context)!),
+        state: state,
+        child: child,
+      );
 }
 
 class _DriverShell extends StatelessWidget {
   final GoRouterState state;
   final Widget child;
-
   const _DriverShell({required this.state, required this.child});
 
   @override
   Widget build(BuildContext context) => _BottomNavigationShell(
-    destinations: _driverDestinations(AppLocalizations.of(context)!),
-    state: state,
-    child: child,
-  );
+        destinations: _driverDestinations(AppLocalizations.of(context)!),
+        state: state,
+        child: child,
+      );
 }
 
 class _BottomNavigationShell extends StatelessWidget {
@@ -619,22 +550,24 @@ class _BottomNavigationShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final selectedIndex = destinations.indexWhere(
-      (destination) => destination.path == state.uri.path,
+      (d) => d.path == state.uri.path,
     );
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          indicatorColor: colorScheme.secondary,
+          indicatorColor: colorScheme.secondaryContainer,
           iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
             (states) => IconThemeData(
               color: states.contains(WidgetState.selected)
-                  ? colorScheme.onSecondary
+                  ? colorScheme.onSecondaryContainer
                   : colorScheme.onSurfaceVariant,
             ),
           ),
           labelTextStyle: WidgetStatePropertyAll(
-            Theme.of(context).textTheme.labelSmall
+            Theme.of(context)
+                .textTheme
+                .labelSmall
                 ?.copyWith(color: colorScheme.onSurface),
           ),
         ),
@@ -644,11 +577,11 @@ class _BottomNavigationShell extends StatelessWidget {
           onDestinationSelected: (index) =>
               context.goNamed(destinations[index].name),
           destinations: [
-            for (final destination in destinations)
+            for (final d in destinations)
               NavigationDestination(
-                icon: Icon(destination.icon),
-                selectedIcon: Icon(destination.selectedIcon),
-                label: destination.label,
+                icon: Icon(d.icon),
+                selectedIcon: Icon(d.selectedIcon),
+                label: d.label,
               ),
           ],
         ),
@@ -657,124 +590,29 @@ class _BottomNavigationShell extends StatelessWidget {
   }
 }
 
-class _AdminShell extends StatelessWidget {
-  final GoRouterState state;
-  final Widget child;
-
-  const _AdminShell({required this.state, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final destinations = _adminDestinations(l10n);
-    final selectedIndex = destinations.indexWhere(
-      (destination) => destination.path == state.uri.path,
-    );
-    final selected = selectedIndex < 0 ? 0 : selectedIndex;
-    final isWide = MediaQuery.sizeOf(context).width > 800;
-
-    if (isWide) {
-      return Scaffold(
-        body: Row(
-          children: [
-            NavigationRail(
-              selectedIndex: selected,
-              labelType: NavigationRailLabelType.all,
-              onDestinationSelected: (index) =>
-                  context.goNamed(destinations[index].name),
-              trailing: IconButton(
-                tooltip: l10n.settingsTitle,
-                onPressed: () => context.pushNamed('settings'),
-                icon: const Icon(Icons.settings_outlined),
-              ),
-              destinations: [
-                for (final destination in destinations)
-                  NavigationRailDestination(
-                    icon: Icon(destination.icon),
-                    selectedIcon: Icon(destination.selectedIcon),
-                    label: Text(destination.label),
-                  ),
-              ],
-            ),
-            const VerticalDivider(width: 1),
-            Expanded(child: child),
-          ],
-        ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(title: Text(destinations[selected].label)),
-      drawer: Drawer(
-        child: SafeArea(
-          child: ListView(
-            padding: EdgeInsetsDirectional.zero,
-            children: [
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 12),
-                child: Text(
-                  l10n.adminMenuTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              for (var index = 0; index < destinations.length; index++)
-                ListTile(
-                  selected: selected == index,
-                  leading: Icon(destinations[index].icon),
-                  title: Text(destinations[index].label),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.goNamed(destinations[index].name);
-                  },
-                ),
-              ListTile(
-                leading: const Icon(Icons.settings_outlined),
-                title: Text(l10n.settingsTitle),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.pushNamed('settings');
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: child,
-    );
-  }
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Utility pages
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _SimplePage extends StatelessWidget {
   final String title;
   final IconData icon;
-
   const _SimplePage({required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(title)),
-    body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 48),
-          const SizedBox(height: 12),
-          Text(title, style: Theme.of(context).textTheme.titleLarge),
-        ],
-      ),
-    ),
-  );
-}
-
-class _AdminPage extends StatelessWidget {
-  final String title;
-
-  const _AdminPage({required this.title});
-
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Text(title, style: Theme.of(context).textTheme.headlineMedium),
-  );
+        appBar: AppBar(title: Text(title)),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 48),
+              const SizedBox(height: 12),
+              Text(title, style: Theme.of(context).textTheme.titleLarge),
+            ],
+          ),
+        ),
+      );
 }
 
 class _NotFoundPage extends StatelessWidget {
@@ -790,10 +628,8 @@ class _NotFoundPage extends StatelessWidget {
           children: [
             const Icon(Icons.search_off, size: 48),
             const SizedBox(height: 12),
-            Text(
-              l10n.pageNotFound,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text(l10n.pageNotFound,
+                style: Theme.of(context).textTheme.titleLarge),
           ],
         ),
       ),

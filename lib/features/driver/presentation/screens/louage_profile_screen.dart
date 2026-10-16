@@ -140,7 +140,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
                           ),
                           validator: (value) =>
                               value == null || value.trim().isEmpty
-                              ? l10n.driverOperationFailed
+                              ? l10n.driverMatriculeRequired
                               : null,
                         ),
                         const SizedBox(height: 12),
@@ -163,15 +163,8 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
                           ),
                           validator: (value) {
                             final total = int.tryParse(value ?? '');
-                            final available = int.tryParse(
-                              _availableSeatsController.text,
-                            );
-                            if (total == null ||
-                                total < 1 ||
-                                available == null ||
-                                available < 0 ||
-                                available > total) {
-                              return l10n.driverOperationFailed;
+                            if (total == null || total <= 0) {
+                              return l10n.driverTotalSeatsInvalid;
                             }
                             return null;
                           },
@@ -195,7 +188,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
                                 total == null ||
                                 available < 0 ||
                                 available > total) {
-                              return l10n.driverOperationFailed;
+                              return l10n.driverAvailableSeatsInvalid;
                             }
                             return null;
                           },
@@ -222,7 +215,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
                             onChanged: (value) =>
                                 setState(() => _stationId = value),
                             validator: (value) => value == null
-                                ? l10n.driverOperationFailed
+                                ? l10n.driverStationRequired
                                 : null,
                           )
                         else
@@ -231,6 +224,10 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
                             decoration: InputDecoration(
                               labelText: l10n.driverCurrentStation,
                             ),
+                            validator: (value) =>
+                                value == null || value.trim().isEmpty
+                                ? l10n.driverStationRequired
+                                : null,
                             onChanged: (value) => _stationId = value,
                           ),
                         const SizedBox(height: 20),
@@ -256,8 +253,12 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
                       const SizedBox(height: 8),
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: Icon(Icons.circle, color: scheme.primary),
+                        leading: Icon(
+                          _statusIcon(louage?.statut),
+                          color: _statusColor(scheme, louage?.statut),
+                        ),
                         title: Text(_statusLabel(l10n, louage?.statut)),
+                        subtitle: Text(l10n.driverChangeStatus),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: louage == null
                             ? null
@@ -266,7 +267,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
                       stats.when(
                         loading: () => const LinearProgressIndicator(),
                         error: (error, stackTrace) => Text(
-                          l10n.driverOperationFailed,
+                          l10n.driverStatsUnavailable,
                           style: TextStyle(color: scheme.error),
                         ),
                         data: (summary) => Wrap(
@@ -343,7 +344,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.driverOperationFailed)));
+          .showSnackBar(SnackBar(content: Text(l10n.driverLouageSaveFailed)));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -378,10 +379,15 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
       await ref
           .read(louageRepositoryProvider)
           .updateStatus(louage.id, selected);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.driverStatusUpdated)),
+      );
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.driverOperationFailed)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.driverStatusUpdateFailed)),
+      );
     }
   }
 
@@ -391,6 +397,22 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
         LouageStatus.enAttente => l10n.driverStatusWaiting,
         LouageStatus.enDeplacement => l10n.driverStatusInTransit,
         LouageStatus.horsService => l10n.driverStatusOutOfService,
+      };
+
+  IconData _statusIcon(LouageStatus? status) =>
+      switch (status ?? LouageStatus.disponible) {
+        LouageStatus.disponible => Icons.check_circle_outline,
+        LouageStatus.enAttente => Icons.schedule_outlined,
+        LouageStatus.enDeplacement => Icons.directions_bus_outlined,
+        LouageStatus.horsService => Icons.do_not_disturb_on_outlined,
+      };
+
+  Color _statusColor(ColorScheme scheme, LouageStatus? status) =>
+      switch (status ?? LouageStatus.disponible) {
+        LouageStatus.disponible => scheme.tertiary,
+        LouageStatus.enAttente => scheme.secondary,
+        LouageStatus.enDeplacement => scheme.primary,
+        LouageStatus.horsService => scheme.error,
       };
 }
 

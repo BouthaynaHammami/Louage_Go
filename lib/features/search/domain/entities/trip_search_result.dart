@@ -10,6 +10,8 @@ class TripSearchResult {
   final Station fromStation;
   final Station toStation;
   final DateTime departure;
+  final double driverRatingAverage;
+  final int driverReviewCount;
 
   const TripSearchResult({
     required this.trip,
@@ -18,6 +20,8 @@ class TripSearchResult {
     required this.fromStation,
     required this.toStation,
     required this.departure,
+    this.driverRatingAverage = 0,
+    this.driverReviewCount = 0,
   });
 
   double get price => route.pricePerSeat;

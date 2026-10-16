@@ -43,7 +43,7 @@ class HomeGreetingHeader extends StatelessWidget {
           children: [
             Row(
               children: [
-                const AppLogoMark(size: 72, showBackground: false),
+                const AppLogoMark(size: 96, showBackground: false),
                 const Spacer(),
                 if (notificationLabel != null) ...[
                   IconButton.filledTonal(

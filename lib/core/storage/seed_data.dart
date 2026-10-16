@@ -1,5 +1,4 @@
 // Comptes de démonstration :
-// Admin : admin@louagego.tn / Admin123!
 // Chauffeur : chauffeur@louagego.tn / Driver123!
 // Passager : passager@louagego.tn / Passenger123!
 import 'package:hive_ce/hive.dart';
@@ -68,16 +67,6 @@ class SeedData {
       await stationsBox.put(station.id, station.toMap());
     }
 
-    final admin = _demoUser(
-      id: 'demo_admin',
-      name: 'Administrateur Demo',
-      phone: '20000001',
-      email: 'admin@louagego.tn',
-      role: 'admin',
-      password: 'Admin123!',
-      city: 'Tunis',
-      createdAt: now,
-    );
     final driver = _demoUser(
       id: 'demo_driver',
       name: 'Chauffeur Demo',
@@ -98,7 +87,7 @@ class SeedData {
       city: 'Tunis',
       createdAt: now,
     );
-    for (final user in [admin, driver, passenger]) {
+    for (final user in [driver, passenger]) {
       if (!usersBox.containsKey(user.id)) {
         await usersBox.put(user.id, user.toMap());
       } else {

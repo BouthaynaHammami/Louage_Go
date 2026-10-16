@@ -198,6 +198,27 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get bookingChooseSeatsTitle => 'Choose my seat';
+
+  @override
+  String bookingSeatLabel(int number, String status) {
+    return 'Seat $number: $status';
+  }
+
+  @override
+  String get bookingSeatUnavailable =>
+      'That seat was just reserved. Please choose another.';
+
+  @override
+  String get bookingNotEnoughSeats => 'There are not enough free seats.';
+
+  @override
+  String get bookingTripUnavailable => 'This trip is no longer available.';
+
+  @override
+  String get bookingLouageUnavailable => 'This louage is no longer available.';
+
+  @override
   String get bookingPaymentSimulation => 'Payment (simulation)';
 
   @override
@@ -1173,7 +1194,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchLoadError => 'Couldn\'t load the trips';
 
   @override
-  String get searchNoLouage => 'No louage for this route';
+  String get searchNoLouage => 'No louage available';
 
   @override
   String get searchAfterRequestedTime => 'After your selected time';
@@ -1243,13 +1264,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverMatricule => 'License plate';
 
   @override
+  String get driverMatriculeRequired => 'Enter the vehicle license plate.';
+
+  @override
   String get driverTotalSeats => 'Total seats';
+
+  @override
+  String get driverTotalSeatsInvalid =>
+      'Enter a total seat count greater than zero.';
 
   @override
   String get driverAvailableSeats => 'Available seats';
 
   @override
+  String get driverAvailableSeatsInvalid =>
+      'Available seats must be between zero and the total seat count.';
+
+  @override
   String get driverCurrentStation => 'Current station';
+
+  @override
+  String get driverStationRequired => 'Choose or enter the current station.';
 
   @override
   String get driverRatingAverage => 'Average rating';
@@ -1264,7 +1299,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverLouageSaved => 'Louage profile saved.';
 
   @override
+  String get driverLouageSaveFailed =>
+      'Couldn\'t save the louage. Check the details and try again.';
+
+  @override
   String get driverChangeStatus => 'Change status';
+
+  @override
+  String get driverStatusUpdated => 'Louage status updated.';
+
+  @override
+  String get driverStatusUpdateFailed =>
+      'Couldn\'t update the status. Please try again.';
+
+  @override
+  String get driverStatsUnavailable =>
+      'Statistics are temporarily unavailable.';
 
   @override
   String get driverStatusAvailable => 'Available';
@@ -1355,6 +1405,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverPaymentCash => 'Pay on board';
 
   @override
+  String get driverPaymentUnknown => 'Unknown payment status';
+
+  @override
   String get driverBookingConfirmed => 'Confirmed';
 
   @override
@@ -1365,6 +1418,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverBookingRejected => 'Rejected';
+
+  @override
+  String get driverBookingUnknown => 'Unknown booking status';
 
   @override
   String get profileTitle => 'Profile';
@@ -1695,4 +1751,193 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchResetFilters => 'Reset';
+
+  @override
+  String get docStepAccountCreated => 'Account created';
+
+  @override
+  String get docStepDocumentsSent => 'Documents sent';
+
+  @override
+  String get docStepValidated => 'Validated';
+
+  @override
+  String get docStepCurrent => 'Current';
+
+  @override
+  String get docSectionTitle => 'Required documents';
+
+  @override
+  String get docStatusToSend => 'To send';
+
+  @override
+  String get docStatusSent => 'Sent';
+
+  @override
+  String get docStatusRejected => 'Rejected';
+
+  @override
+  String get docStatusValidated => 'Validated';
+
+  @override
+  String get docTypeNationalId => 'National ID';
+
+  @override
+  String get docTypeDriverLicense => 'Driver\'s licence';
+
+  @override
+  String get docTypeVehicleCard => 'Vehicle registration';
+
+  @override
+  String get docTypeInsurance => 'Insurance';
+
+  @override
+  String get docTypeTransportLicense => 'Transport licence';
+
+  @override
+  String get docTypeDriverPhoto => 'Driver photo';
+
+  @override
+  String get docTypeVehiclePhoto => 'Vehicle photo';
+
+  @override
+  String get docUploadTitle => 'Upload document';
+
+  @override
+  String get docUploadFromCamera => 'Take a photo';
+
+  @override
+  String get docUploadFromGallery => 'Choose from gallery';
+
+  @override
+  String get docUploadPreviewTitle => 'Preview before sending';
+
+  @override
+  String get docUploadConfirm => 'Confirm upload';
+
+  @override
+  String get docUploadCancel => 'Cancel';
+
+  @override
+  String get docUploadSuccess => 'Document uploaded.';
+
+  @override
+  String get docUploadError => 'Could not upload the document.';
+
+  @override
+  String get docResend => 'Resend';
+
+  @override
+  String get docRejectionReason => 'Rejection reason';
+
+  @override
+  String get docSubmitAll => 'Submit documents';
+
+  @override
+  String get docSubmitConfirmTitle => 'Submit all documents?';
+
+  @override
+  String get docSubmitConfirmBody =>
+      'Your documents will be sent for review. This action cannot be undone.';
+
+  @override
+  String get docSubmitSuccess => 'Documents submitted successfully.';
+
+  @override
+  String get docLockedPreviewTitle => 'Driver workspace';
+
+  @override
+  String get docLockedPreviewBody =>
+      'These features will be available after your account is validated.';
+
+  @override
+  String get docHelpTitle => 'Need help?';
+
+  @override
+  String get docHelpFaq => 'Frequently asked questions';
+
+  @override
+  String get docHelpContact => 'Contact support';
+
+  @override
+  String get docDebugTitle => 'Admin simulation (debug)';
+
+  @override
+  String get docDebugApprove => 'Approve all documents';
+
+  @override
+  String get docDebugReject => 'Reject a document';
+
+  @override
+  String get docDebugRejectReason => 'Reason (e.g. blurry photo)';
+
+  @override
+  String get docDebugNotifApproved => 'Account validated';
+
+  @override
+  String get docDebugNotifApprovedBody =>
+      'Congratulations! Your driver account has been validated.';
+
+  @override
+  String get docDebugNotifRejected => 'Document rejected';
+
+  @override
+  String get docDebugNotifRejectedBody =>
+      'One of your documents was rejected. Check the reason and resend it.';
+
+  @override
+  String get docValidationStatusPending => 'Account pending';
+
+  @override
+  String get docValidationStatusSubmitted =>
+      'Documents sent — awaiting validation';
+
+  @override
+  String get docValidationStatusApproved => 'Account validated';
+
+  @override
+  String get docValidationStatusRejected => 'Account rejected';
+
+  @override
+  String get driverDelayTitle => 'Announce a delay';
+
+  @override
+  String get driverDelayNewTime => 'New departure time';
+
+  @override
+  String get driverDelayReason => 'Reason (optional)';
+
+  @override
+  String get driverDelayConfirm => 'Announce delay';
+
+  @override
+  String get driverDelaySuccess =>
+      'Passengers have been notified of the delay.';
+
+  @override
+  String get driverReportTitle => 'Report a problem';
+
+  @override
+  String get driverReportBreakdown => 'Breakdown';
+
+  @override
+  String get driverReportDelay => 'Delay';
+
+  @override
+  String get driverReportOther => 'Other';
+
+  @override
+  String get driverReportSend => 'Send report';
+
+  @override
+  String get driverReportSuccess => 'Report sent to passengers.';
+
+  @override
+  String get driverNavigateTitle => 'Route to station';
+
+  @override
+  String get driverNavigateOpen => 'Open in Maps';
+
+  @override
+  String get driverNavigateNoCoords => 'Station coordinates unavailable.';
 }

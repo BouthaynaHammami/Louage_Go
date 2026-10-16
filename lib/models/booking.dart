@@ -8,7 +8,7 @@ class Booking {
   final double totalPrice;
   final String status;
   final String createdAt;
-  final List<int> selectedSeats;
+  final List<int> numerosPlaces;
   final String paymentMethod;
   final String paymentStatus;
   final String qrCode;
@@ -16,6 +16,8 @@ class Booking {
   final String cancelledAt;
   final String driverName;
   final String matricule;
+  final String fromCity;
+  final String toCity;
 
   const Booking({
     this.id = '',
@@ -25,7 +27,8 @@ class Booking {
     this.totalPrice = 0,
     this.status = 'pending',
     this.createdAt = '',
-    this.selectedSeats = const [],
+    List<int>? numerosPlaces,
+    List<int>? selectedSeats,
     this.paymentMethod = '',
     this.paymentStatus = 'pending',
     this.qrCode = '',
@@ -33,7 +36,11 @@ class Booking {
     this.cancelledAt = '',
     this.driverName = '',
     this.matricule = '',
-  });
+    this.fromCity = '',
+    this.toCity = '',
+  }) : numerosPlaces = numerosPlaces ?? selectedSeats ?? const [];
+
+  List<int> get selectedSeats => numerosPlaces;
 
   Booking copyWith({
     String? id,
@@ -43,6 +50,7 @@ class Booking {
     double? totalPrice,
     String? status,
     String? createdAt,
+    List<int>? numerosPlaces,
     List<int>? selectedSeats,
     String? paymentMethod,
     String? paymentStatus,
@@ -51,6 +59,8 @@ class Booking {
     String? cancelledAt,
     String? driverName,
     String? matricule,
+    String? fromCity,
+    String? toCity,
   }) =>
       Booking(
         id: id ?? this.id,
@@ -60,7 +70,7 @@ class Booking {
         totalPrice: totalPrice ?? this.totalPrice,
         status: status ?? this.status,
         createdAt: createdAt ?? this.createdAt,
-        selectedSeats: selectedSeats ?? this.selectedSeats,
+        numerosPlaces: numerosPlaces ?? selectedSeats ?? this.numerosPlaces,
         paymentMethod: paymentMethod ?? this.paymentMethod,
         paymentStatus: paymentStatus ?? this.paymentStatus,
         qrCode: qrCode ?? this.qrCode,
@@ -68,6 +78,8 @@ class Booking {
         cancelledAt: cancelledAt ?? this.cancelledAt,
         driverName: driverName ?? this.driverName,
         matricule: matricule ?? this.matricule,
+        fromCity: fromCity ?? this.fromCity,
+        toCity: toCity ?? this.toCity,
       );
 
   Map<String, dynamic> toMap() => {
@@ -78,7 +90,8 @@ class Booking {
         'totalPrice': totalPrice,
         'status': status,
         'createdAt': createdAt,
-        'selectedSeats': selectedSeats,
+        'numerosPlaces': numerosPlaces,
+        'selectedSeats': numerosPlaces,
         'paymentMethod': paymentMethod,
         'paymentStatus': paymentStatus,
         'qrCode': qrCode,
@@ -86,6 +99,8 @@ class Booking {
         'cancelledAt': cancelledAt,
         'driverName': driverName,
         'matricule': matricule,
+        'fromCity': fromCity,
+        'toCity': toCity,
       };
 
   factory Booking.fromMap(Map<dynamic, dynamic> map) => Booking(
@@ -96,12 +111,7 @@ class Booking {
         totalPrice: ModelMap.decimal(map, 'totalPrice'),
         status: ModelMap.text(map, 'status', 'pending'),
         createdAt: ModelMap.date(map, 'createdAt'),
-        selectedSeats: (map['selectedSeats'] is Iterable)
-            ? (map['selectedSeats'] as Iterable)
-                .whereType<num>()
-                .map((value) => value.toInt())
-                .toList()
-            : const [],
+        numerosPlaces: _readSeatNumbers(map),
         paymentMethod: ModelMap.text(map, 'paymentMethod'),
         paymentStatus: ModelMap.text(map, 'paymentStatus', 'pending'),
         qrCode: ModelMap.text(map, 'qrCode'),
@@ -109,5 +119,13 @@ class Booking {
         cancelledAt: ModelMap.text(map, 'cancelledAt'),
         driverName: ModelMap.text(map, 'driverName'),
         matricule: ModelMap.text(map, 'matricule'),
+        fromCity: ModelMap.text(map, 'fromCity'),
+        toCity: ModelMap.text(map, 'toCity'),
       );
+
+  static List<int> _readSeatNumbers(Map<dynamic, dynamic> map) {
+    final value = map['numerosPlaces'] ?? map['selectedSeats'];
+    if (value is! Iterable) return const [];
+    return value.whereType<num>().map((number) => number.toInt()).toList();
+  }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -64,91 +65,95 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: colorScheme.primary,
       body: SafeArea(
         child: LayoutBuilder(
-          builder: (context, constraints) => Column(
-            children: [
-              const Spacer(flex: 2),
-              SizedBox(
-                width: constraints.maxWidth,
-                height: 150,
-                child: AnimatedBuilder(
-                  animation: _rideProgress,
-                  builder: (context, child) => Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      PositionedDirectional(
-                        start: 24,
-                        end: 24,
-                        top: 100,
-                        child: Container(
-                          height: 2,
-                          decoration: BoxDecoration(
-                            color: colorScheme.secondary.withValues(
-                              alpha: 0.45,
+          builder: (context, constraints) {
+            final logoSize = math.min(160.0, constraints.maxHeight * 0.28);
+            return Column(
+              children: [
+                const Spacer(flex: 2),
+                SizedBox(
+                  width: constraints.maxWidth,
+                  height: 150,
+                  child: AnimatedBuilder(
+                    animation: _rideProgress,
+                    builder: (context, child) => Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        PositionedDirectional(
+                          start: 24,
+                          end: 24,
+                          top: 100,
+                          child: Container(
+                            height: 2,
+                            decoration: BoxDecoration(
+                              color: colorScheme.secondary.withValues(
+                                alpha: 0.45,
+                              ),
+                              borderRadius: BorderRadius.circular(2),
                             ),
-                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                      ),
-                      PositionedDirectional(
-                        start:
-                            -72 +
-                            _rideProgress.value * (constraints.maxWidth + 48),
-                        top: 35,
-                        child: child!,
-                      ),
-                    ],
+                        PositionedDirectional(
+                          start:
+                              -72 +
+                              _rideProgress.value * (constraints.maxWidth + 48),
+                          top: 35,
+                          child: child!,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.location_pin,
+                          size: 30,
+                          color: colorScheme.secondary,
+                        ),
+                        Icon(
+                          Icons.airport_shuttle_rounded,
+                          size: 64,
+                          color: textColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0, end: 1),
+                  duration: const Duration(milliseconds: 900),
+                  curve: Curves.easeOut,
+                  builder: (context, opacity, child) => Opacity(
+                    opacity: opacity,
+                    child: Transform.translate(
+                      offset: Offset(0, 10 * (1 - opacity)),
+                      child: child,
+                    ),
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.location_pin,
-                        size: 30,
-                        color: colorScheme.secondary,
+                      FadeTransition(
+                        opacity: _logoFade,
+                        child: AppLogoMark(size: logoSize),
                       ),
-                      Icon(
-                        Icons.airport_shuttle_rounded,
-                        size: 64,
-                        color: textColor,
+                      const SizedBox(height: 12),
+                      const AppWordmark(),
+                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
+                      Text(
+                        slogan,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: textColor.withValues(alpha: 0.78),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              const Spacer(),
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: 1),
-                duration: const Duration(milliseconds: 900),
-                curve: Curves.easeOut,
-                builder: (context, opacity, child) => Opacity(
-                  opacity: opacity,
-                  child: Transform.translate(
-                    offset: Offset(0, 10 * (1 - opacity)),
-                    child: child,
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    FadeTransition(
-                      opacity: _logoFade,
-                      child: const AppLogoMark(size: 104),
-                    ),
-                    const SizedBox(height: 12),
-                    const AppWordmark(),
-                    const SizedBox(height: 16),
-                    const SizedBox(height: 8),
-                    Text(
-                      slogan,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge
-                          ?.copyWith(color: textColor.withValues(alpha: 0.78)),
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(flex: 2),
-            ],
-          ),
+                const Spacer(flex: 2),
+              ],
+            );
+          },
         ),
       ),
     );

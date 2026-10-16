@@ -126,100 +126,114 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appTitle => 'لواج غو';
 
   @override
-  String get bookingReviewAction => 'Vérifier la réservation';
+  String get bookingReviewAction => 'مراجعة الحجز';
 
   @override
-  String get bookingReviewTitle => 'Récapitulatif de la réservation';
+  String get bookingReviewTitle => 'مراجعة الحجز';
 
   @override
-  String get bookingConfirmAction => 'Confirmer et réserver';
+  String get bookingConfirmAction => 'تأكيد الحجز';
 
   @override
-  String get bookingConfirmed => 'Réservation confirmée';
+  String get bookingConfirmed => 'تم تأكيد الحجز';
 
   @override
-  String get bookingTicketReady => 'Votre billet est prêt';
+  String get bookingTicketReady => 'تذكرتك جاهزة';
 
   @override
-  String get bookingReference => 'Référence';
+  String get bookingReference => 'المرجع';
 
   @override
-  String get bookingSeats => 'Places';
+  String get bookingSeats => 'المقاعد';
 
   @override
-  String get bookingDriver => 'Conducteur';
+  String get bookingDriver => 'السائق';
 
   @override
-  String get bookingMatricule => 'Matricule';
+  String get bookingMatricule => 'رقم التسجيل';
 
   @override
-  String get bookingDeparture => 'Départ';
+  String get bookingDeparture => 'المغادرة';
 
   @override
-  String get bookingTotal => 'Total';
+  String get bookingTotal => 'المجموع';
 
   @override
-  String get bookingPayment => 'Paiement';
+  String get bookingPayment => 'الدفع';
 
   @override
-  String get bookingDownloadTicket => 'Enregistrer / partager le billet PDF';
+  String get bookingDownloadTicket => 'حفظ / مشاركة تذكرة PDF';
 
   @override
-  String get bookingDetails => 'Détails de la réservation';
+  String get bookingDetails => 'تفاصيل الحجز';
 
   @override
-  String get bookingCancel => 'Annuler';
+  String get bookingCancel => 'إلغاء';
 
   @override
-  String get bookingCancelTitle => 'Annuler la réservation ?';
+  String get bookingCancelTitle => 'إلغاء الحجز؟';
 
   @override
-  String get bookingCancelMessage =>
-      'L’annulation est possible jusqu’à 2 heures avant le départ.';
+  String get bookingCancelMessage => 'يمكن الإلغاء حتى ساعتين قبل المغادرة.';
 
   @override
-  String get bookingEmpty => 'Aucune réservation pour le moment';
+  String get bookingEmpty => 'لا توجد حجوزات بعد';
 
   @override
-  String get bookingPerSeat => 'par place';
+  String get bookingPerSeat => 'لكل مقعد';
 
   @override
   String bookingSummary(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Récapitulatif ($count places)',
-      one: 'Récapitulatif (1 place)',
-    );
-    return '$_temp0';
+    return '$count مقاعد مختارة';
   }
 
   @override
-  String get bookingPaymentSimulation => 'Paiement (simulation)';
+  String get bookingChooseSeatsTitle => 'اختر مقعدي';
 
   @override
-  String get bookingPaymentMethod => 'Mode de paiement';
+  String bookingSeatLabel(int number, String status) {
+    return 'المقعد $number: $status';
+  }
 
   @override
-  String get bookingPayOnBoarding => 'Paiement à l’embarquement';
+  String get bookingSeatUnavailable =>
+      'تم حجز هذا المقعد للتو. اختر مقعدًا آخر.';
 
   @override
-  String get bookingCardSimulation => 'Carte bancaire (simulation)';
+  String get bookingNotEnoughSeats => 'لا توجد مقاعد شاغرة كافية.';
 
   @override
-  String get bookingMobileSimulation => 'Portefeuille mobile (simulation)';
+  String get bookingTripUnavailable => 'لم تعد هذه الرحلة متاحة.';
 
   @override
-  String get bookingDriverSeat => 'Conducteur';
+  String get bookingLouageUnavailable => 'لم يعد هذا اللواج متاحًا.';
 
   @override
-  String get bookingTaken => 'Occupée';
+  String get bookingPaymentSimulation => 'الدفع (محاكاة)';
 
   @override
-  String get bookingSelected => 'Sélectionnée';
+  String get bookingPaymentMethod => 'طريقة الدفع';
 
   @override
-  String get bookingFree => 'Libre';
+  String get bookingPayOnBoarding => 'الدفع عند الصعود';
+
+  @override
+  String get bookingCardSimulation => 'بطاقة بنكية (محاكاة)';
+
+  @override
+  String get bookingMobileSimulation => 'محفظة الهاتف (محاكاة)';
+
+  @override
+  String get bookingDriverSeat => 'السائق';
+
+  @override
+  String get bookingTaken => 'محجوز';
+
+  @override
+  String get bookingSelected => 'محدد';
+
+  @override
+  String get bookingFree => 'متاح';
 
   @override
   String get commonLoading => 'جارٍ التحميل';
@@ -1161,7 +1175,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchLoadError => 'تعذر تحميل الرحلات';
 
   @override
-  String get searchNoLouage => 'لا يوجد لواج على هذا المسار';
+  String get searchNoLouage => 'لا يوجد لواج متاح';
 
   @override
   String get searchAfterRequestedTime => 'بعد الوقت الذي اخترته';
@@ -1231,13 +1245,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverMatricule => 'رقم التسجيل';
 
   @override
+  String get driverMatriculeRequired => 'أدخل رقم تسجيل المركبة.';
+
+  @override
   String get driverTotalSeats => 'إجمالي المقاعد';
+
+  @override
+  String get driverTotalSeatsInvalid =>
+      'أدخل عددًا إجماليًا للمقاعد أكبر من صفر.';
 
   @override
   String get driverAvailableSeats => 'المقاعد المتاحة';
 
   @override
+  String get driverAvailableSeatsInvalid =>
+      'يجب أن يكون عدد المقاعد المتاحة بين صفر والإجمالي.';
+
+  @override
   String get driverCurrentStation => 'المحطة الحالية';
+
+  @override
+  String get driverStationRequired => 'اختر أو أدخل المحطة الحالية.';
 
   @override
   String get driverRatingAverage => 'متوسط التقييم';
@@ -1252,7 +1280,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverLouageSaved => 'تم حفظ بيانات اللواج.';
 
   @override
+  String get driverLouageSaveFailed =>
+      'تعذر حفظ بيانات اللواج. تحقق من المعلومات وحاول مرة أخرى.';
+
+  @override
   String get driverChangeStatus => 'تغيير الحالة';
+
+  @override
+  String get driverStatusUpdated => 'تم تحديث حالة اللواج.';
+
+  @override
+  String get driverStatusUpdateFailed => 'تعذر تحديث الحالة. حاول مرة أخرى.';
+
+  @override
+  String get driverStatsUnavailable => 'الإحصائيات غير متاحة مؤقتًا.';
 
   @override
   String get driverStatusAvailable => 'متاح';
@@ -1341,6 +1382,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverPaymentCash => 'الدفع على متن المركبة';
 
   @override
+  String get driverPaymentUnknown => 'حالة الدفع غير معروفة';
+
+  @override
   String get driverBookingConfirmed => 'مؤكد';
 
   @override
@@ -1351,6 +1395,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get driverBookingRejected => 'مرفوض';
+
+  @override
+  String get driverBookingUnknown => 'حالة الحجز غير معروفة';
 
   @override
   String get profileTitle => 'الملف الشخصي';
@@ -1678,4 +1725,192 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchResetFilters => 'إعادة الضبط';
+
+  @override
+  String get docStepAccountCreated => 'تم إنشاء الحساب';
+
+  @override
+  String get docStepDocumentsSent => 'تم إرسال الوثائق';
+
+  @override
+  String get docStepValidated => 'تم التحقق';
+
+  @override
+  String get docStepCurrent => 'الحالي';
+
+  @override
+  String get docSectionTitle => 'الوثائق المطلوبة';
+
+  @override
+  String get docStatusToSend => 'للإرسال';
+
+  @override
+  String get docStatusSent => 'مُرسَل';
+
+  @override
+  String get docStatusRejected => 'مرفوض';
+
+  @override
+  String get docStatusValidated => 'تم التحقق';
+
+  @override
+  String get docTypeNationalId => 'بطاقة الهوية الوطنية';
+
+  @override
+  String get docTypeDriverLicense => 'رخصة القيادة';
+
+  @override
+  String get docTypeVehicleCard => 'بطاقة ترقيم المركبة';
+
+  @override
+  String get docTypeInsurance => 'وثيقة التأمين';
+
+  @override
+  String get docTypeTransportLicense => 'رخصة النقل';
+
+  @override
+  String get docTypeDriverPhoto => 'صورة السائق';
+
+  @override
+  String get docTypeVehiclePhoto => 'صورة اللواج';
+
+  @override
+  String get docUploadTitle => 'رفع وثيقة';
+
+  @override
+  String get docUploadFromCamera => 'التقاط صورة';
+
+  @override
+  String get docUploadFromGallery => 'اختر من المعرض';
+
+  @override
+  String get docUploadPreviewTitle => 'معاينة قبل الإرسال';
+
+  @override
+  String get docUploadConfirm => 'تأكيد الإرسال';
+
+  @override
+  String get docUploadCancel => 'إلغاء';
+
+  @override
+  String get docUploadSuccess => 'تم إرسال الوثيقة.';
+
+  @override
+  String get docUploadError => 'تعذّر إرسال الوثيقة.';
+
+  @override
+  String get docResend => 'إعادة الإرسال';
+
+  @override
+  String get docRejectionReason => 'سبب الرفض';
+
+  @override
+  String get docSubmitAll => 'إرسال الوثائق';
+
+  @override
+  String get docSubmitConfirmTitle => 'إرسال جميع الوثائق؟';
+
+  @override
+  String get docSubmitConfirmBody =>
+      'ستُرسَل وثائقك للمراجعة. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get docSubmitSuccess => 'تم إرسال الوثائق بنجاح.';
+
+  @override
+  String get docLockedPreviewTitle => 'مساحة السائق';
+
+  @override
+  String get docLockedPreviewBody =>
+      'ستكون هذه الميزات متاحة بعد التحقق من حسابك.';
+
+  @override
+  String get docHelpTitle => 'هل تحتاج مساعدة؟';
+
+  @override
+  String get docHelpFaq => 'الأسئلة الشائعة';
+
+  @override
+  String get docHelpContact => 'تواصل مع الدعم';
+
+  @override
+  String get docDebugTitle => 'محاكاة المشرف (تجريبي)';
+
+  @override
+  String get docDebugApprove => 'الموافقة على جميع الوثائق';
+
+  @override
+  String get docDebugReject => 'رفض وثيقة';
+
+  @override
+  String get docDebugRejectReason => 'السبب (مثال: صورة غير واضحة)';
+
+  @override
+  String get docDebugNotifApproved => 'تم التحقق من الحساب';
+
+  @override
+  String get docDebugNotifApprovedBody =>
+      'تهانينا! تم التحقق من حساب السائق الخاص بك.';
+
+  @override
+  String get docDebugNotifRejected => 'تم رفض وثيقة';
+
+  @override
+  String get docDebugNotifRejectedBody =>
+      'تم رفض إحدى وثائقك. تحقق من السبب وأعد الإرسال.';
+
+  @override
+  String get docValidationStatusPending => 'الحساب قيد الانتظار';
+
+  @override
+  String get docValidationStatusSubmitted =>
+      'تم إرسال الوثائق — في انتظار التحقق';
+
+  @override
+  String get docValidationStatusApproved => 'تم التحقق من الحساب';
+
+  @override
+  String get docValidationStatusRejected => 'تم رفض الحساب';
+
+  @override
+  String get driverDelayTitle => 'الإعلان عن تأخير';
+
+  @override
+  String get driverDelayNewTime => 'وقت المغادرة الجديد';
+
+  @override
+  String get driverDelayReason => 'السبب (اختياري)';
+
+  @override
+  String get driverDelayConfirm => 'الإعلان عن التأخير';
+
+  @override
+  String get driverDelaySuccess => 'تم إخطار الركاب بالتأخير.';
+
+  @override
+  String get driverReportTitle => 'الإبلاغ عن مشكلة';
+
+  @override
+  String get driverReportBreakdown => 'عطل';
+
+  @override
+  String get driverReportDelay => 'تأخير';
+
+  @override
+  String get driverReportOther => 'أخرى';
+
+  @override
+  String get driverReportSend => 'إرسال البلاغ';
+
+  @override
+  String get driverReportSuccess => 'تم إرسال البلاغ إلى الركاب.';
+
+  @override
+  String get driverNavigateTitle => 'الاتجاه إلى المحطة';
+
+  @override
+  String get driverNavigateOpen => 'فتح في الخرائط';
+
+  @override
+  String get driverNavigateNoCoords => 'إحداثيات المحطة غير متوفرة.';
 }

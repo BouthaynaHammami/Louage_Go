@@ -243,9 +243,11 @@ Future<void> showProfileThemePicker(BuildContext context, WidgetRef ref) async {
 }
 
 class DeleteAccountButton extends ConsumerWidget {
-  const DeleteAccountButton({required this.user, super.key});
+  const DeleteAccountButton({required this.user, this.hide = false, super.key});
 
   final AppUser? user;
+  /// When true the widget renders nothing (e.g. for driver accounts).
+  final bool hide;
 
   Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
@@ -357,15 +359,18 @@ class DeleteAccountButton extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => TextButton.icon(
-    onPressed: () => _deleteAccount(context, ref),
-    icon: const Icon(Icons.delete_outline),
-    label: Text(AppLocalizations.of(context)!.deleteAccountAction),
-    style: TextButton.styleFrom(
-      foregroundColor: Theme.of(context).colorScheme.error,
-      minimumSize: const Size(48, 48),
-    ),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (hide) return const SizedBox.shrink();
+    return TextButton.icon(
+      onPressed: () => _deleteAccount(context, ref),
+      icon: const Icon(Icons.delete_outline),
+      label: Text(AppLocalizations.of(context)!.deleteAccountAction),
+      style: TextButton.styleFrom(
+        foregroundColor: Theme.of(context).colorScheme.error,
+        minimumSize: const Size(48, 48),
+      ),
+    );
+  }
 }
 
 class SignOutButton extends ConsumerWidget {

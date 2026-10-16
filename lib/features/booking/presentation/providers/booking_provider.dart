@@ -20,6 +20,12 @@ final userBookingsProvider = StreamProvider.autoDispose((ref) async* {
   yield* ref.watch(bookingRepositoryProvider).watchForUser(user.id);
 });
 
+final occupiedSeatNumbersProvider = StreamProvider.autoDispose
+    .family<Set<int>, String>(
+      (ref, tripId) =>
+          ref.watch(bookingRepositoryProvider).watchOccupiedSeats(tripId),
+    );
+
 final bookingControllerProvider =
     AsyncNotifierProvider<BookingController, void>(BookingController.new);
 

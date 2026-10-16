@@ -166,7 +166,8 @@ class HiveSearchRepository implements SearchRepository {
       ..add(_tripsBox.watch().listen((_) => reload()))
       ..add(_routesBox.watch().listen((_) => reload()))
       ..add(_louagesBox.watch().listen((_) => reload()))
-      ..add(_stationsBox.watch().listen((_) => reload()));
+      ..add(_stationsBox.watch().listen((_) => reload()))
+      ..add(_driversBox.watch().listen((_) => reload()));
 
     controller.onCancel = () async {
       await Future.wait(
@@ -199,6 +200,11 @@ class HiveSearchRepository implements SearchRepository {
       final louage = louages[trip.louageId];
       final departure = DateTime.tryParse(trip.departureTime);
       if (route == null || louage == null || departure == null) continue;
+      if (!const {'waiting', 'full'}.contains(trip.status) ||
+          louage.statut == LouageStatus.horsService ||
+          louage.statut == LouageStatus.enDeplacement) {
+        continue;
+      }
 
       final fromStation = stations[route.fromStationId];
       final toStation = stations[route.toStationId];
@@ -214,6 +220,10 @@ class HiveSearchRepository implements SearchRepository {
         continue;
       }
 
+      final driverProfileMap = _driversBox.get(louage.driverId);
+      final driverProfile = driverProfileMap == null
+          ? null
+          : DriverProfile.fromMap(driverProfileMap);
       results.add(
         TripSearchResult(
           trip: trip,
@@ -222,6 +232,8 @@ class HiveSearchRepository implements SearchRepository {
           fromStation: fromStation,
           toStation: toStation,
           departure: departure,
+          driverRatingAverage: driverProfile?.ratingAverage ?? 0,
+          driverReviewCount: driverProfile?.reviewCount ?? 0,
         ),
       );
     }

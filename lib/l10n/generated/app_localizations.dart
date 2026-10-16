@@ -442,6 +442,42 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1 {Récapitulatif (1 place)} other {Récapitulatif ({count} places)}}'**
   String bookingSummary(int count);
 
+  /// No description provided for @bookingChooseSeatsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir ma place'**
+  String get bookingChooseSeatsTitle;
+
+  /// No description provided for @bookingSeatLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Place {number} : {status}'**
+  String bookingSeatLabel(int number, String status);
+
+  /// No description provided for @bookingSeatUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette place vient d’être réservée. Choisissez-en une autre.'**
+  String get bookingSeatUnavailable;
+
+  /// No description provided for @bookingNotEnoughSeats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il n’y a pas assez de places libres.'**
+  String get bookingNotEnoughSeats;
+
+  /// No description provided for @bookingTripUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce trajet n’est plus disponible.'**
+  String get bookingTripUnavailable;
+
+  /// No description provided for @bookingLouageUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce louage n’est plus disponible.'**
+  String get bookingLouageUnavailable;
+
   /// No description provided for @bookingPaymentSimulation.
   ///
   /// In fr, this message translates to:
@@ -2257,7 +2293,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchNoLouage.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun louage pour ce trajet'**
+  /// **'Aucun louage disponible'**
   String get searchNoLouage;
 
   /// No description provided for @searchAfterRequestedTime.
@@ -2374,11 +2410,23 @@ abstract class AppLocalizations {
   /// **'Matricule'**
   String get driverMatricule;
 
+  /// No description provided for @driverMatriculeRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez le matricule du véhicule.'**
+  String get driverMatriculeRequired;
+
   /// No description provided for @driverTotalSeats.
   ///
   /// In fr, this message translates to:
   /// **'Nombre total de places'**
   String get driverTotalSeats;
+
+  /// No description provided for @driverTotalSeatsInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez un nombre de places total supérieur à zéro.'**
+  String get driverTotalSeatsInvalid;
 
   /// No description provided for @driverAvailableSeats.
   ///
@@ -2386,11 +2434,23 @@ abstract class AppLocalizations {
   /// **'Places disponibles'**
   String get driverAvailableSeats;
 
+  /// No description provided for @driverAvailableSeatsInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les places disponibles doivent être comprises entre 0 et le nombre total.'**
+  String get driverAvailableSeatsInvalid;
+
   /// No description provided for @driverCurrentStation.
   ///
   /// In fr, this message translates to:
   /// **'Station actuelle'**
   String get driverCurrentStation;
+
+  /// No description provided for @driverStationRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez ou saisissez la station actuelle.'**
+  String get driverStationRequired;
 
   /// No description provided for @driverRatingAverage.
   ///
@@ -2416,11 +2476,35 @@ abstract class AppLocalizations {
   /// **'Profil du louage enregistré.'**
   String get driverLouageSaved;
 
+  /// No description provided for @driverLouageSaveFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d’enregistrer le louage. Vérifiez les informations et réessayez.'**
+  String get driverLouageSaveFailed;
+
   /// No description provided for @driverChangeStatus.
   ///
   /// In fr, this message translates to:
   /// **'Modifier le statut'**
   String get driverChangeStatus;
+
+  /// No description provided for @driverStatusUpdated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le statut du louage a été mis à jour.'**
+  String get driverStatusUpdated;
+
+  /// No description provided for @driverStatusUpdateFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de modifier le statut. Réessayez.'**
+  String get driverStatusUpdateFailed;
+
+  /// No description provided for @driverStatsUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les statistiques sont momentanément indisponibles.'**
+  String get driverStatsUnavailable;
 
   /// No description provided for @driverStatusAvailable.
   ///
@@ -2578,6 +2662,12 @@ abstract class AppLocalizations {
   /// **'À payer à bord'**
   String get driverPaymentCash;
 
+  /// No description provided for @driverPaymentUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut de paiement inconnu'**
+  String get driverPaymentUnknown;
+
   /// No description provided for @driverBookingConfirmed.
   ///
   /// In fr, this message translates to:
@@ -2601,6 +2691,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Refusée'**
   String get driverBookingRejected;
+
+  /// No description provided for @driverBookingUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut de réservation inconnu'**
+  String get driverBookingUnknown;
 
   /// No description provided for @profileTitle.
   ///
@@ -3237,6 +3333,372 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Réinitialiser'**
   String get searchResetFilters;
+
+  /// No description provided for @docStepAccountCreated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte créé'**
+  String get docStepAccountCreated;
+
+  /// No description provided for @docStepDocumentsSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Documents envoyés'**
+  String get docStepDocumentsSent;
+
+  /// No description provided for @docStepValidated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validé'**
+  String get docStepValidated;
+
+  /// No description provided for @docStepCurrent.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get docStepCurrent;
+
+  /// No description provided for @docSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Documents requis'**
+  String get docSectionTitle;
+
+  /// No description provided for @docStatusToSend.
+  ///
+  /// In fr, this message translates to:
+  /// **'À envoyer'**
+  String get docStatusToSend;
+
+  /// No description provided for @docStatusSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyé'**
+  String get docStatusSent;
+
+  /// No description provided for @docStatusRejected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refusé'**
+  String get docStatusRejected;
+
+  /// No description provided for @docStatusValidated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validé'**
+  String get docStatusValidated;
+
+  /// No description provided for @docTypeNationalId.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte d\'identité nationale'**
+  String get docTypeNationalId;
+
+  /// No description provided for @docTypeDriverLicense.
+  ///
+  /// In fr, this message translates to:
+  /// **'Permis de conduire'**
+  String get docTypeDriverLicense;
+
+  /// No description provided for @docTypeVehicleCard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Carte grise du louage'**
+  String get docTypeVehicleCard;
+
+  /// No description provided for @docTypeInsurance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Assurance'**
+  String get docTypeInsurance;
+
+  /// No description provided for @docTypeTransportLicense.
+  ///
+  /// In fr, this message translates to:
+  /// **'Licence de transport'**
+  String get docTypeTransportLicense;
+
+  /// No description provided for @docTypeDriverPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo du chauffeur'**
+  String get docTypeDriverPhoto;
+
+  /// No description provided for @docTypeVehiclePhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo du louage'**
+  String get docTypeVehiclePhoto;
+
+  /// No description provided for @docUploadTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer un document'**
+  String get docUploadTitle;
+
+  /// No description provided for @docUploadFromCamera.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre une photo'**
+  String get docUploadFromCamera;
+
+  /// No description provided for @docUploadFromGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir dans la galerie'**
+  String get docUploadFromGallery;
+
+  /// No description provided for @docUploadPreviewTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aperçu avant envoi'**
+  String get docUploadPreviewTitle;
+
+  /// No description provided for @docUploadConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer l\'envoi'**
+  String get docUploadConfirm;
+
+  /// No description provided for @docUploadCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get docUploadCancel;
+
+  /// No description provided for @docUploadSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Document envoyé.'**
+  String get docUploadSuccess;
+
+  /// No description provided for @docUploadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'envoyer le document.'**
+  String get docUploadError;
+
+  /// No description provided for @docResend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renvoyer'**
+  String get docResend;
+
+  /// No description provided for @docRejectionReason.
+  ///
+  /// In fr, this message translates to:
+  /// **'Motif du refus'**
+  String get docRejectionReason;
+
+  /// No description provided for @docSubmitAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer les documents'**
+  String get docSubmitAll;
+
+  /// No description provided for @docSubmitConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer tous les documents ?'**
+  String get docSubmitConfirmTitle;
+
+  /// No description provided for @docSubmitConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos documents seront transmis pour validation. Cette action ne peut pas être annulée.'**
+  String get docSubmitConfirmBody;
+
+  /// No description provided for @docSubmitSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Documents envoyés avec succès.'**
+  String get docSubmitSuccess;
+
+  /// No description provided for @docLockedPreviewTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Espace chauffeur'**
+  String get docLockedPreviewTitle;
+
+  /// No description provided for @docLockedPreviewBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ces fonctionnalités seront disponibles après validation de votre compte.'**
+  String get docLockedPreviewBody;
+
+  /// No description provided for @docHelpTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Besoin d\'aide ?'**
+  String get docHelpTitle;
+
+  /// No description provided for @docHelpFaq.
+  ///
+  /// In fr, this message translates to:
+  /// **'Questions fréquentes'**
+  String get docHelpFaq;
+
+  /// No description provided for @docHelpContact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contacter le support'**
+  String get docHelpContact;
+
+  /// No description provided for @docDebugTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Simulation admin (debug)'**
+  String get docDebugTitle;
+
+  /// No description provided for @docDebugApprove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Approuver tous les documents'**
+  String get docDebugApprove;
+
+  /// No description provided for @docDebugReject.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refuser un document'**
+  String get docDebugReject;
+
+  /// No description provided for @docDebugRejectReason.
+  ///
+  /// In fr, this message translates to:
+  /// **'Motif (ex : photo floue)'**
+  String get docDebugRejectReason;
+
+  /// No description provided for @docDebugNotifApproved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte validé'**
+  String get docDebugNotifApproved;
+
+  /// No description provided for @docDebugNotifApprovedBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Félicitations ! Votre compte chauffeur a été validé.'**
+  String get docDebugNotifApprovedBody;
+
+  /// No description provided for @docDebugNotifRejected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Document refusé'**
+  String get docDebugNotifRejected;
+
+  /// No description provided for @docDebugNotifRejectedBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un de vos documents a été refusé. Vérifiez le motif et renvoyez-le.'**
+  String get docDebugNotifRejectedBody;
+
+  /// No description provided for @docValidationStatusPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte en attente'**
+  String get docValidationStatusPending;
+
+  /// No description provided for @docValidationStatusSubmitted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Documents envoyés — en attente de validation'**
+  String get docValidationStatusSubmitted;
+
+  /// No description provided for @docValidationStatusApproved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte validé'**
+  String get docValidationStatusApproved;
+
+  /// No description provided for @docValidationStatusRejected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte refusé'**
+  String get docValidationStatusRejected;
+
+  /// No description provided for @driverDelayTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annoncer un retard'**
+  String get driverDelayTitle;
+
+  /// No description provided for @driverDelayNewTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle heure de départ'**
+  String get driverDelayNewTime;
+
+  /// No description provided for @driverDelayReason.
+  ///
+  /// In fr, this message translates to:
+  /// **'Motif (optionnel)'**
+  String get driverDelayReason;
+
+  /// No description provided for @driverDelayConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annoncer le retard'**
+  String get driverDelayConfirm;
+
+  /// No description provided for @driverDelaySuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les passagers ont été notifiés du retard.'**
+  String get driverDelaySuccess;
+
+  /// No description provided for @driverReportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler un problème'**
+  String get driverReportTitle;
+
+  /// No description provided for @driverReportBreakdown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Panne'**
+  String get driverReportBreakdown;
+
+  /// No description provided for @driverReportDelay.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retard'**
+  String get driverReportDelay;
+
+  /// No description provided for @driverReportOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get driverReportOther;
+
+  /// No description provided for @driverReportSend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer le signalement'**
+  String get driverReportSend;
+
+  /// No description provided for @driverReportSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signalement envoyé aux passagers.'**
+  String get driverReportSuccess;
+
+  /// No description provided for @driverNavigateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Itinéraire vers la station'**
+  String get driverNavigateTitle;
+
+  /// No description provided for @driverNavigateOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir dans Maps'**
+  String get driverNavigateOpen;
+
+  /// No description provided for @driverNavigateNoCoords.
+  ///
+  /// In fr, this message translates to:
+  /// **'Coordonnées de la station indisponibles.'**
+  String get driverNavigateNoCoords;
 }
 
 class _AppLocalizationsDelegate

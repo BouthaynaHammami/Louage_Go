@@ -84,6 +84,8 @@ class BookingHistoryScreen extends ConsumerWidget {
               Text('${l10n.bookingReference}: ${booking.id}'),
               Text('${l10n.bookingDriver}: ${booking.driverName.isEmpty ? '—' : booking.driverName}'),
               Text('${l10n.bookingMatricule}: ${booking.matricule.isEmpty ? '—' : booking.matricule}'),
+              if (booking.fromCity.isNotEmpty || booking.toCity.isNotEmpty)
+                Text('De ${booking.fromCity.isEmpty ? '?' : booking.fromCity} → ${booking.toCity.isEmpty ? '?' : booking.toCity}'),
               Text('${l10n.bookingSeats}: ${booking.selectedSeats.join(', ')}'),
               Text('${l10n.bookingDeparture}: ${booking.departureTime}'),
               Text('${l10n.bookingTotal}: ${booking.totalPrice.toStringAsFixed(2)} DT'),

@@ -22,174 +22,271 @@ class DriverTripDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    return ref.watch(currentUserProvider).when(
-      loading: () => Scaffold(
-        appBar: AppBar(title: Text(l10n.driverTripDetail)),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
-      error: (error, stackTrace) => Scaffold(
-        appBar: AppBar(title: Text(l10n.driverTripDetail)),
-        body: EmptyState(icon: Icons.error_outline, title: l10n.driverOperationFailed),
-      ),
-      data: (user) {
-        if (user == null || user.role != 'driver') {
-          return Scaffold(
-            appBar: AppBar(title: Text(l10n.driverTripDetail)),
-            body: EmptyState(icon: Icons.person_off_outlined, title: l10n.sessionExpired),
-          );
-        }
-        return ref.watch(driverTripsProvider(user.id)).when(
+    return ref
+        .watch(currentUserProvider)
+        .when(
           loading: () => Scaffold(
             appBar: AppBar(title: Text(l10n.driverTripDetail)),
             body: const Center(child: CircularProgressIndicator()),
           ),
           error: (error, stackTrace) => Scaffold(
             appBar: AppBar(title: Text(l10n.driverTripDetail)),
-            body: EmptyState(icon: Icons.error_outline, title: l10n.driverOperationFailed),
+            body: EmptyState(
+              icon: Icons.error_outline,
+              title: l10n.driverOperationFailed,
+            ),
           ),
-          data: (trips) {
-            final matches = trips.where((trip) => trip.id == tripId);
-            if (matches.isEmpty) {
+          data: (user) {
+            if (user == null || user.role != 'driver') {
               return Scaffold(
                 appBar: AppBar(title: Text(l10n.driverTripDetail)),
                 body: EmptyState(
-                  icon: Icons.route_outlined,
-                  title: l10n.louageNotFound,
+                  icon: Icons.person_off_outlined,
+                  title: l10n.sessionExpired,
                 ),
               );
             }
-            final trip = matches.first;
-            final louageAsync = ref.watch(driverLouageProvider(user.id));
-            return Scaffold(
-              appBar: AppBar(title: Text(l10n.driverTripDetail)),
-              body: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
-                  child: ListView(
-                    padding: const EdgeInsetsDirectional.all(16),
-                    children: [
-                      _TripSummary(trip: trip),
-                      const SizedBox(height: 12),
-                      louageAsync.when(
-                        loading: () => const LinearProgressIndicator(),
-                        error: (error, stackTrace) => Text(
-                          l10n.driverOperationFailed,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
+            return ref
+                .watch(driverTripsProvider(user.id))
+                .when(
+                  loading: () => Scaffold(
+                    appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                    body: const Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (error, stackTrace) => Scaffold(
+                    appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                    body: EmptyState(
+                      icon: Icons.error_outline,
+                      title: l10n.driverOperationFailed,
+                    ),
+                  ),
+                  data: (trips) {
+                    final matches = trips.where((trip) => trip.id == tripId);
+                    if (matches.isEmpty) {
+                      return Scaffold(
+                        appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                        body: EmptyState(
+                          icon: Icons.route_outlined,
+                          title: l10n.louageNotFound,
                         ),
-                        data: (louage) => louage == null
-                            ? Text(l10n.driverNoLouage)
-                            : _SeatsControl(louage: louage),
-                      ),
-                      const SizedBox(height: 12),
-                      AppButton(
-                        label: l10n.driverScanTitle,
-                        icon: Icons.qr_code_scanner,
-                        onPressed: () => context.pushNamed(
-                          'driverScan',
-                          queryParameters: {'tripId': trip.id},
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        l10n.driverBookingsTitle,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      ref.watch(driverTripBookingsProvider(trip.id)).when(
-                        loading: () => const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(24),
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                        error: (error, stackTrace) => EmptyState(
-                          icon: Icons.error_outline,
-                          title: l10n.driverOperationFailed,
-                        ),
-                        data: (bookings) {
-                          if (bookings.isEmpty) {
-                            return EmptyState(
-                              icon: Icons.event_seat_outlined,
-                              title: l10n.driverNoBookings,
-                              description: l10n.driverBookingsAppearHere,
-                            );
-                          }
-                          return Column(
+                      );
+                    }
+                    final trip = matches.first;
+                    final louageAsync = ref.watch(
+                      driverLouageProvider(user.id),
+                    );
+                    return Scaffold(
+                      appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                      body: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 760),
+                          child: ListView(
+                            padding: const EdgeInsetsDirectional.all(16),
                             children: [
-                              for (final item in bookings)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: AppCard(
-                                    child: ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      leading: const CircleAvatar(
-                                        child: Icon(Icons.person_outline),
-                                      ),
-                                      title: Text(
-                                        item.passenger?.name.isNotEmpty == true
-                                            ? item.passenger!.name
-                                            : l10n.driverPassengerFallback,
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            l10n.driverBookingPayment(
-                                              _paymentLabel(
-                                                l10n,
-                                                item.booking.paymentStatus,
-                                              ),
-                                            ),
-                                          ),
-                                          Text(
-                                            l10n.driverBookingStatus(
-                                              _bookingLabel(
-                                                l10n,
-                                                item.booking.status,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      trailing: Text(
-                                        l10n.driverBookingSeatCount(
-                                          item.booking.seats.toString(),
-                                        ),
-                                      ),
-                                    ),
+                              _TripSummary(trip: trip),
+                              const SizedBox(height: 12),
+                              louageAsync.when(
+                                loading: () => const LinearProgressIndicator(),
+                                error: (error, stackTrace) => Text(
+                                  l10n.driverOperationFailed,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.error,
                                   ),
                                 ),
+                                data: (louage) => louage == null
+                                    ? Text(l10n.driverNoLouage)
+                                    : _SeatsControl(louage: louage),
+                              ),
+                              const SizedBox(height: 12),
+                              AppButton(
+                                label: l10n.driverScanTitle,
+                                icon: Icons.qr_code_scanner,
+                                onPressed: () => context.pushNamed(
+                                  'driverScan',
+                                  queryParameters: {'tripId': trip.id},
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              Text(
+                                l10n.driverBookingsTitle,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 8),
+                              ref
+                                  .watch(driverTripBookingsProvider(trip.id))
+                                  .when(
+                                    loading: () => const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(24),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                    error: (error, stackTrace) => EmptyState(
+                                      icon: Icons.error_outline,
+                                      title: l10n.driverOperationFailed,
+                                    ),
+                                    data: (bookings) {
+                                      if (bookings.isEmpty) {
+                                        return EmptyState(
+                                          icon: Icons.event_seat_outlined,
+                                          title: l10n.driverNoBookings,
+                                          description:
+                                              l10n.driverBookingsAppearHere,
+                                        );
+                                      }
+                                      return Column(
+                                        children: [
+                                          for (final item in bookings)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 8,
+                                              ),
+                                              child: AppCard(
+                                                child: ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  leading: const CircleAvatar(
+                                                    child: Icon(
+                                                      Icons.person_outline,
+                                                    ),
+                                                  ),
+                                                  title: Text(
+                                                    item
+                                                                .passenger
+                                                                ?.name
+                                                                .isNotEmpty ==
+                                                            true
+                                                        ? item.passenger!.name
+                                                        : l10n.driverPassengerFallback,
+                                                  ),
+                                                  subtitle: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const SizedBox(height: 6),
+                                                      Wrap(
+                                                        spacing: 8,
+                                                        runSpacing: 4,
+                                                        children: [
+                                                          _BookingStateBadge(
+                                                            label: l10n
+                                                                .driverBookingPayment(
+                                                                  _paymentLabel(
+                                                                    l10n,
+                                                                    item
+                                                                        .booking
+                                                                        .paymentStatus,
+                                                                  ),
+                                                                ),
+                                                            status: item
+                                                                .booking
+                                                                .paymentStatus,
+                                                            isPayment: true,
+                                                          ),
+                                                          _BookingStateBadge(
+                                                            label: l10n
+                                                                .driverBookingStatus(
+                                                                  _bookingLabel(
+                                                                    l10n,
+                                                                    item
+                                                                        .booking
+                                                                        .status,
+                                                                  ),
+                                                                ),
+                                                            status: item
+                                                                .booking
+                                                                .status,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  trailing: Text(
+                                                    l10n.driverBookingSeatCount(
+                                                      item.booking.seats
+                                                          .toString(),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    },
+                                  ),
                             ],
-                          );
-                        },
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            );
+                    );
+                  },
+                );
           },
         );
-      },
-    );
   }
 
-  String _paymentLabel(AppLocalizations l10n, String status) => switch (status) {
-    'paid' => l10n.driverPaymentPaid,
-    'cashOnBoard' => l10n.driverPaymentCash,
-    _ => l10n.driverPaymentPending,
-  };
+  String _paymentLabel(AppLocalizations l10n, String status) =>
+      switch (status.toLowerCase()) {
+        'paid' || 'completed' => l10n.driverPaymentPaid,
+        'cashonboard' || 'cash_on_board' => l10n.driverPaymentCash,
+        'pending' || 'unpaid' => l10n.driverPaymentPending,
+        _ => l10n.driverPaymentUnknown,
+      };
 
-  String _bookingLabel(AppLocalizations l10n, String status) => switch (status) {
-    'confirmed' => l10n.driverBookingConfirmed,
-    'validated' => l10n.driverBookingValidated,
-    'cancelled' => l10n.driverBookingCancelled,
-    'rejected' => l10n.driverBookingRejected,
-    _ => status,
-  };
+  String _bookingLabel(AppLocalizations l10n, String status) =>
+      switch (status.toLowerCase()) {
+        'confirmed' || 'pending' => l10n.driverBookingConfirmed,
+        'validated' || 'used' || 'checkedin' => l10n.driverBookingValidated,
+        'cancelled' || 'canceled' || 'annulled' => l10n.driverBookingCancelled,
+        'rejected' => l10n.driverBookingRejected,
+        _ => l10n.driverBookingUnknown,
+      };
+}
+
+class _BookingStateBadge extends StatelessWidget {
+  const _BookingStateBadge({
+    required this.label,
+    required this.status,
+    this.isPayment = false,
+  });
+
+  final String label;
+  final String status;
+  final bool isPayment;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final normalized = status.toLowerCase();
+    final color = switch ((isPayment, normalized)) {
+      (false, 'cancelled' || 'canceled' || 'annulled' || 'rejected') =>
+        scheme.error,
+      (false, 'validated' || 'used' || 'checkedin') => scheme.tertiary,
+      (false, 'confirmed' || 'pending') => scheme.primary,
+      (true, 'paid' || 'completed') => scheme.tertiary,
+      (true, 'cashonboard' || 'cash_on_board' || 'pending' || 'unpaid') =>
+        scheme.secondary,
+      _ => scheme.outline,
+    };
+    final icon = switch ((isPayment, normalized)) {
+      (true, 'paid' || 'completed') => Icons.check_circle_outline,
+      (true, 'cashonboard' || 'cash_on_board') => Icons.payments_outlined,
+      (true, _) => Icons.schedule_outlined,
+      (false, 'cancelled' || 'canceled' || 'annulled' || 'rejected') =>
+        Icons.cancel_outlined,
+      (false, 'validated' || 'used' || 'checkedin') => Icons.verified_outlined,
+      _ => Icons.confirmation_number_outlined,
+    };
+    return Chip(
+      avatar: Icon(icon, size: 16, color: color),
+      label: Text(label),
+      side: BorderSide(color: color.withValues(alpha: 0.45)),
+      backgroundColor: color.withValues(alpha: 0.08),
+      visualDensity: VisualDensity.compact,
+      labelStyle: TextStyle(color: scheme.onSurface),
+    );
+  }
 }
 
 class _TripSummary extends StatelessWidget {
@@ -221,9 +318,8 @@ class _TripSummary extends StatelessWidget {
         : MaterialLocalizations.of(context).formatFullDate(departure);
     final timeText = departure == null
         ? ''
-        : MaterialLocalizations.of(context).formatTimeOfDay(
-            TimeOfDay.fromDateTime(departure),
-          );
+        : MaterialLocalizations.of(context)
+              .formatTimeOfDay(TimeOfDay.fromDateTime(departure));
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -291,15 +387,11 @@ class _SeatsControl extends ConsumerWidget {
     try {
       await ref
           .read(louageRepositoryProvider)
-          .updateAvailableSeats(
-            louage.id,
-            louage.placesDisponibles + delta,
-          );
+          .updateAvailableSeats(louage.id, louage.placesDisponibles + delta);
     } catch (error) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.driverOperationFailed)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.driverOperationFailed)));
     }
   }
 }

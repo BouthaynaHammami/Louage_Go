@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../theme/app_colors.dart';
 
 class SeatDots extends StatelessWidget {
   final int freeSeats;
@@ -41,7 +42,7 @@ class SeatDots extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: index < available
                       ? colorScheme.tertiary
-                      : Colors.transparent,
+                      : AppColors.transparent,
                   border: Border.all(
                     color: index < available
                         ? colorScheme.tertiary

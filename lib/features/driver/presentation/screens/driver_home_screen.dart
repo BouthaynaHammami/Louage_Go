@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,7 @@ import '../../../../features/notifications/presentation/providers/notifications_
 import '../../../../features/driver/domain/entities/driver_dashboard_data.dart';
 import '../../../../features/driver/domain/entities/driver_passenger.dart';
 import '../../../../features/driver/presentation/providers/driver_home_provider.dart';
+import '../../../../features/driver/presentation/providers/louage_provider.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/app_user.dart';
 import '../../../../models/booking.dart';
@@ -20,18 +23,20 @@ import '../../../../models/louage.dart';
 import '../../../../models/station.dart';
 import '../../../../models/trip.dart';
 
+// ═════════════════════════════════════════════════════════════════════════════
+// DriverHomeScreen — root widget
+// ═════════════════════════════════════════════════════════════════════════════
+
 class DriverHomeScreen extends ConsumerWidget {
   const DriverHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    return ref
-        .watch(currentUserProvider)
-        .when(
+    return ref.watch(currentUserProvider).when(
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
-          error: (error, stackTrace) => Scaffold(
+          error: (error, _) => Scaffold(
             body: EmptyState(
               icon: Icons.error_outline,
               title: l10n.driverProfileUnavailable,
@@ -44,118 +49,99 @@ class DriverHomeScreen extends ConsumerWidget {
                     title: l10n.sessionExpired,
                   ),
                 )
-              : ref
-                    .watch(driverDashboardProvider(user.id))
-                    .when(
-                      loading: () => const Scaffold(
-                        body: Center(child: CircularProgressIndicator()),
-                      ),
-                      error: (error, stackTrace) => Scaffold(
-                        body: EmptyState(
-                          icon: Icons.error_outline,
-                          title: l10n.driverProfileUnavailable,
-                        ),
-                      ),
-                      data: (dashboard) =>
-                          _buildDashboard(context, user, dashboard),
+              : ref.watch(driverDashboardProvider(user.id)).when(
+                    loading: () => const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
                     ),
+                    error: (error, _) => Scaffold(
+                      body: EmptyState(
+                        icon: Icons.error_outline,
+                        title: l10n.driverProfileUnavailable,
+                      ),
+                    ),
+                    data: (dashboard) =>
+                        _DriverDashboard(user: user, dashboard: dashboard),
+                  ),
         );
   }
+}
 
-  Widget _buildDashboard(
-    BuildContext context,
-    AppUser user,
-    DriverDashboardData dashboard,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
+// ═════════════════════════════════════════════════════════════════════════════
+// _DriverDashboard — decides pending vs validated view
+// ═════════════════════════════════════════════════════════════════════════════
+
+class _DriverDashboard extends ConsumerWidget {
+  const _DriverDashboard({required this.user, required this.dashboard});
+
+  final AppUser user;
+  final DriverDashboardData dashboard;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final profile = dashboard.profile;
-    final validated = const {
-      'approved',
-      'validated',
-    }.contains(profile.validationStatus.toLowerCase());
-    final rejected = const {
-      'rejected',
-      'declined',
-    }.contains(profile.validationStatus.toLowerCase());
+    final status = profile.validationStatus.toLowerCase();
+    final validated =
+        const {'approved', 'validated'}.contains(status);
+    final rejected =
+        const {'rejected', 'declined'}.contains(status);
 
     if (!validated) {
-      return _buildPendingDashboard(context, user, rejected);
+      return _PendingDashboard(
+        user: user,
+        rejected: rejected,
+        documentsSubmitted: status == 'documentssubmitted',
+      );
     }
+    return _ValidatedDashboard(user: user, dashboard: dashboard);
+  }
+}
 
-    final louage = dashboard.louage;
-    final station = dashboard.station;
-    final trips = dashboard.trips;
-    final trip = trips.isEmpty ? null : _selectTrip(trips);
-    final colorScheme = Theme.of(context).colorScheme;
+// ═════════════════════════════════════════════════════════════════════════════
+// Greeting header (shared)
+// ═════════════════════════════════════════════════════════════════════════════
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      body: SafeArea(
-        bottom: false,
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: _buildGreetingHeader(context, user, l10n),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 28),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 760),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const _ValidationBanner(
-                          status: _ValidationStatus.validated,
-                        ),
-                        const SizedBox(height: 24),
-                        SectionHeader(title: l10n.driverMyLouage),
-                        const SizedBox(height: 12),
-                        _LouageCard(louage: louage, station: station),
-                        const SizedBox(height: 28),
-                        SectionHeader(
-                          title: l10n.driverSeatFill,
-                          trailing: trip == null
-                              ? null
-                              : StatusChip(status: trip.status),
-                        ),
-                        const SizedBox(height: 12),
-                        _SeatFillCard(trip: trip, louage: louage),
-                        const SizedBox(height: 16),
-                        _DriverQueueActions(louage: louage),
-                        const SizedBox(height: 28),
-                        SectionHeader(title: l10n.driverPassengersReserved),
-                        const SizedBox(height: 12),
-                        if (trip == null)
-                          EmptyState(
-                            icon: Icons.event_seat_outlined,
-                            title: l10n.driverNoBookings,
-                            description: l10n.driverBookingsAppearHere,
-                          )
-                        else
-                          _PassengerReservations(
-                            trip: trip,
-                            bookings: dashboard.bookings,
-                            passengers: dashboard.passengers,
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+class _GreetingHeader extends ConsumerWidget {
+  const _GreetingHeader({required this.user});
+  final AppUser user;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final rawFirst = user.name.trim().split(RegExp(r'\s+')).firstOrNull ?? '';
+    final firstName = _capitalize(rawFirst);
+    final unreadCount =
+        ref.watch(unreadNotificationCountProvider(user.id)).asData?.value ?? 0;
+    return HomeGreetingHeader(
+      greeting: l10n.driverHomeGreeting(
+        firstName.isEmpty ? l10n.profileDriverFallback : firstName,
       ),
+      subtitle: l10n.driverHomeSubtitle,
+      profileTooltip: l10n.profileTitle,
+      notificationsTooltip: l10n.adminNavNotifications,
+      unreadCount: unreadCount,
+      onNotifications: () => context.pushNamed('notifications'),
+      onProfile: () => context.goNamed('driverProfile'),
     );
   }
+}
 
-  Widget _buildPendingDashboard(
-    BuildContext context,
-    AppUser user,
-    bool rejected,
-  ) {
+// ═════════════════════════════════════════════════════════════════════════════
+// PENDING DASHBOARD
+// ═════════════════════════════════════════════════════════════════════════════
+
+class _PendingDashboard extends StatelessWidget {
+  const _PendingDashboard({
+    required this.user,
+    required this.rejected,
+    required this.documentsSubmitted,
+  });
+
+  final AppUser user;
+  final bool rejected;
+  final bool documentsSubmitted;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -163,9 +149,7 @@ class DriverHomeScreen extends ConsumerWidget {
         bottom: false,
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(
-              child: _buildGreetingHeader(context, user, l10n),
-            ),
+            SliverToBoxAdapter(child: _GreetingHeader(user: user)),
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
@@ -180,7 +164,9 @@ class DriverHomeScreen extends ConsumerWidget {
                         _ValidationBanner(
                           status: rejected
                               ? _ValidationStatus.rejected
-                              : _ValidationStatus.pending,
+                              : documentsSubmitted
+                                  ? _ValidationStatus.submitted
+                                  : _ValidationStatus.pending,
                         ),
                         const SizedBox(height: 20),
                         Text(
@@ -207,49 +193,142 @@ class DriverHomeScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildGreetingHeader(
-    BuildContext context,
-    AppUser user,
-    AppLocalizations l10n,
-  ) {
-    final firstName = user.name.trim().split(RegExp(r'\s+')).firstOrNull;
-    return Consumer(
-      builder: (context, ref, child) {
-        final unreadCount =
-            ref.watch(unreadNotificationCountProvider(user.id)).asData?.value ??
-            0;
-        return HomeGreetingHeader(
-          greeting: l10n.driverHomeGreeting(
-            firstName == null || firstName.isEmpty
-                ? l10n.profileDriverFallback
-                : firstName,
-          ),
-          subtitle: l10n.driverHomeSubtitle,
-          profileTooltip: l10n.profileTitle,
-          notificationsTooltip: l10n.adminNavNotifications,
-          unreadCount: unreadCount,
-          onNotifications: () => context.pushNamed('notifications'),
-          onProfile: () => context.goNamed('driverProfile'),
-        );
-      },
+// ═════════════════════════════════════════════════════════════════════════════
+// VALIDATED DASHBOARD  ← Phase 3
+// ═════════════════════════════════════════════════════════════════════════════
+
+class _ValidatedDashboard extends ConsumerWidget {
+  const _ValidatedDashboard({required this.user, required this.dashboard});
+
+  final AppUser user;
+  final DriverDashboardData dashboard;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final louage = dashboard.louage;
+    final station = dashboard.station;
+    final trips = dashboard.trips;
+    final nextTrip =
+        trips.isEmpty ? null : _selectNextTrip(trips);
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(child: _GreetingHeader(user: user)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 32),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // ── 1. Louage card ──────────────────────────────
+                        _LouageInfoCard(louage: louage, station: station),
+                        const SizedBox(height: 16),
+
+                        // ── 2. Status switcher ──────────────────────────
+                        if (louage != null)
+                          _StatusSwitcher(louage: louage),
+                        const SizedBox(height: 20),
+
+                        // ── 3. Next departure card ──────────────────────
+                        SectionHeader(
+                          title: l10n.driverCurrentTrip,
+                          trailing: nextTrip == null
+                              ? null
+                              : StatusChip(status: nextTrip.status),
+                        ),
+                        const SizedBox(height: 8),
+                        _NextDepartureCard(
+                          trip: nextTrip,
+                          louage: louage,
+                          bookings: dashboard.bookings,
+                        ),
+                        const SizedBox(height: 20),
+
+                        // ── 4. Quick actions ────────────────────────────
+                        SectionHeader(title: l10n.driverMyLouage),
+                        const SizedBox(height: 8),
+                        _QuickActions(
+                          tripId: nextTrip?.id,
+                          louageId: louage?.id,
+                        ),
+                        const SizedBox(height: 20),
+
+                        // ── 5. Statistics ───────────────────────────────
+                        _StatsSection(
+                          driverId: user.id,
+                          bookings: dashboard.bookings,
+                        ),
+                        const SizedBox(height: 20),
+
+                        // ── 6. Seat map ─────────────────────────────────
+                        if (nextTrip != null) ...[
+                          SectionHeader(title: l10n.driverPassengersReserved),
+                          const SizedBox(height: 8),
+                          _SeatMapCard(
+                            trip: nextTrip,
+                            bookings: dashboard.bookings,
+                            passengers: dashboard.passengers,
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+
+                        // ── 7. Queue toggle ─────────────────────────────
+                        _QueueToggle(louage: louage),
+                        const SizedBox(height: 12),
+
+                        // ── Shortcuts ───────────────────────────────────
+                        _Shortcuts(),
+                        const SizedBox(height: 12),
+
+                        // ── Phase 5: Actions bonus ───────────────────────
+                        OutlinedButton.icon(
+                          icon: const Icon(Icons.more_horiz_rounded),
+                          label: const Text('Annonce / Signalement / Itinéraire'),
+                          onPressed: () => context.pushNamed(
+                            'driverActions',
+                            queryParameters: nextTrip != null
+                                ? {'tripId': nextTrip.id}
+                                : {},
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Trip? _selectTrip(List<Trip> trips) {
+  Trip? _selectNextTrip(List<Trip> trips) {
     final now = DateTime.now();
-    for (final trip in trips) {
-      final departure = DateTime.tryParse(trip.departureTime);
-      if (departure != null && departure.isAfter(now)) return trip;
+    for (final t in trips) {
+      final dep = DateTime.tryParse(t.departureTime);
+      if (dep != null && dep.isAfter(now)) return t;
     }
-    return trips.isEmpty ? null : trips.last;
+    return trips.last;
   }
 }
 
-enum _ValidationStatus { pending, validated, rejected }
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. Louage info card
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _LouageCard extends StatelessWidget {
-  const _LouageCard({required this.louage, required this.station});
+class _LouageInfoCard extends StatelessWidget {
+  const _LouageInfoCard({required this.louage, required this.station});
 
   final Louage? louage;
   final Station? station;
@@ -257,21 +336,23 @@ class _LouageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context);
+
     return AppCard(
       child: Row(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
-              color: colorScheme.secondary.withValues(alpha: 0.18),
+              color: colors.primary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
-              Icons.airport_shuttle_outlined,
-              color: colorScheme.secondary,
+              Icons.airport_shuttle_rounded,
+              color: colors.primary,
+              size: 28,
             ),
           ),
           const SizedBox(width: 14),
@@ -280,18 +361,411 @@ class _LouageCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  louage?.matricule ?? l10n.driverNoLouage,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  louage?.matricule.isEmpty != false
+                      ? l10n.driverNoLouage
+                      : louage!.matricule,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
+                if (louage?.modele.isNotEmpty == true) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    louage!.modele,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                  ),
+                ],
                 const SizedBox(height: 4),
-                Text(
-                  station?.localizedName(locale) ??
-                      l10n.driverStationUnavailable,
-                  style: Theme.of(context).textTheme.bodyMedium
-                      ?.copyWith(color: colorScheme.onSurfaceVariant),
+                Row(
+                  children: [
+                    Icon(Icons.location_on_outlined,
+                        size: 14, color: colors.onSurfaceVariant),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        station?.localizedName(locale) ??
+                            l10n.driverStationUnavailable,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: colors.onSurfaceVariant,
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
+          ),
+          if (louage != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '${louage!.placesTotal}',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: colors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                Text(
+                  l10n.driverSeatWord,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 2. Status switcher
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _StatusSwitcher extends ConsumerWidget {
+  const _StatusSwitcher({required this.louage});
+
+  final Louage louage;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = Theme.of(context).colorScheme;
+    final current = louage.statut;
+
+    final statuses = [
+      (LouageStatus.disponible, l10n.driverStatusAvailable,
+          Icons.check_circle_outline),
+      (LouageStatus.enAttente, l10n.driverStatusWaiting,
+          Icons.hourglass_top_rounded),
+      (LouageStatus.enDeplacement, l10n.driverStatusInTransit,
+          Icons.directions_car_rounded),
+      (LouageStatus.horsService, l10n.driverStatusOutOfService,
+          Icons.cancel_outlined),
+    ];
+
+    Color chipColor(LouageStatus s) => switch (s) {
+          LouageStatus.disponible => colors.tertiary,
+          LouageStatus.enAttente => colors.secondary,
+          LouageStatus.enDeplacement => colors.primary,
+          LouageStatus.horsService => colors.error,
+        };
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.driverChangeStatus,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final (status, label, icon) in statuses)
+                FilterChip(
+                  selected: current == status,
+                  label: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, size: 16),
+                      const SizedBox(width: 4),
+                      Text(label),
+                    ],
+                  ),
+                  selectedColor: chipColor(status).withValues(alpha: 0.18),
+                  checkmarkColor: chipColor(status),
+                  side: BorderSide(
+                    color: current == status
+                        ? chipColor(status)
+                        : colors.outlineVariant,
+                  ),
+                  onSelected: (_) => _confirmChange(context, ref, status),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmChange(
+    BuildContext context,
+    WidgetRef ref,
+    LouageStatus newStatus,
+  ) async {
+    if (newStatus == louage.statut) return;
+    final l10n = AppLocalizations.of(context)!;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.driverConfirmStatus),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.authCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.driverChangeStatus),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    try {
+      await ref
+          .read(louageRepositoryProvider)
+          .updateStatus(louage.id, newStatus);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.driverStatusUpdated)),
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.driverStatusUpdateFailed)),
+      );
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. Next departure card with countdown
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _NextDepartureCard extends StatefulWidget {
+  const _NextDepartureCard({
+    required this.trip,
+    required this.louage,
+    required this.bookings,
+  });
+
+  final Trip? trip;
+  final Louage? louage;
+  final List<Booking> bookings;
+
+  @override
+  State<_NextDepartureCard> createState() => _NextDepartureCardState();
+}
+
+class _NextDepartureCardState extends State<_NextDepartureCard> {
+  Timer? _timer;
+  Duration _remaining = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    _update();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _update());
+  }
+
+  void _update() {
+    final dep = widget.trip == null
+        ? null
+        : DateTime.tryParse(widget.trip!.departureTime);
+    if (dep == null || !mounted) return;
+    final diff = dep.difference(DateTime.now());
+    setState(() => _remaining = diff.isNegative ? Duration.zero : diff);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = Theme.of(context).colorScheme;
+    final trip = widget.trip;
+
+    if (trip == null) {
+      return AppCard(
+        child: EmptyState(
+          icon: Icons.route_outlined,
+          title: l10n.driverNoActiveTrip,
+          description: l10n.driverFillUpdatesNextTrip,
+        ),
+      );
+    }
+
+    final dep = DateTime.tryParse(trip.departureTime);
+    final reserved = trip.reservedSeats;
+    final total = trip.totalSeats;
+    final tripBookings = widget.bookings
+        .where((b) =>
+            b.tripId == trip.id &&
+            !const {'cancelled', 'rejected'}.contains(b.status))
+        .toList();
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Departure time
+          Row(
+            children: [
+              Icon(Icons.schedule_rounded, color: colors.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                dep == null
+                    ? l10n.louageDepartureUnavailable
+                    : TimeOfDay.fromDateTime(dep).format(context),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: colors.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const Spacer(),
+              StatusChip(status: trip.status),
+            ],
+          ),
+          if (dep != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              MaterialLocalizations.of(context).formatFullDate(dep),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+            ),
+          ],
+          const SizedBox(height: 12),
+
+          // Seats progress
+          Row(
+            children: [
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: total > 0 ? reserved / total : 0,
+                  backgroundColor: colors.outlineVariant,
+                  color: reserved == total ? colors.error : colors.primary,
+                  borderRadius: BorderRadius.circular(4),
+                  minHeight: 8,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                '$reserved/$total',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.driverSeatCounts(
+              reserved.toString(),
+              trip.freeSeats.toString(),
+            ),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 12),
+
+          // Countdown
+          if (_remaining > Duration.zero) ...[
+            _CountdownBadge(remaining: _remaining),
+            const SizedBox(height: 8),
+          ],
+
+          // Passengers list (compact)
+          if (tripBookings.isNotEmpty) ...[
+            const Divider(height: 16),
+            Text(
+              l10n.driverPassengersReserved,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+            ),
+            const SizedBox(height: 6),
+            for (final b in tripBookings.take(3))
+              Padding(
+                padding: const EdgeInsetsDirectional.only(bottom: 2),
+                child: Row(
+                  children: [
+                    Icon(Icons.person_outline, size: 14,
+                        color: colors.onSurfaceVariant),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        b.driverName.isEmpty ? '—' : b.driverName,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      '${b.seats} pl.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            if (tripBookings.length > 3)
+              TextButton(
+                onPressed: () => context.pushNamed(
+                  'driverTripDetail',
+                  pathParameters: {'tripId': trip.id},
+                ),
+                child: Text('+${tripBookings.length - 3} autres'),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CountdownBadge extends StatelessWidget {
+  const _CountdownBadge({required this.remaining});
+  final Duration remaining;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final h = remaining.inHours;
+    final m = remaining.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = remaining.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final label = h > 0 ? '${h}h $m min' : '$m:$s';
+    final urgent = remaining.inMinutes < 15;
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: urgent
+            ? colors.error.withValues(alpha: 0.10)
+            : colors.primaryContainer,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.timer_outlined,
+              size: 16,
+              color: urgent ? colors.error : colors.onPrimaryContainer),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: urgent ? colors.error : colors.onPrimaryContainer,
+                  fontWeight: FontWeight.w700,
+                ),
           ),
         ],
       ),
@@ -299,97 +773,533 @@ class _LouageCard extends StatelessWidget {
   }
 }
 
-class _SeatFillCard extends StatelessWidget {
-  const _SeatFillCard({required this.trip, required this.louage});
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. Quick actions grid
+// ─────────────────────────────────────────────────────────────────────────────
 
-  final Trip? trip;
-  final Louage? louage;
+class _QuickActions extends StatelessWidget {
+  const _QuickActions({required this.tripId, required this.louageId});
+
+  final String? tripId;
+  final String? louageId;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final activeTrip = trip;
-    final reserved = activeTrip?.reservedSeats ?? 0;
-    final capacity = activeTrip?.totalSeats ?? louage?.capacity ?? 8;
-    final departure = activeTrip == null
-        ? null
-        : DateTime.tryParse(activeTrip.departureTime);
+    final colors = Theme.of(context).colorScheme;
 
-    return AppCard(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final narrow = constraints.maxWidth < 400;
-          final gauge = _SeatFillGauge(reserved: reserved, capacity: capacity);
-          final details = Column(
-            crossAxisAlignment: narrow
-                ? CrossAxisAlignment.center
-                : CrossAxisAlignment.start,
+    final actions = [
+      (
+        Icons.qr_code_scanner_rounded,
+        l10n.driverScanTitle,
+        colors.primary,
+        () => context.pushNamed(
+              'driverScan',
+              queryParameters:
+                  tripId != null ? {'tripId': tripId!} : {},
+            ),
+      ),
+      (
+        Icons.people_outline,
+        l10n.driverPassengersReserved,
+        colors.secondary,
+        () => tripId != null
+            ? context.pushNamed(
+                'driverTripDetail',
+                pathParameters: {'tripId': tripId!},
+              )
+            : null,
+      ),
+      (
+        Icons.route_outlined,
+        l10n.driverTripsTitle,
+        colors.tertiary,
+        () => context.goNamed('driverQueue'),
+      ),
+      (
+        Icons.history_rounded,
+        l10n.profileDriverReviews,
+        colors.onSurfaceVariant,
+        () => context.goNamed('driverReviews'),
+      ),
+    ];
+
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      childAspectRatio: 2.0,
+      children: [
+        for (final (icon, label, color, onTap) in actions)
+          _QuickActionTile(
+            icon: icon,
+            label: label,
+            color: color,
+            onTap: onTap,
+          ),
+      ],
+    );
+  }
+}
+
+class _QuickActionTile extends StatelessWidget {
+  const _QuickActionTile({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Material(
+      color: color.withValues(alpha: 0.09),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.all(14),
+          child: Row(
             children: [
-              Text(
-                activeTrip == null
-                    ? l10n.driverNoActiveTrip
-                    : l10n.driverCurrentTrip,
-                textAlign: narrow ? TextAlign.center : TextAlign.start,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              if (activeTrip == null)
-                Text(
-                  l10n.driverFillUpdatesNextTrip,
-                  textAlign: narrow ? TextAlign.center : TextAlign.start,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                )
-              else ...[
-                Text(
-                  l10n.driverSeatCounts(
-                    reserved.toString(),
-                    activeTrip.freeSeats.toString(),
-                  ),
-                  textAlign: narrow ? TextAlign.center : TextAlign.start,
-                  style: Theme.of(context).textTheme.bodyMedium,
+              Icon(icon, color: color, size: 26),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: colors.onSurface,
+                      ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                if (departure != null) ...[
-                  const SizedBox(height: 6),
-                  Text(
-                    l10n.driverDepartureTime(
-                      MaterialLocalizations.of(context)
-                          .formatTimeOfDay(TimeOfDay.fromDateTime(departure)),
-                    ),
-                    textAlign: narrow ? TextAlign.center : TextAlign.start,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ],
+              ),
             ],
-          );
-          if (narrow) {
-            return Column(
-              children: [
-                Center(child: gauge),
-                const SizedBox(height: 16),
-                details,
-              ],
-            );
-          }
-          return Row(
-            children: [
-              Expanded(child: Center(child: gauge)),
-              const SizedBox(width: 20),
-              Expanded(child: details),
-            ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }
 }
 
-class _ValidationBanner extends StatelessWidget {
-  final _ValidationStatus status;
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. Statistics section
+// ─────────────────────────────────────────────────────────────────────────────
 
+class _StatsSection extends ConsumerWidget {
+  const _StatsSection({
+    required this.driverId,
+    required this.bookings,
+  });
+
+  final String driverId;
+  final List<Booking> bookings;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = Theme.of(context).colorScheme;
+
+    final stats = ref.watch(driverLouageStatsProvider(driverId));
+    final rating = stats.asData?.value.$1 ?? 0.0;
+    final completedTrips = stats.asData?.value.$2 ?? 0;
+
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final weekStart = todayStart.subtract(Duration(days: now.weekday - 1));
+
+    double revenueDay = 0;
+    double revenueWeek = 0;
+    int passengersTotal = 0;
+    for (final b in bookings) {
+      if (const {'confirmed', 'validated'}.contains(b.status)) {
+        passengersTotal += b.seats;
+        final created = DateTime.tryParse(b.createdAt);
+        if (created != null) {
+          if (created.isAfter(todayStart)) revenueDay += b.totalPrice;
+          if (created.isAfter(weekStart)) revenueWeek += b.totalPrice;
+        }
+      }
+    }
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.driverStatsUnavailable.contains('ind')
+                ? 'Statistiques'
+                : l10n.driverStatsUnavailable,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _StatChip(
+                icon: Icons.star_rounded,
+                value: rating == 0 ? '—' : rating.toStringAsFixed(1),
+                label: l10n.driverRatingAverage,
+                color: colors.secondary,
+              ),
+              _StatChip(
+                icon: Icons.check_circle_outline,
+                value: '$completedTrips',
+                label: l10n.driverCompletedTrips,
+                color: colors.tertiary,
+              ),
+              _StatChip(
+                icon: Icons.people_outline,
+                value: '$passengersTotal',
+                label: l10n.driverPassengersReserved,
+                color: colors.primary,
+              ),
+              _StatChip(
+                icon: Icons.today_rounded,
+                value: '${revenueDay.toStringAsFixed(0)} DT',
+                label: 'Aujourd\'hui',
+                color: colors.primary,
+              ),
+              _StatChip(
+                icon: Icons.calendar_view_week_rounded,
+                value: '${revenueWeek.toStringAsFixed(0)} DT',
+                label: 'Cette semaine',
+                color: colors.secondary,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  const _StatChip({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.09),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    ),
+              ),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurfaceVariant,
+                    ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. Seat map card
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _SeatMapCard extends StatelessWidget {
+  const _SeatMapCard({
+    required this.trip,
+    required this.bookings,
+    required this.passengers,
+  });
+
+  final Trip trip;
+  final List<Booking> bookings;
+  final Map<String, DriverPassenger> passengers;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    // Build a map seatNumber -> passengerName
+    final seatMap = <int, String>{};
+    for (final b in bookings) {
+      if (b.tripId != trip.id ||
+          const {'cancelled', 'rejected'}.contains(b.status)) {
+        continue;
+      }
+      final passengerName =
+          passengers[b.userId]?.name ?? l10n.driverPassengerFallback;
+      for (final seat in b.numerosPlaces) {
+        seatMap[seat] = passengerName;
+      }
+    }
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.driverPassengersReserved,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          const SizedBox(height: 16),
+          _LouageSeatDiagram(
+            totalSeats: trip.totalSeats.clamp(0, 8),
+            seatMap: seatMap,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LouageSeatDiagram extends StatelessWidget {
+  const _LouageSeatDiagram({
+    required this.totalSeats,
+    required this.seatMap,
+  });
+
+  final int totalSeats;
+  final Map<int, String> seatMap;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget seatWidget(int n) => _SeatButton(
+          number: n,
+          passengerName: seatMap[n],
+          visible: n <= totalSeats,
+        );
+
+    Widget row(List<int> seats) => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: seats
+              .map((n) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: seatWidget(n),
+                  ))
+              .toList(),
+        );
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Column(
+        children: [
+          // Front row: driver + seat 1
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _DriverSeat(),
+              seatWidget(1),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Divider(
+              color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+          const SizedBox(height: 8),
+          row([2, 3]),
+          const SizedBox(height: 8),
+          row([4, 5]),
+          const SizedBox(height: 8),
+          row([6, 7, 8]),
+        ],
+      ),
+    );
+  }
+}
+
+class _DriverSeat extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        Container(
+          width: 60,
+          height: 52,
+          decoration: BoxDecoration(
+            color: colors.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: colors.outlineVariant),
+          ),
+          child: Icon(Icons.directions_car_filled_outlined,
+              color: colors.onSurfaceVariant, size: 24),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          AppLocalizations.of(context)!.bookingDriverSeat,
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      ],
+    );
+  }
+}
+
+class _SeatButton extends StatelessWidget {
+  const _SeatButton({
+    required this.number,
+    required this.passengerName,
+    required this.visible,
+  });
+
+  final int number;
+  final String? passengerName;
+  final bool visible;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!visible) return const SizedBox(width: 60, height: 52);
+    final colors = Theme.of(context).colorScheme;
+    final occupied = passengerName != null;
+
+    return Tooltip(
+      message: occupied
+          ? passengerName!
+          : AppLocalizations.of(context)!.bookingFree,
+      child: Container(
+        width: 60,
+        height: 52,
+        decoration: BoxDecoration(
+          color: occupied
+              ? colors.primary.withValues(alpha: 0.15)
+              : colors.surface,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: occupied ? colors.primary : colors.outlineVariant,
+            width: occupied ? 1.5 : 1,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                occupied ? Icons.person : Icons.event_seat_outlined,
+                size: 16,
+                color: occupied ? colors.primary : colors.onSurfaceVariant,
+              ),
+              Text(
+                '$number',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: occupied ? colors.primary : colors.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Queue toggle
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _QueueToggle extends ConsumerWidget {
+  const _QueueToggle({required this.louage});
+  final Louage? louage;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final queued = louage?.isQueued ?? false;
+    return AppButton(
+      label: queued ? l10n.driverLeaveQueue : l10n.driverJoinQueue,
+      icon: queued ? Icons.logout : Icons.queue_play_next,
+      variant: queued ? AppButtonVariant.secondary : AppButtonVariant.primary,
+      onPressed: louage == null
+          ? null
+          : () async {
+              await ref
+                  .read(driverRepositoryProvider)
+                  .toggleQueue(louage!.id);
+              if (!context.mounted) return;
+              context.goNamed('driverQueue');
+            },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shortcuts (history + reviews)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _Shortcuts extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.history_rounded),
+            label: Text(l10n.driverTripsTitle),
+            onPressed: () => context.pushNamed('driverQueue'),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.star_outline_rounded),
+            label: Text(l10n.profileDriverReviews),
+            onPressed: () => context.goNamed('driverReviews'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// Shared: Validation banner
+// ═════════════════════════════════════════════════════════════════════════════
+
+enum _ValidationStatus { pending, submitted, validated, rejected }
+
+class _ValidationBanner extends StatelessWidget {
   const _ValidationBanner({required this.status});
+  final _ValidationStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -397,27 +1307,30 @@ class _ValidationBanner extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final (label, icon, color) = switch (status) {
       _ValidationStatus.pending => (
-        l10n.driverStatusPending,
-        Icons.hourglass_top_rounded,
-        scheme.secondary,
-      ),
+          l10n.driverStatusPending,
+          Icons.hourglass_top_rounded,
+          scheme.secondary,
+        ),
+      _ValidationStatus.submitted => (
+          l10n.docValidationStatusSubmitted,
+          Icons.pending_outlined,
+          scheme.secondary,
+        ),
       _ValidationStatus.validated => (
-        l10n.driverStatusApproved,
-        Icons.verified_outlined,
-        scheme.tertiary,
-      ),
+          l10n.driverStatusApproved,
+          Icons.verified_outlined,
+          scheme.tertiary,
+        ),
       _ValidationStatus.rejected => (
-        l10n.driverStatusRejected,
-        Icons.error_outline,
-        scheme.error,
-      ),
+          l10n.driverStatusRejected,
+          Icons.error_outline,
+          scheme.error,
+        ),
     };
     return Container(
       constraints: const BoxConstraints(minHeight: 52),
       padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 16,
-        vertical: 12,
-      ),
+          horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
@@ -431,9 +1344,9 @@ class _ValidationBanner extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: scheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ),
         ],
@@ -442,178 +1355,11 @@ class _ValidationBanner extends StatelessWidget {
   }
 }
 
-class _DriverQueueActions extends ConsumerWidget {
-  final Louage? louage;
+// ═════════════════════════════════════════════════════════════════════════════
+// Utility
+// ═════════════════════════════════════════════════════════════════════════════
 
-  const _DriverQueueActions({required this.louage});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final currentLouage = louage;
-    final queued = currentLouage?.isQueued ?? false;
-    return SizedBox(
-      width: double.infinity,
-      child: AppButton(
-        label: queued ? l10n.driverLeaveQueue : l10n.driverJoinQueue,
-        icon: queued ? Icons.logout : Icons.queue_play_next,
-        variant: queued ? AppButtonVariant.secondary : AppButtonVariant.primary,
-        onPressed: currentLouage == null
-            ? null
-            : () async {
-                await ref
-                    .read(driverRepositoryProvider)
-                    .toggleQueue(currentLouage.id);
-                if (!context.mounted) return;
-                context.goNamed('driverQueue');
-              },
-      ),
-    );
-  }
-}
-
-class _PassengerReservations extends StatelessWidget {
-  final Trip trip;
-  final List<Booking> bookings;
-  final Map<String, DriverPassenger> passengers;
-
-  const _PassengerReservations({
-    required this.trip,
-    required this.bookings,
-    required this.passengers,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final tripBookings = bookings
-        .where(
-          (booking) =>
-              booking.tripId == trip.id &&
-              !const {'cancelled', 'rejected'}.contains(booking.status),
-        )
-        .toList();
-
-    if (tripBookings.isEmpty) {
-      return EmptyState(
-        icon: Icons.event_seat_outlined,
-        title: l10n.driverNoBookings,
-        description: l10n.driverBookingsAppearHere,
-      );
-    }
-
-    return AppCard(
-      padding: EdgeInsetsDirectional.zero,
-      child: Column(
-        children: [
-          for (var index = 0; index < tripBookings.length; index++) ...[
-            if (index > 0) const Divider(height: 1, indent: 16, endIndent: 16),
-            ListTile(
-              minVerticalPadding: 8,
-              leading: const CircleAvatar(child: Icon(Icons.person_outline)),
-              title: Text(
-                passengers[tripBookings[index].userId]?.name ??
-                    l10n.driverPassengerFallback,
-              ),
-              subtitle: Text(
-                passengers[tripBookings[index].userId]?.phone ?? '',
-              ),
-              trailing: Text(
-                l10n.driverBookingSeatCount(
-                  tripBookings[index].seats.toString(),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _SeatFillGauge extends StatelessWidget {
-  final int reserved;
-  final int capacity;
-
-  const _SeatFillGauge({required this.reserved, required this.capacity});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final safeCapacity = capacity <= 0 ? 8 : capacity;
-    final safeReserved = reserved.clamp(0, safeCapacity);
-    final color = safeReserved == safeCapacity
-        ? colorScheme.error
-        : colorScheme.secondary;
-    return SizedBox.square(
-      dimension: 142,
-      child: CustomPaint(
-        painter: _SeatFillPainter(
-          progress: safeReserved / safeCapacity,
-          trackColor: Theme.of(context).colorScheme.outlineVariant,
-          progressColor: color,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '$safeReserved/$safeCapacity',
-              style: Theme.of(context).textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            Text(
-              AppLocalizations.of(context)!.driverSeatWord,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SeatFillPainter extends CustomPainter {
-  final double progress;
-  final Color trackColor;
-  final Color progressColor;
-
-  const _SeatFillPainter({
-    required this.progress,
-    required this.trackColor,
-    required this.progressColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const strokeWidth = 10.0;
-    final rect = Offset.zero & size;
-    final circleRect = rect.deflate(strokeWidth / 2);
-    final trackPaint = Paint()
-      ..color = trackColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-    final progressPaint = Paint()
-      ..color = progressColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawArc(circleRect, -1.5708, 6.2832, false, trackPaint);
-    if (progress > 0) {
-      canvas.drawArc(
-        circleRect,
-        -1.5708,
-        6.2832 * progress,
-        false,
-        progressPaint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _SeatFillPainter oldDelegate) =>
-      progress != oldDelegate.progress ||
-      trackColor != oldDelegate.trackColor ||
-      progressColor != oldDelegate.progressColor;
+String _capitalize(String text) {
+  if (text.isEmpty) return text;
+  return text[0].toUpperCase() + text.substring(1);
 }

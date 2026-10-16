@@ -71,7 +71,10 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 20),
                 _SettingsSectionTitle(title: l10n.settingsSecuritySection),
-                DeleteAccountButton(user: user),
+                DeleteAccountButton(
+                  user: user,
+                  hide: user?.role == 'driver',
+                ),
                 const SizedBox(height: 20),
                 _SettingsSectionTitle(title: l10n.settingsSupportSection),
                 ProfileOptionRow(

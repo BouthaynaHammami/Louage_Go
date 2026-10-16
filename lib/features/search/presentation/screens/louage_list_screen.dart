@@ -303,8 +303,12 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
           afterRequestedTime: !result.departure.isBefore(
             _requestedDateTime(_selectedDate),
           ),
-          onReserve: () => context.pushNamed(
+          onOpenDetails: () => context.pushNamed(
             'passengerLouageDetail',
+            pathParameters: {'tripId': result.trip.id},
+          ),
+          onReserve: () => context.pushNamed(
+            'passengerBook',
             pathParameters: {'tripId': result.trip.id},
           ),
         );
@@ -479,12 +483,14 @@ class _StaggeredTripCard extends StatefulWidget {
   final int index;
   final TripSearchResult result;
   final bool afterRequestedTime;
+  final VoidCallback onOpenDetails;
   final VoidCallback onReserve;
 
   const _StaggeredTripCard({
     required this.index,
     required this.result,
     required this.afterRequestedTime,
+    required this.onOpenDetails,
     required this.onReserve,
   });
 
@@ -523,6 +529,15 @@ class _StaggeredTripCardState extends State<_StaggeredTripCard>
     final full = result.isFull;
     final colorScheme = Theme.of(context).colorScheme;
     final priceColor = colorScheme.primary;
+    final locale = Localizations.localeOf(context);
+    final fromStation = _stationLabel(
+      result.fromStation.localizedName(locale),
+      result.fromStation.localizedCity(locale),
+    );
+    final toStation = _stationLabel(
+      result.toStation.localizedName(locale),
+      result.toStation.localizedCity(locale),
+    );
 
     return FadeTransition(
       opacity: CurvedAnimation(parent: _controller, curve: Curves.easeOut),
@@ -531,108 +546,149 @@ class _StaggeredTripCardState extends State<_StaggeredTripCard>
           begin: const Offset(0, 0.08),
           end: Offset.zero,
         ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut)),
-        child: AppCard(
-          padding: const EdgeInsetsDirectional.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FavoriteButton.offer(
-                    louageId: result.louage.id,
-                    departureHm: _departureHm(result.departure),
-                    routeId: result.route.id,
-                  ),
-                ],
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      TimeOfDay.fromDateTime(result.departure).format(context),
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontSize: 28, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  StatusChip(status: full ? 'full' : result.trip.status),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  Icon(
-                    Icons.route_outlined,
-                    size: 18,
-                    color: colorScheme.secondary,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      l10n.searchRoutePair(
-                        result.fromStation.localizedCity(
-                          Localizations.localeOf(context),
-                        ),
-                        result.toStation.localizedCity(
-                          Localizations.localeOf(context),
-                        ),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                result.louage.matricule,
-                style: Theme.of(context).textTheme.bodySmall
-                    ?.copyWith(color: colorScheme.onSurfaceVariant),
-              ),
-              if (widget.afterRequestedTime) ...[
-                const SizedBox(height: 8),
+        child: Opacity(
+          opacity: full ? 0.68 : 1,
+          child: AppCard(
+            padding: const EdgeInsetsDirectional.all(16),
+            onTap: widget.onOpenDetails,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(Icons.schedule, size: 16, color: colorScheme.tertiary),
-                    const SizedBox(width: 6),
-                    Text(
-                      l10n.searchAfterRequestedTime,
-                      style: Theme.of(context).textTheme.labelMedium
-                          ?.copyWith(color: colorScheme.tertiary),
+                    FavoriteButton.offer(
+                      louageId: result.louage.id,
+                      departureHm: _departureHm(result.departure),
+                      routeId: result.route.id,
                     ),
                   ],
                 ),
-              ],
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: SeatDots(
-                      freeSeats: result.freeSeats,
-                      totalSeats: result.totalSeats,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        TimeOfDay.fromDateTime(result.departure)
+                            .format(context),
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '${_formatTripPrice(result.price)} DT',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: priceColor,
-                      fontWeight: FontWeight.w700,
+                    StatusChip(status: full ? 'full' : result.trip.status),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.route_outlined,
+                      size: 18,
+                      color: colorScheme.secondary,
                     ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.searchRoutePair(fromStation, toStation),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '${l10n.driverMatricule}: ${result.louage.matricule.isEmpty ? '—' : result.louage.matricule}',
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: colorScheme.onSurfaceVariant),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${l10n.driverVehicleModel}: ${result.louage.modele.isEmpty ? '—' : result.louage.modele}',
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: colorScheme.onSurfaceVariant),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      size: 17,
+                      color: colorScheme.secondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      l10n.louageDriverRating(
+                        result.driverReviewCount == 0
+                            ? '—'
+                            : result.driverRatingAverage.toStringAsFixed(1),
+                      ),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+                if (widget.afterRequestedTime) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.schedule,
+                        size: 16,
+                        color: colorScheme.tertiary,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        l10n.searchAfterRequestedTime,
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(color: colorScheme.tertiary),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-              const SizedBox(height: 16),
-              AppButton(
-                label: l10n.searchReservation,
-                icon: Directionality.of(context) == TextDirection.rtl
-                    ? Icons.arrow_back
-                    : Icons.arrow_forward,
-                onPressed: full ? null : widget.onReserve,
-              ),
-            ],
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SeatDots(
+                            freeSeats: result.freeSeats,
+                            totalSeats: result.totalSeats,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            l10n.searchSeatsFree(result.freeSeats.toString()),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      l10n.searchPricePerSeat(_formatTripPrice(result.price)),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: priceColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                AppButton(
+                  label: l10n.searchReservation,
+                  icon: Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_back
+                      : Icons.arrow_forward,
+                  onPressed: full ? null : widget.onReserve,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -643,6 +699,9 @@ class _StaggeredTripCardState extends State<_StaggeredTripCard>
 String _formatTripPrice(double price) => price == price.roundToDouble()
     ? price.toStringAsFixed(0)
     : price.toStringAsFixed(2);
+
+String _stationLabel(String name, String city) =>
+    name.isEmpty || name == city ? city : '$name, $city';
 
 String _departureHm(DateTime departure) =>
     '${departure.hour.toString().padLeft(2, '0')}:${departure.minute.toString().padLeft(2, '0')}';

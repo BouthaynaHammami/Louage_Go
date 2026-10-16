@@ -15,6 +15,7 @@ class BoxNames {
   static const notifications = 'notifications';
   static const favorites = 'favorites';
   static const session = 'session';
+  static const documents = 'documents'; // driver validation documents
 
   static const values = [
     users,
@@ -30,6 +31,7 @@ class BoxNames {
     notifications,
     favorites,
     session,
+    documents,
   ];
 }
 
@@ -50,6 +52,7 @@ class HiveService {
   static Box<Map> get notifications => _box(BoxNames.notifications);
   static Box<Map> get favorites => _box(BoxNames.favorites);
   static Box<Map> get session => _box(BoxNames.session);
+  static Box<Map> get documents => _box(BoxNames.documents);
 
   static bool get isReady => initializationError == null;
 

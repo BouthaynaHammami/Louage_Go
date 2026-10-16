@@ -95,9 +95,7 @@ class AppUser {
       name: ModelMap.text(map, 'name'),
       phone: ModelMap.text(map, 'phone'),
       email: ModelMap.text(map, 'email'),
-      role: const ['passenger', 'driver', 'admin'].contains(role)
-          ? role
-          : 'passenger',
+      role: const ['passenger', 'driver'].contains(role) ? role : 'passenger',
       photo: ModelMap.text(map, 'photo'),
       city: ModelMap.text(map, 'city'),
       language: ModelMap.text(map, 'language'),

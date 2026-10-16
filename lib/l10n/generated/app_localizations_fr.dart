@@ -200,6 +200,27 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get bookingChooseSeatsTitle => 'Choisir ma place';
+
+  @override
+  String bookingSeatLabel(int number, String status) {
+    return 'Place $number : $status';
+  }
+
+  @override
+  String get bookingSeatUnavailable =>
+      'Cette place vient d’être réservée. Choisissez-en une autre.';
+
+  @override
+  String get bookingNotEnoughSeats => 'Il n’y a pas assez de places libres.';
+
+  @override
+  String get bookingTripUnavailable => 'Ce trajet n’est plus disponible.';
+
+  @override
+  String get bookingLouageUnavailable => 'Ce louage n’est plus disponible.';
+
+  @override
   String get bookingPaymentSimulation => 'Paiement (simulation)';
 
   @override
@@ -1181,7 +1202,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchLoadError => 'Impossible de charger les trajets';
 
   @override
-  String get searchNoLouage => 'Aucun louage pour ce trajet';
+  String get searchNoLouage => 'Aucun louage disponible';
 
   @override
   String get searchAfterRequestedTime => 'Après l’heure choisie';
@@ -1252,13 +1273,28 @@ class AppLocalizationsFr extends AppLocalizations {
   String get driverMatricule => 'Matricule';
 
   @override
+  String get driverMatriculeRequired => 'Saisissez le matricule du véhicule.';
+
+  @override
   String get driverTotalSeats => 'Nombre total de places';
+
+  @override
+  String get driverTotalSeatsInvalid =>
+      'Saisissez un nombre de places total supérieur à zéro.';
 
   @override
   String get driverAvailableSeats => 'Places disponibles';
 
   @override
+  String get driverAvailableSeatsInvalid =>
+      'Les places disponibles doivent être comprises entre 0 et le nombre total.';
+
+  @override
   String get driverCurrentStation => 'Station actuelle';
+
+  @override
+  String get driverStationRequired =>
+      'Choisissez ou saisissez la station actuelle.';
 
   @override
   String get driverRatingAverage => 'Note moyenne';
@@ -1273,7 +1309,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get driverLouageSaved => 'Profil du louage enregistré.';
 
   @override
+  String get driverLouageSaveFailed =>
+      'Impossible d’enregistrer le louage. Vérifiez les informations et réessayez.';
+
+  @override
   String get driverChangeStatus => 'Modifier le statut';
+
+  @override
+  String get driverStatusUpdated => 'Le statut du louage a été mis à jour.';
+
+  @override
+  String get driverStatusUpdateFailed =>
+      'Impossible de modifier le statut. Réessayez.';
+
+  @override
+  String get driverStatsUnavailable =>
+      'Les statistiques sont momentanément indisponibles.';
 
   @override
   String get driverStatusAvailable => 'Disponible';
@@ -1365,6 +1416,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get driverPaymentCash => 'À payer à bord';
 
   @override
+  String get driverPaymentUnknown => 'Statut de paiement inconnu';
+
+  @override
   String get driverBookingConfirmed => 'Confirmée';
 
   @override
@@ -1375,6 +1429,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get driverBookingRejected => 'Refusée';
+
+  @override
+  String get driverBookingUnknown => 'Statut de réservation inconnu';
 
   @override
   String get profileTitle => 'Profil';
@@ -1708,4 +1765,193 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get searchResetFilters => 'Réinitialiser';
+
+  @override
+  String get docStepAccountCreated => 'Compte créé';
+
+  @override
+  String get docStepDocumentsSent => 'Documents envoyés';
+
+  @override
+  String get docStepValidated => 'Validé';
+
+  @override
+  String get docStepCurrent => 'En cours';
+
+  @override
+  String get docSectionTitle => 'Documents requis';
+
+  @override
+  String get docStatusToSend => 'À envoyer';
+
+  @override
+  String get docStatusSent => 'Envoyé';
+
+  @override
+  String get docStatusRejected => 'Refusé';
+
+  @override
+  String get docStatusValidated => 'Validé';
+
+  @override
+  String get docTypeNationalId => 'Carte d\'identité nationale';
+
+  @override
+  String get docTypeDriverLicense => 'Permis de conduire';
+
+  @override
+  String get docTypeVehicleCard => 'Carte grise du louage';
+
+  @override
+  String get docTypeInsurance => 'Assurance';
+
+  @override
+  String get docTypeTransportLicense => 'Licence de transport';
+
+  @override
+  String get docTypeDriverPhoto => 'Photo du chauffeur';
+
+  @override
+  String get docTypeVehiclePhoto => 'Photo du louage';
+
+  @override
+  String get docUploadTitle => 'Envoyer un document';
+
+  @override
+  String get docUploadFromCamera => 'Prendre une photo';
+
+  @override
+  String get docUploadFromGallery => 'Choisir dans la galerie';
+
+  @override
+  String get docUploadPreviewTitle => 'Aperçu avant envoi';
+
+  @override
+  String get docUploadConfirm => 'Confirmer l\'envoi';
+
+  @override
+  String get docUploadCancel => 'Annuler';
+
+  @override
+  String get docUploadSuccess => 'Document envoyé.';
+
+  @override
+  String get docUploadError => 'Impossible d\'envoyer le document.';
+
+  @override
+  String get docResend => 'Renvoyer';
+
+  @override
+  String get docRejectionReason => 'Motif du refus';
+
+  @override
+  String get docSubmitAll => 'Envoyer les documents';
+
+  @override
+  String get docSubmitConfirmTitle => 'Envoyer tous les documents ?';
+
+  @override
+  String get docSubmitConfirmBody =>
+      'Vos documents seront transmis pour validation. Cette action ne peut pas être annulée.';
+
+  @override
+  String get docSubmitSuccess => 'Documents envoyés avec succès.';
+
+  @override
+  String get docLockedPreviewTitle => 'Espace chauffeur';
+
+  @override
+  String get docLockedPreviewBody =>
+      'Ces fonctionnalités seront disponibles après validation de votre compte.';
+
+  @override
+  String get docHelpTitle => 'Besoin d\'aide ?';
+
+  @override
+  String get docHelpFaq => 'Questions fréquentes';
+
+  @override
+  String get docHelpContact => 'Contacter le support';
+
+  @override
+  String get docDebugTitle => 'Simulation admin (debug)';
+
+  @override
+  String get docDebugApprove => 'Approuver tous les documents';
+
+  @override
+  String get docDebugReject => 'Refuser un document';
+
+  @override
+  String get docDebugRejectReason => 'Motif (ex : photo floue)';
+
+  @override
+  String get docDebugNotifApproved => 'Compte validé';
+
+  @override
+  String get docDebugNotifApprovedBody =>
+      'Félicitations ! Votre compte chauffeur a été validé.';
+
+  @override
+  String get docDebugNotifRejected => 'Document refusé';
+
+  @override
+  String get docDebugNotifRejectedBody =>
+      'Un de vos documents a été refusé. Vérifiez le motif et renvoyez-le.';
+
+  @override
+  String get docValidationStatusPending => 'Compte en attente';
+
+  @override
+  String get docValidationStatusSubmitted =>
+      'Documents envoyés — en attente de validation';
+
+  @override
+  String get docValidationStatusApproved => 'Compte validé';
+
+  @override
+  String get docValidationStatusRejected => 'Compte refusé';
+
+  @override
+  String get driverDelayTitle => 'Annoncer un retard';
+
+  @override
+  String get driverDelayNewTime => 'Nouvelle heure de départ';
+
+  @override
+  String get driverDelayReason => 'Motif (optionnel)';
+
+  @override
+  String get driverDelayConfirm => 'Annoncer le retard';
+
+  @override
+  String get driverDelaySuccess => 'Les passagers ont été notifiés du retard.';
+
+  @override
+  String get driverReportTitle => 'Signaler un problème';
+
+  @override
+  String get driverReportBreakdown => 'Panne';
+
+  @override
+  String get driverReportDelay => 'Retard';
+
+  @override
+  String get driverReportOther => 'Autre';
+
+  @override
+  String get driverReportSend => 'Envoyer le signalement';
+
+  @override
+  String get driverReportSuccess => 'Signalement envoyé aux passagers.';
+
+  @override
+  String get driverNavigateTitle => 'Itinéraire vers la station';
+
+  @override
+  String get driverNavigateOpen => 'Ouvrir dans Maps';
+
+  @override
+  String get driverNavigateNoCoords =>
+      'Coordonnées de la station indisponibles.';
 }

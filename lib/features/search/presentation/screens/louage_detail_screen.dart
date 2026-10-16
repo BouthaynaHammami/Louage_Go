@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/favorite_button.dart';
@@ -249,23 +248,6 @@ class LouageDetailScreen extends ConsumerWidget {
                   initialCount: driverProfile?.reviewCount ?? 0,
                 ),
               ],
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 640),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 16),
-              child: AppButton(
-                label: l10n.searchReservation,
-                onPressed: full
-                    ? null
-                    : () => context.push('/passenger/book/${trip.id}'),
-              ),
             ),
           ),
         ),

@@ -7,6 +7,7 @@ import 'package:louage_go/core/storage/seed_data.dart';
 import 'package:louage_go/features/search/data/hive_search_repository.dart';
 import 'package:louage_go/features/search/domain/trip_search_criteria.dart';
 import 'package:louage_go/models/booking.dart';
+import 'package:louage_go/models/driver_profile.dart';
 import 'package:louage_go/models/louage.dart';
 import 'package:louage_go/models/route_line.dart';
 import 'package:louage_go/models/station.dart';
@@ -90,7 +91,19 @@ void main() {
       );
       await louagesBox.put(
         'vehicle',
-        const Louage(id: 'vehicle', matricule: '123 TN 456').toMap(),
+        const Louage(
+          id: 'vehicle',
+          chauffeurId: 'driver-1',
+          matricule: '123 TN 456',
+        ).toMap(),
+      );
+      await driversBox.put(
+        'driver-1',
+        const DriverProfile(
+          userId: 'driver-1',
+          ratingAverage: 4.5,
+          reviewCount: 2,
+        ).toMap(),
       );
       await tripsBox.put(
         'matching-trip',
@@ -132,8 +145,72 @@ void main() {
       expect(results, hasLength(1));
       expect(results.single.trip.id, 'matching-trip');
       expect(results.single.price, 18);
+      expect(results.single.driverRatingAverage, 4.5);
+      expect(results.single.driverReviewCount, 2);
     },
   );
+
+  test('findTrips excludes unavailable trips and louages', () async {
+    await stationsBox.put(
+      'from',
+      const Station(id: 'from', city: 'Tunis').toMap(),
+    );
+    await stationsBox.put(
+      'to',
+      const Station(id: 'to', city: 'Sousse').toMap(),
+    );
+    await routesBox.put(
+      'route',
+      const RouteLine(
+        id: 'route',
+        fromStationId: 'from',
+        toStationId: 'to',
+      ).toMap(),
+    );
+    await louagesBox.put(
+      'available',
+      const Louage(id: 'available').toMap(),
+    );
+    await louagesBox.put(
+      'out-of-service',
+      const Louage(id: 'out-of-service', statut: LouageStatus.horsService)
+          .toMap(),
+    );
+    await louagesBox.put(
+      'moving',
+      const Louage(id: 'moving', statut: LouageStatus.enDeplacement).toMap(),
+    );
+    for (final (id, louageId, status) in [
+      ('available-trip', 'available', 'waiting'),
+      ('cancelled-trip', 'available', 'cancelled'),
+      ('departed-trip', 'available', 'departed'),
+      ('arrived-trip', 'available', 'arrived'),
+      ('out-of-service-trip', 'out-of-service', 'waiting'),
+      ('moving-trip', 'moving', 'waiting'),
+    ]) {
+      await tripsBox.put(
+        id,
+        Trip(
+          id: id,
+          routeId: 'route',
+          louageId: louageId,
+          status: status,
+          departureTime: DateTime(2026, 10, 3, 8).toIso8601String(),
+        ).toMap(),
+      );
+    }
+
+    final results = repository.findTrips(
+      TripSearchCriteria(
+        from: 'Tunis',
+        to: 'Sousse',
+        date: DateTime(2026, 10, 3),
+        time: const TimeOfDay(hour: 8, minute: 0),
+      ),
+    );
+
+    expect(results.map((result) => result.trip.id), ['available-trip']);
+  });
 
   test(
     'station search ignores French accents and matches Arabic names',
