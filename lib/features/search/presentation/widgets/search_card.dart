@@ -55,9 +55,9 @@ class SearchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return AppCard(
-      color: colorScheme.surfaceContainerLow,
+      color: colorScheme.surface,
       shadowColor: colorScheme.shadow.withValues(alpha: 0.12),
-      elevation: 3,
+      elevation: 1,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
@@ -78,12 +78,12 @@ class SearchCard extends StatelessWidget {
                     Icon(
                       Icons.trip_origin_rounded,
                       size: 14,
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     ),
                     Expanded(
                       child: CustomPaint(
                         painter: _DottedRoutePainter(
-                          color: colorScheme.secondary.withValues(alpha: 0.7),
+                          color: colorScheme.outline.withValues(alpha: 0.8),
                         ),
                         child: const SizedBox.expand(),
                       ),
@@ -177,7 +177,7 @@ class SearchCard extends StatelessWidget {
           AppButton(
             label: searchLabel,
             icon: Icons.search_rounded,
-            variant: AppButtonVariant.accent,
+            variant: AppButtonVariant.primary,
             height: 52,
             isLoading: isLoading,
             onPressed: isLoading ? null : onSearch,

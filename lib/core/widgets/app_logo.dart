@@ -23,7 +23,7 @@ class AppLogoMark extends StatelessWidget {
       fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) => Icon(
         Icons.airport_shuttle_rounded,
-        color: colorScheme.primary,
+        color: colorScheme.inversePrimary,
         size: size * 0.5,
       ),
     );
@@ -53,8 +53,9 @@ class AppLogoMark extends StatelessWidget {
 
 class AppWordmark extends StatelessWidget {
   final bool prominent;
+  final bool onDark;
 
-  const AppWordmark({super.key, this.prominent = false});
+  const AppWordmark({super.key, this.prominent = false, this.onDark = false});
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +71,66 @@ class AppWordmark extends StatelessWidget {
         children: [
           TextSpan(
             text: 'Louage',
-            style: style?.copyWith(color: colorScheme.onSurface),
+            style: style?.copyWith(
+              color: onDark ? colorScheme.onPrimary : colorScheme.onSurface,
+            ),
           ),
           TextSpan(
             text: 'Go',
-            style: style?.copyWith(color: colorScheme.secondary),
+            style: style?.copyWith(
+              color: onDark ? colorScheme.primary : colorScheme.secondary,
+            ),
           ),
         ],
       ),
       textAlign: TextAlign.center,
+    );
+  }
+}
+
+class AuthBrandHeader extends StatelessWidget {
+  final double height;
+  final Widget? trailing;
+
+  const AuthBrandHeader({super.key, this.height = 208, this.trailing});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final background = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainer
+        : colorScheme.secondary;
+
+    return ClipRRect(
+      borderRadius: const BorderRadiusDirectional.vertical(
+        bottom: Radius.circular(32),
+      ),
+      child: SizedBox(
+        height: height,
+        child: ColoredBox(
+          color: background,
+          child: Stack(
+            children: [
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const AppLogoMark(size: 76),
+                    const SizedBox(height: 10),
+                    const AppWordmark(onDark: true),
+                  ],
+                ),
+              ),
+              if (trailing != null)
+                PositionedDirectional(
+                  top: MediaQuery.viewPaddingOf(context).top + 8,
+                  end: 8,
+                  child: trailing!,
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -110,7 +162,7 @@ class AppLogo extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) => Icon(
             Icons.airport_shuttle_rounded,
             size: size * 0.55,
-            color: colorScheme.primary,
+            color: colorScheme.inversePrimary,
           ),
         ),
       ),

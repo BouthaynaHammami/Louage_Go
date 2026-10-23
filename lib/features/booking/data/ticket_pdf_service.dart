@@ -8,6 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../../../models/booking.dart';
 
 // ---------------------------------------------------------------------------
@@ -50,12 +51,12 @@ Future<Uint8List> _buildPdf(Booking booking) async {
   final departureDate = departure == null
       ? booking.departureTime
       : '${departure.day.toString().padLeft(2, '0')}/'
-          '${departure.month.toString().padLeft(2, '0')}/'
-          '${departure.year}';
+            '${departure.month.toString().padLeft(2, '0')}/'
+            '${departure.year}';
   final departureTime = departure == null
       ? ''
       : '${departure.hour.toString().padLeft(2, '0')}:'
-          '${departure.minute.toString().padLeft(2, '0')}';
+            '${departure.minute.toString().padLeft(2, '0')}';
 
   // Generate QR image bytes
   final qrImageBytes = await _generateQrImageBytes(booking.qrCode);
@@ -72,22 +73,18 @@ Future<Uint8List> _buildPdf(Booking booking) async {
   );
 
   // Colours
-  const primaryColor = PdfColor.fromInt(0xFFCC1F1F);
-  const lightRed = PdfColor.fromInt(0xFFFFF0F0);
-  const darkGray = PdfColor.fromInt(0xFF424242);
-  const medGray = PdfColor.fromInt(0xFF757575);
-  const lightGray = PdfColor.fromInt(0xFFF5F5F5);
-  const borderGray = PdfColor.fromInt(0xFFE0E0E0);
+  final primaryColor = PdfColor.fromInt(AppColors.primary.toARGB32());
+  final darkColor = PdfColor.fromInt(AppColors.secondary.toARGB32());
+  final backgroundColor = PdfColor.fromInt(AppColors.background.toARGB32());
+  final borderColor = PdfColor.fromInt(AppColors.darkSecondary.toARGB32());
 
-  final pw.TextStyle labelStyle =
-      pw.TextStyle(fontSize: 9, color: medGray);
+  final pw.TextStyle labelStyle = pw.TextStyle(fontSize: 9, color: darkColor);
   final pw.TextStyle valueStyle = pw.TextStyle(
     fontSize: 11,
     fontWeight: pw.FontWeight.bold,
-    color: darkGray,
+    color: darkColor,
   );
-  final pw.TextStyle monoStyle =
-      pw.TextStyle(fontSize: 8, color: darkGray);
+  final pw.TextStyle monoStyle = pw.TextStyle(fontSize: 8, color: darkColor);
 
   doc.addPage(
     pw.Page(
@@ -99,9 +96,11 @@ Future<Uint8List> _buildPdf(Booking booking) async {
           children: [
             // ── Header band ─────────────────────────────────────────────
             pw.Container(
-              color: primaryColor,
+              color: darkColor,
               padding: const pw.EdgeInsets.symmetric(
-                  horizontal: 40, vertical: 20),
+                horizontal: 40,
+                vertical: 20,
+              ),
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
@@ -113,7 +112,7 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                         style: pw.TextStyle(
                           fontSize: 22,
                           fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.white,
+                          color: backgroundColor,
                         ),
                       ),
                       pw.SizedBox(height: 4),
@@ -121,18 +120,19 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                         'Billet de réservation',
                         style: pw.TextStyle(
                           fontSize: 12,
-                          color: PdfColors.white,
+                          color: backgroundColor,
                         ),
                       ),
                     ],
                   ),
                   pw.Container(
                     padding: const pw.EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
-                    decoration: const pw.BoxDecoration(
-                      color: PdfColors.white,
-                      borderRadius: pw.BorderRadius.all(
-                          pw.Radius.circular(6)),
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: pw.BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: pw.BorderRadius.all(pw.Radius.circular(6)),
                     ),
                     child: pw.Text(
                       'CONFIRMÉ',
@@ -165,7 +165,7 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                             style: pw.TextStyle(
                               fontSize: 13,
                               fontWeight: pw.FontWeight.bold,
-                              color: darkGray,
+                              color: darkColor,
                             ),
                           ),
                           pw.SizedBox(height: 16),
@@ -174,15 +174,17 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                           pw.Container(
                             padding: const pw.EdgeInsets.all(12),
                             decoration: pw.BoxDecoration(
-                              color: lightRed,
+                              color: backgroundColor,
                               border: pw.Border.all(
-                                  color: primaryColor, width: 1.5),
+                                color: borderColor,
+                                width: 1.5,
+                              ),
                               borderRadius: const pw.BorderRadius.all(
-                                  pw.Radius.circular(8)),
+                                pw.Radius.circular(8),
+                              ),
                             ),
                             child: pw.Column(
-                              crossAxisAlignment:
-                                  pw.CrossAxisAlignment.start,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
                               children: [
                                 pw.Text(
                                   'Matricule du louage',
@@ -209,27 +211,30 @@ Future<Uint8List> _buildPdf(Booking booking) async {
 
                           // De → Vers
                           _pdfField(
-                              label: 'De',
-                              value: booking.fromCity.isNotEmpty
-                                  ? booking.fromCity
-                                  : 'Départ',
-                              labelStyle: labelStyle,
-                              valueStyle: valueStyle),
+                            label: 'De',
+                            value: booking.fromCity.isNotEmpty
+                                ? booking.fromCity
+                                : 'Départ',
+                            labelStyle: labelStyle,
+                            valueStyle: valueStyle,
+                          ),
                           _pdfField(
-                              label: 'Vers',
-                              value: booking.toCity.isNotEmpty
-                                  ? booking.toCity
-                                  : 'Destination',
-                              labelStyle: labelStyle,
-                              valueStyle: valueStyle),
-                          _pdfHr(color: borderGray),
+                            label: 'Vers',
+                            value: booking.toCity.isNotEmpty
+                                ? booking.toCity
+                                : 'Destination',
+                            labelStyle: labelStyle,
+                            valueStyle: valueStyle,
+                          ),
+                          _pdfHr(color: borderColor),
 
                           // Date & time
                           _pdfField(
-                              label: 'Date de départ',
-                              value: departureDate,
-                              labelStyle: labelStyle,
-                              valueStyle: valueStyle),
+                            label: 'Date de départ',
+                            value: departureDate,
+                            labelStyle: labelStyle,
+                            valueStyle: valueStyle,
+                          ),
                           if (departureTime.isNotEmpty)
                             _pdfField(
                               label: 'Heure de départ',
@@ -241,7 +246,7 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                                 color: primaryColor,
                               ),
                             ),
-                          _pdfHr(color: borderGray),
+                          _pdfHr(color: borderColor),
 
                           // Seats
                           _pdfField(
@@ -249,8 +254,8 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                             value: booking.selectedSeats.isEmpty
                                 ? '—'
                                 : booking.selectedSeats
-                                    .map((s) => 'N°$s')
-                                    .join(', '),
+                                      .map((s) => 'N°$s')
+                                      .join(', '),
                             labelStyle: labelStyle,
                             valueStyle: valueStyle,
                           ),
@@ -260,7 +265,7 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                             labelStyle: labelStyle,
                             valueStyle: valueStyle,
                           ),
-                          _pdfHr(color: borderGray),
+                          _pdfHr(color: borderColor),
 
                           // Driver
                           _pdfField(
@@ -271,7 +276,7 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                             labelStyle: labelStyle,
                             valueStyle: valueStyle,
                           ),
-                          _pdfHr(color: borderGray),
+                          _pdfHr(color: borderColor),
 
                           // Total
                           _pdfField(
@@ -305,19 +310,21 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                         children: [
                           pw.Text(
                             'Code de vérification',
-                            style: pw.TextStyle(
-                                fontSize: 9, color: medGray),
+                            style: pw.TextStyle(fontSize: 9, color: darkColor),
                           ),
                           pw.SizedBox(height: 8),
                           if (qrImageBytes != null)
                             pw.Container(
                               padding: const pw.EdgeInsets.all(8),
                               decoration: pw.BoxDecoration(
-                                color: PdfColors.white,
+                                color: backgroundColor,
                                 border: pw.Border.all(
-                                    color: borderGray, width: 1),
+                                  color: borderColor,
+                                  width: 1,
+                                ),
                                 borderRadius: const pw.BorderRadius.all(
-                                    pw.Radius.circular(8)),
+                                  pw.Radius.circular(8),
+                                ),
                               ),
                               child: pw.Image(
                                 pw.MemoryImage(qrImageBytes),
@@ -329,13 +336,13 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                             pw.Container(
                               width: 144,
                               height: 144,
-                              color: lightGray,
+                              color: backgroundColor,
                               child: pw.Center(
                                 child: pw.Text(
                                   'QR Code',
                                   style: pw.TextStyle(
                                     fontSize: 10,
-                                    color: medGray,
+                                    color: darkColor,
                                   ),
                                 ),
                               ),
@@ -343,18 +350,23 @@ Future<Uint8List> _buildPdf(Booking booking) async {
                           pw.SizedBox(height: 10),
                           pw.Container(
                             padding: const pw.EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 6),
-                            decoration: const pw.BoxDecoration(
-                              color: lightGray,
+                              horizontal: 8,
+                              vertical: 6,
+                            ),
+                            decoration: pw.BoxDecoration(
+                              color: backgroundColor,
                               borderRadius: pw.BorderRadius.all(
-                                  pw.Radius.circular(6)),
+                                pw.Radius.circular(6),
+                              ),
                             ),
                             child: pw.Column(
                               children: [
                                 pw.Text(
                                   'Référence',
                                   style: pw.TextStyle(
-                                      fontSize: 8, color: medGray),
+                                    fontSize: 8,
+                                    color: darkColor,
+                                  ),
                                 ),
                                 pw.SizedBox(height: 3),
                                 pw.Text(
@@ -375,19 +387,21 @@ Future<Uint8List> _buildPdf(Booking booking) async {
 
             // ── Footer ──────────────────────────────────────────────────
             pw.Container(
-              color: lightGray,
+              color: backgroundColor,
               padding: const pw.EdgeInsets.symmetric(
-                  horizontal: 40, vertical: 14),
+                horizontal: 40,
+                vertical: 14,
+              ),
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(
                     'LouageGo — Billet généré automatiquement',
-                    style: pw.TextStyle(fontSize: 8, color: medGray),
+                    style: pw.TextStyle(fontSize: 8, color: darkColor),
                   ),
                   pw.Text(
                     'Présentez ce billet au conducteur',
-                    style: pw.TextStyle(fontSize: 8, color: medGray),
+                    style: pw.TextStyle(fontSize: 8, color: darkColor),
                   ),
                 ],
               ),
@@ -410,18 +424,17 @@ pw.Widget _pdfField({
   required String value,
   required pw.TextStyle labelStyle,
   required pw.TextStyle valueStyle,
-}) =>
-    pw.Padding(
-      padding: const pw.EdgeInsets.only(bottom: 8),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(label, style: labelStyle),
-          pw.SizedBox(height: 2),
-          pw.Text(value, style: valueStyle),
-        ],
-      ),
-    );
+}) => pw.Padding(
+  padding: const pw.EdgeInsets.only(bottom: 8),
+  child: pw.Column(
+    crossAxisAlignment: pw.CrossAxisAlignment.start,
+    children: [
+      pw.Text(label, style: labelStyle),
+      pw.SizedBox(height: 2),
+      pw.Text(value, style: valueStyle),
+    ],
+  ),
+);
 
 pw.Widget _pdfHr({required PdfColor color}) => pw.Padding(
   padding: const pw.EdgeInsets.symmetric(vertical: 6),
@@ -455,10 +468,10 @@ Future<Uint8List?> _generateQrImageBytes(String data) async {
     );
     painter.paint(canvas, const dart_ui.Size(sizeValue, sizeValue));
     final picture = recorder.endRecording();
-    final image =
-        await picture.toImage(sizeValue.toInt(), sizeValue.toInt());
-    final byteData =
-        await image.toByteData(format: dart_ui.ImageByteFormat.png);
+    final image = await picture.toImage(sizeValue.toInt(), sizeValue.toInt());
+    final byteData = await image.toByteData(
+      format: dart_ui.ImageByteFormat.png,
+    );
     return byteData?.buffer.asUint8List();
   } catch (_) {
     return null;

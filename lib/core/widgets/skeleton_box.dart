@@ -42,7 +42,7 @@ class _SkeletonBoxState extends State<SkeletonBox>
     final scheme = Theme.of(context).colorScheme;
     final base = scheme.surface;
     final highlight = Color.alphaBlend(
-      scheme.secondary.withValues(alpha: 0.18),
+      scheme.outline.withValues(alpha: 0.14),
       base,
     );
     final loadingLabel = AppLocalizations.of(context)!.commonLoading;

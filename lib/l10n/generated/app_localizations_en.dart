@@ -219,7 +219,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingLouageUnavailable => 'This louage is no longer available.';
 
   @override
-  String get bookingPaymentSimulation => 'Payment (simulation)';
+  String get bookingPaymentSimulation => 'Payment';
 
   @override
   String get bookingPaymentMethod => 'Payment method';
@@ -228,10 +228,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingPayOnBoarding => 'Pay on boarding';
 
   @override
-  String get bookingCardSimulation => 'Bank card (simulation)';
+  String get bookingCardSimulation => 'Bank card';
 
   @override
-  String get bookingMobileSimulation => 'Mobile wallet (simulation)';
+  String get bookingMobileSimulation => 'Mobile wallet';
 
   @override
   String get bookingDriverSeat => 'Driver';
@@ -250,6 +250,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusWaiting => 'Waiting';
+
+  @override
+  String get statusConfirmed => 'Confirmed';
 
   @override
   String get statusFull => 'Full';
@@ -1291,6 +1294,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverCompletedTrips => 'Completed trips';
+
+  @override
+  String get driverDashboardStatsTitle => 'Statistics';
+
+  @override
+  String get driverDashboardRevenueTitle => 'Revenue';
+
+  @override
+  String get driverRevenueToday => 'Today';
+
+  @override
+  String get driverRevenueWeek => 'This week';
 
   @override
   String get driverSaveLouage => 'Save louage';

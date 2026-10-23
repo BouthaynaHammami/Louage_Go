@@ -17,23 +17,23 @@ class SupportHomeScreen extends StatelessWidget {
     String unavailableMessage,
   ) async {
     try {
-      final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
       if (!launched && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(unavailableMessage)),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(unavailableMessage)));
       }
     } on PlatformException {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(unavailableMessage)),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(unavailableMessage)));
       }
     } on MissingPluginException {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(unavailableMessage)),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(unavailableMessage)));
       }
     }
   }
@@ -98,7 +98,9 @@ class SupportHomeScreen extends StatelessWidget {
                         Uri(
                           scheme: 'mailto',
                           path: AppConfig.supportEmail,
-                          queryParameters: {'subject': l10n.supportEmailSubject},
+                          queryParameters: {
+                            'subject': l10n.supportEmailSubject,
+                          },
                         ),
                         l10n.supportContactUnavailable,
                       ),
@@ -144,7 +146,7 @@ class _SupportCard extends StatelessWidget {
     onTap: onTap,
     child: Row(
       children: [
-        Icon(icon, color: Theme.of(context).colorScheme.primary),
+        Icon(icon, color: Theme.of(context).colorScheme.inversePrimary),
         const SizedBox(width: 12),
         Expanded(
           child: Text(title, style: Theme.of(context).textTheme.titleMedium),

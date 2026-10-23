@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -26,8 +27,7 @@ class DriverQrScannerScreen extends ConsumerStatefulWidget {
       _DriverQrScannerScreenState();
 }
 
-class _DriverQrScannerScreenState
-    extends ConsumerState<DriverQrScannerScreen> {
+class _DriverQrScannerScreenState extends ConsumerState<DriverQrScannerScreen> {
   String? _selectedTripId;
   TicketValidationResult? _result;
   String? _error;
@@ -122,7 +122,9 @@ class _DriverQrScannerScreenState
     } catch (err) {
       if (!mounted) return;
       HapticFeedback.vibrate();
-      setState(() => _error = AppLocalizations.of(context)!.driverOperationFailed);
+      setState(
+        () => _error = AppLocalizations.of(context)!.driverOperationFailed,
+      );
     } finally {
       if (mounted) setState(() => _validating = false);
     }
@@ -133,7 +135,9 @@ class _DriverQrScannerScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return ref.watch(currentUserProvider).when(
+    return ref
+        .watch(currentUserProvider)
+        .when(
           loading: () => Scaffold(
             appBar: AppBar(title: Text(l10n.driverScanTitle)),
             body: const Center(child: CircularProgressIndicator()),
@@ -155,7 +159,9 @@ class _DriverQrScannerScreenState
                 ),
               );
             }
-            return ref.watch(driverTripsProvider(user.id)).when(
+            return ref
+                .watch(driverTripsProvider(user.id))
+                .when(
                   loading: () => Scaffold(
                     appBar: AppBar(title: Text(l10n.driverScanTitle)),
                     body: const Center(child: CircularProgressIndicator()),
@@ -167,17 +173,15 @@ class _DriverQrScannerScreenState
                       title: l10n.driverOperationFailed,
                     ),
                   ),
-                  data: (trips) =>
-                      trips.isEmpty
-                          ? Scaffold(
-                              appBar:
-                                  AppBar(title: Text(l10n.driverScanTitle)),
-                              body: EmptyState(
-                                icon: Icons.route_outlined,
-                                title: l10n.driverTripsEmpty,
-                              ),
-                            )
-                          : _buildScanner(context, user.id, trips),
+                  data: (trips) => trips.isEmpty
+                      ? Scaffold(
+                          appBar: AppBar(title: Text(l10n.driverScanTitle)),
+                          body: EmptyState(
+                            icon: Icons.route_outlined,
+                            title: l10n.driverTripsEmpty,
+                          ),
+                        )
+                      : _buildScanner(context, user.id, trips),
                 );
           },
         );
@@ -196,15 +200,19 @@ class _DriverQrScannerScreenState
     }
 
     final selectedTrip = trips.firstWhere((t) => t.id == _selectedTripId);
-    final tripBookings = ref
-        .watch(driverTripBookingsProvider(_selectedTripId!))
-        .asData
-        ?.value ?? [];
-    final validated =
-        tripBookings.where((b) => b.booking.status == 'validated').length;
+    final tripBookings =
+        ref.watch(driverTripBookingsProvider(_selectedTripId!)).asData?.value ??
+        [];
+    final validated = tripBookings
+        .where((b) => b.booking.status == 'validated')
+        .length;
     final total = selectedTrip.totalSeats;
 
     final result = _result;
+    final colorScheme = Theme.of(context).colorScheme;
+    final overlayColor = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainer
+        : colorScheme.secondary;
     final (resultColor, resultIcon, resultMsg) = _resultStyle(
       context,
       l10n,
@@ -213,28 +221,29 @@ class _DriverQrScannerScreenState
     );
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: overlayColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.black.withValues(alpha: 0.55),
-        foregroundColor: Colors.white,
+        backgroundColor: overlayColor.withValues(alpha: 0.7),
+        foregroundColor: colorScheme.onPrimary,
         elevation: 0,
-        title: Text(l10n.driverScanTitle,
-            style: const TextStyle(color: Colors.white)),
+        title: Text(l10n.driverScanTitle),
         actions: [
           // Torch toggle
           IconButton(
             icon: Icon(
               _torchOn ? Icons.flashlight_on : Icons.flashlight_off,
-              color: Colors.white,
+              color: colorScheme.onPrimary,
             ),
             tooltip: 'Torche',
             onPressed: _toggleTorch,
           ),
           // Switch camera
           IconButton(
-            icon: const Icon(Icons.flip_camera_ios_outlined,
-                color: Colors.white),
+            icon: Icon(
+              Icons.flip_camera_ios_outlined,
+              color: colorScheme.onPrimary,
+            ),
             tooltip: 'Changer de caméra',
             onPressed: _switchCamera,
           ),
@@ -264,8 +273,8 @@ class _DriverQrScannerScreenState
 
           // ── Loading spinner ─────────────────────────────────────────
           if (_validating)
-            const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+            Center(
+              child: CircularProgressIndicator(color: colorScheme.onPrimary),
             ),
 
           // ── Bottom panel ────────────────────────────────────────────
@@ -306,33 +315,29 @@ class _DriverQrScannerScreenState
     String? error,
   ) {
     if (error != null) {
-      return (
-        Theme.of(context).colorScheme.error,
-        Icons.error_outline,
-        error,
-      );
+      return (Theme.of(context).colorScheme.error, Icons.error_outline, error);
     }
     return switch (result?.status) {
       TicketValidationStatus.valid => (
-          Theme.of(context).colorScheme.tertiary,
-          Icons.check_circle_outline_rounded,
-          l10n.driverScanValid,
-        ),
+        Theme.of(context).colorScheme.tertiary,
+        Icons.check_circle_outline_rounded,
+        l10n.driverScanValid,
+      ),
       TicketValidationStatus.alreadyUsed => (
-          Theme.of(context).colorScheme.error,
-          Icons.history_toggle_off_rounded,
-          l10n.driverScanUsed,
-        ),
+        Theme.of(context).colorScheme.error,
+        Icons.history_toggle_off_rounded,
+        l10n.driverScanUsed,
+      ),
       TicketValidationStatus.invalid => (
-          const Color(0xFFFF8F00), // amber / orange
-          Icons.cancel_outlined,
-          l10n.driverScanInvalid,
-        ),
+        AppColors.warning,
+        Icons.cancel_outlined,
+        l10n.driverScanInvalid,
+      ),
       null => (
-          Theme.of(context).colorScheme.primary,
-          Icons.qr_code_scanner,
-          l10n.driverScanInstructions,
-        ),
+        Theme.of(context).colorScheme.inversePrimary,
+        Icons.qr_code_scanner,
+        l10n.driverScanInstructions,
+      ),
     };
   }
 }
@@ -346,8 +351,13 @@ class _ViewfinderOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: _ViewfinderPainter(
-        frameColor: Colors.white,
-        dimColor: Colors.black.withValues(alpha: 0.55),
+        frameColor: Theme.of(context).colorScheme.onPrimary,
+        cornerColor: Theme.of(context).colorScheme.primary,
+        dimColor:
+            (Theme.of(context).colorScheme.brightness == Brightness.dark
+                    ? Theme.of(context).colorScheme.surfaceContainer
+                    : Theme.of(context).colorScheme.secondary)
+                .withValues(alpha: 0.7),
       ),
     );
   }
@@ -356,10 +366,12 @@ class _ViewfinderOverlay extends StatelessWidget {
 class _ViewfinderPainter extends CustomPainter {
   const _ViewfinderPainter({
     required this.frameColor,
+    required this.cornerColor,
     required this.dimColor,
   });
 
   final Color frameColor;
+  final Color cornerColor;
   final Color dimColor;
 
   @override
@@ -385,14 +397,23 @@ class _ViewfinderPainter extends CustomPainter {
           const Radius.circular(12),
         ),
       );
-    canvas.drawPath(
-      holePath..fillType = PathFillType.evenOdd,
-      dimPaint,
+    canvas.drawPath(holePath..fillType = PathFillType.evenOdd, dimPaint);
+
+    final framePaint = Paint()
+      ..color = frameColor
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTRB(l, t, r, b),
+        const Radius.circular(12),
+      ),
+      framePaint,
     );
 
     // Corner brackets
     final paint = Paint()
-      ..color = frameColor
+      ..color = cornerColor
       ..strokeWidth = cornerW
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -403,16 +424,8 @@ class _ViewfinderPainter extends CustomPainter {
       (l, b, 1.0, -1.0),
       (r, b, -1.0, -1.0),
     ]) {
-      canvas.drawLine(
-        Offset(ox, oy + dy * cornerLen),
-        Offset(ox, oy),
-        paint,
-      );
-      canvas.drawLine(
-        Offset(ox + dx * cornerLen, oy),
-        Offset(ox, oy),
-        paint,
-      );
+      canvas.drawLine(Offset(ox, oy + dy * cornerLen), Offset(ox, oy), paint);
+      canvas.drawLine(Offset(ox + dx * cornerLen, oy), Offset(ox, oy), paint);
     }
   }
 
@@ -485,7 +498,9 @@ class _BottomPanel extends StatelessWidget {
               labelText: l10n.driverScanSelectTrip,
               border: const OutlineInputBorder(),
               contentPadding: const EdgeInsetsDirectional.symmetric(
-                  horizontal: 12, vertical: 10),
+                horizontal: 12,
+                vertical: 10,
+              ),
             ),
             items: [
               for (final trip in trips)
@@ -506,11 +521,11 @@ class _BottomPanel extends StatelessWidget {
           // Boarding counter
           Container(
             padding: const EdgeInsetsDirectional.symmetric(
-                horizontal: 14, vertical: 10),
+              horizontal: 14,
+              vertical: 10,
+            ),
             decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .primaryContainer
+              color: Theme.of(context).colorScheme.primaryContainer
                   .withValues(alpha: 0.60),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -525,11 +540,9 @@ class _BottomPanel extends StatelessWidget {
                 Text(
                   '$validated / $total ${l10n.driverSeatWord}',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onPrimaryContainer,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                 ),
               ],
             ),
@@ -540,12 +553,13 @@ class _BottomPanel extends StatelessWidget {
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsetsDirectional.symmetric(
-                  horizontal: 14, vertical: 12),
+                horizontal: 14,
+                vertical: 12,
+              ),
               decoration: BoxDecoration(
                 color: resultColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                    color: resultColor.withValues(alpha: 0.40)),
+                border: Border.all(color: resultColor.withValues(alpha: 0.40)),
               ),
               child: Row(
                 children: [
@@ -554,9 +568,7 @@ class _BottomPanel extends StatelessWidget {
                   Expanded(
                     child: Text(
                       resultMsg,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleSmall
+                      style: Theme.of(context).textTheme.titleSmall
                           ?.copyWith(color: resultColor),
                     ),
                   ),

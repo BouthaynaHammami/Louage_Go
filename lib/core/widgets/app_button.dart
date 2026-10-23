@@ -26,6 +26,7 @@ class AppButton extends StatefulWidget {
 
 class _AppButtonState extends State<AppButton> {
   bool _pressed = false;
+  bool _focused = false;
 
   Widget _content(Color foreground) {
     return Semantics(
@@ -53,69 +54,93 @@ class _AppButtonState extends State<AppButton> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final darkButtonBackground = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainer
+        : colorScheme.secondary;
+    final darkButtonForeground = colorScheme.brightness == Brightness.dark
+        ? colorScheme.onSurface
+        : colorScheme.onSecondary;
     final foreground = switch (widget.variant) {
       AppButtonVariant.primary => colorScheme.onPrimary,
       AppButtonVariant.secondary => colorScheme.onSurface,
-      AppButtonVariant.accent => colorScheme.onPrimary,
+      AppButtonVariant.accent => darkButtonForeground,
+    };
+    final background = switch (widget.variant) {
+      AppButtonVariant.primary => colorScheme.primary,
+      AppButtonVariant.secondary => colorScheme.surface,
+      AppButtonVariant.accent => darkButtonBackground,
     };
     final callback = widget.isLoading ? null : widget.onPressed;
     final borderRadius = BorderRadius.circular(16);
     final shape = RoundedRectangleBorder(borderRadius: borderRadius);
 
+    late final Widget button;
     if (widget.variant == AppButtonVariant.secondary) {
-      return OutlinedButton(
+      button = OutlinedButton(
         onPressed: callback,
         style: OutlinedButton.styleFrom(
           minimumSize: Size(0, widget.height),
           padding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
           foregroundColor: foreground,
-          side: BorderSide(color: colorScheme.outline),
+          side: BorderSide(color: colorScheme.secondary),
           shape: shape,
         ),
         child: _content(foreground),
       );
-    }
-
-    if (widget.variant == AppButtonVariant.primary) {
-      return AnimatedScale(
+    } else {
+      button = AnimatedScale(
         scale: _pressed ? 0.97 : 1,
         duration: const Duration(milliseconds: 120),
-        child: Material(
-          color: callback == null
-              ? colorScheme.onSurface.withValues(alpha: 0.12)
-              : colorScheme.primary,
-          borderRadius: borderRadius,
-          child: InkWell(
-            onTap: callback,
-            onHighlightChanged: (pressed) => setState(() => _pressed = pressed),
-            borderRadius: borderRadius,
-            child: SizedBox(
-              height: widget.height,
-              child: Center(
-                child: _content(
-                  callback == null
-                      ? colorScheme.onSurface.withValues(alpha: 0.38)
-                      : colorScheme.onPrimary,
-                ),
-              ),
+        child: ElevatedButton(
+          onPressed: callback,
+          style: ElevatedButton.styleFrom(
+            minimumSize: Size(0, widget.height),
+            padding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
+            backgroundColor: background,
+            foregroundColor: foreground,
+            disabledBackgroundColor: colorScheme.onSurface.withValues(
+              alpha: 0.12,
             ),
+            disabledForegroundColor: colorScheme.onSurface.withValues(
+              alpha: 0.38,
+            ),
+            elevation: 0,
+            shape: shape,
+          ),
+          child: _content(
+            callback == null
+                ? colorScheme.onSurface.withValues(alpha: 0.38)
+                : foreground,
           ),
         ),
       );
     }
 
-    return ElevatedButton(
-      onPressed: callback,
-      style: ElevatedButton.styleFrom(
-        minimumSize: Size(0, widget.height),
-        padding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
-        backgroundColor: widget.variant == AppButtonVariant.accent
-            ? colorScheme.secondary
-            : colorScheme.primary,
-        foregroundColor: foreground,
-        shape: shape,
+    return Focus(
+      onFocusChange: (focused) {
+        if (_focused != focused) setState(() => _focused = focused);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          boxShadow: _focused
+              ? [
+                  BoxShadow(
+                    color: colorScheme.primary.withValues(alpha: 0.28),
+                    blurRadius: 0,
+                    spreadRadius: 2,
+                  ),
+                ]
+              : null,
+        ),
+        child: Listener(
+          onPointerDown: (_) => setState(() => _pressed = true),
+          onPointerUp: (_) => setState(() => _pressed = false),
+          onPointerCancel: (_) => setState(() => _pressed = false),
+          child: button,
+        ),
       ),
-      child: _content(foreground),
     );
   }
 }
@@ -131,7 +156,18 @@ class _ButtonContent extends StatelessWidget {
     if (icon == null) return Text(label);
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [Icon(icon, size: 20), const SizedBox(width: 8), Text(label)],
+      children: [
+        Icon(icon, size: 20),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
     );
   }
 }

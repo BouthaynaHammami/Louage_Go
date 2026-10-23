@@ -13,6 +13,7 @@ import '../../../../features/notifications/presentation/providers/notifications_
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/driver_document.dart';
 import '../../../../models/driver_profile.dart';
+import '../widgets/driver_app_bar.dart';
 import '../providers/document_provider.dart';
 import '../providers/driver_home_provider.dart';
 
@@ -27,28 +28,31 @@ class DriverPendingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    return ref.watch(currentUserProvider).when(
-          loading: () => const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          ),
+    return ref
+        .watch(currentUserProvider)
+        .when(
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (err, _) => Scaffold(
-            appBar: AppBar(title: Text(l10n.driverDocumentsTitle)),
+            appBar: driverAppBar(context, l10n.driverDocumentsTitle),
             body: Center(child: Text(l10n.driverProfileUnavailable)),
           ),
           data: (user) {
             if (user == null) {
               return Scaffold(
-                appBar: AppBar(title: Text(l10n.driverDocumentsTitle)),
+                appBar: driverAppBar(context, l10n.driverDocumentsTitle),
                 body: Center(child: Text(l10n.sessionExpired)),
               );
             }
 
-            return ref.watch(driverDashboardProvider(user.id)).when(
+            return ref
+                .watch(driverDashboardProvider(user.id))
+                .when(
                   loading: () => const Scaffold(
                     body: Center(child: CircularProgressIndicator()),
                   ),
                   error: (err, _) => Scaffold(
-                    appBar: AppBar(title: Text(l10n.driverDocumentsTitle)),
+                    appBar: driverAppBar(context, l10n.driverDocumentsTitle),
                     body: Center(child: Text(l10n.driverProfileUnavailable)),
                   ),
                   data: (dashboard) => _PendingBody(
@@ -77,7 +81,7 @@ class _PendingBody extends ConsumerWidget {
     final docs = ref.watch(driverDocumentsProvider(driverId));
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.driverDocumentsTitle)),
+      appBar: driverAppBar(context, l10n.driverDocumentsTitle),
       body: docs.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(child: Text('$err')),
@@ -94,8 +98,9 @@ class _PendingBody extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final allUploaded = ref.watch(allDocumentsUploadedProvider(documents));
     final status = profile.validationStatus;
-    final hasRejected =
-        documents.any((d) => d.status == DocumentStatus.rejected.name);
+    final hasRejected = documents.any(
+      (d) => d.status == DocumentStatus.rejected.name,
+    );
 
     return Center(
       child: ConstrainedBox(
@@ -114,9 +119,8 @@ class _PendingBody extends ConsumerWidget {
             // ── Document list ───────────────────────────────────────────
             Text(
               l10n.docSectionTitle,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 12),
             for (final type in DocumentType.values)
@@ -181,9 +185,7 @@ class _PendingBody extends ConsumerWidget {
     );
     if (confirmed != true || !context.mounted) return;
     try {
-      await ref
-          .read(documentRepositoryProvider)
-          .submitAll(driverId);
+      await ref.read(documentRepositoryProvider).submitAll(driverId);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l10n.docSubmitSuccess)));
@@ -210,30 +212,32 @@ class _StatusBanner extends StatelessWidget {
 
     final (label, icon, color) = switch (status) {
       'approved' || 'validated' => (
-          l10n.docValidationStatusApproved,
-          Icons.verified_rounded,
-          colors.tertiary,
-        ),
+        l10n.docValidationStatusApproved,
+        Icons.verified_rounded,
+        colors.tertiary,
+      ),
       'rejected' || 'declined' => (
-          l10n.docValidationStatusRejected,
-          Icons.error_outline_rounded,
-          colors.error,
-        ),
+        l10n.docValidationStatusRejected,
+        Icons.error_outline_rounded,
+        colors.error,
+      ),
       'documentsSubmitted' => (
-          l10n.docValidationStatusSubmitted,
-          Icons.hourglass_top_rounded,
-          colors.secondary,
-        ),
+        l10n.docValidationStatusSubmitted,
+        Icons.hourglass_top_rounded,
+        colors.secondary,
+      ),
       _ => (
-          l10n.docValidationStatusPending,
-          Icons.pending_outlined,
-          colors.secondary,
-        ),
+        l10n.docValidationStatusPending,
+        Icons.pending_outlined,
+        colors.secondary,
+      ),
     };
 
     return Container(
       padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 16, vertical: 14),
+        horizontal: 16,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(16),
@@ -247,9 +251,9 @@ class _StatusBanner extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: colors.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: colors.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -286,15 +290,13 @@ class _ValidationStepper extends StatelessWidget {
 
     return AppCard(
       padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 16, vertical: 18),
+        horizontal: 16,
+        vertical: 18,
+      ),
       child: Row(
         children: [
           for (var i = 0; i < steps.length; i++) ...[
-            _StepDot(
-              index: i,
-              label: steps[i],
-              currentStep: currentStep,
-            ),
+            _StepDot(index: i, label: steps[i], currentStep: currentStep),
             if (i < steps.length - 1)
               Expanded(
                 child: Container(
@@ -330,8 +332,8 @@ class _StepDot extends StatelessWidget {
     final dotColor = isDone
         ? colors.primary
         : isCurrent
-            ? colors.primary
-            : colors.outlineVariant;
+        ? colors.primary
+        : colors.outlineVariant;
     final textColor = isCurrent || isDone
         ? colors.primary
         : colors.onSurfaceVariant;
@@ -369,10 +371,9 @@ class _StepDot extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: textColor,
-                  fontWeight:
-                      isCurrent ? FontWeight.w700 : FontWeight.normal,
-                ),
+              color: textColor,
+              fontWeight: isCurrent ? FontWeight.w700 : FontWeight.normal,
+            ),
           ),
         ),
       ],
@@ -400,27 +401,14 @@ class _DocumentItem extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
     final doc = document;
-    final docStatus =
-        doc?.documentStatus ?? DocumentStatus.toSend;
+    final docStatus = doc?.documentStatus ?? DocumentStatus.toSend;
     final isRejected = docStatus == DocumentStatus.rejected;
 
     final (statusLabel, statusColor) = switch (docStatus) {
-      DocumentStatus.toSend => (
-          l10n.docStatusToSend,
-          colors.onSurfaceVariant,
-        ),
-      DocumentStatus.sent => (
-          l10n.docStatusSent,
-          colors.secondary,
-        ),
-      DocumentStatus.rejected => (
-          l10n.docStatusRejected,
-          colors.error,
-        ),
-      DocumentStatus.validated => (
-          l10n.docStatusValidated,
-          colors.tertiary,
-        ),
+      DocumentStatus.toSend => (l10n.docStatusToSend, colors.onSurfaceVariant),
+      DocumentStatus.sent => (l10n.docStatusSent, colors.secondary),
+      DocumentStatus.rejected => (l10n.docStatusRejected, colors.error),
+      DocumentStatus.validated => (l10n.docStatusValidated, colors.tertiary),
     };
 
     return Padding(
@@ -452,7 +440,9 @@ class _DocumentItem extends ConsumerWidget {
                 // Status badge
                 Container(
                   padding: const EdgeInsetsDirectional.symmetric(
-                      horizontal: 8, vertical: 3),
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
@@ -460,9 +450,9 @@ class _DocumentItem extends ConsumerWidget {
                   child: Text(
                     statusLabel,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: statusColor,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      color: statusColor,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -475,11 +465,8 @@ class _DocumentItem extends ConsumerWidget {
                           : Icons.upload_file_outlined,
                       color: isRejected ? colors.error : colors.primary,
                     ),
-                    tooltip: isRejected
-                        ? l10n.docResend
-                        : l10n.docUploadTitle,
-                    onPressed: () =>
-                        _pickAndUpload(context, ref),
+                    tooltip: isRejected ? l10n.docResend : l10n.docUploadTitle,
+                    onPressed: () => _pickAndUpload(context, ref),
                   ),
               ],
             ),
@@ -488,22 +475,26 @@ class _DocumentItem extends ConsumerWidget {
               const SizedBox(height: 6),
               Container(
                 padding: const EdgeInsetsDirectional.symmetric(
-                    horizontal: 10, vertical: 6),
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: colors.errorContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline,
-                        size: 14, color: colors.onErrorContainer),
+                    Icon(
+                      Icons.info_outline,
+                      size: 14,
+                      color: colors.onErrorContainer,
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         '${l10n.docRejectionReason} : ${doc.rejectionReason}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: colors.onErrorContainer,
-                            ),
+                        style: Theme.of(context).textTheme.bodySmall
+                            ?.copyWith(color: colors.onErrorContainer),
                       ),
                     ),
                   ],
@@ -531,8 +522,7 @@ class _DocumentItem extends ConsumerWidget {
     );
   }
 
-  Future<void> _pickAndUpload(
-      BuildContext context, WidgetRef ref) async {
+  Future<void> _pickAndUpload(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
     // Show picker choice dialog
     final source = await showModalBottomSheet<ImageSource>(
@@ -574,41 +564,38 @@ class _DocumentItem extends ConsumerWidget {
     // Preview dialog
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => _PreviewDialog(
-        imagePath: picked.path,
-        title: _typeLabel(l10n, type),
-      ),
+      builder: (ctx) =>
+          _PreviewDialog(imagePath: picked.path, title: _typeLabel(l10n, type)),
     );
     if (confirmed != true || !context.mounted) return;
 
     try {
-      await ref.read(documentRepositoryProvider).saveDocument(
+      await ref
+          .read(documentRepositoryProvider)
+          .saveDocument(
             driverId: driverId,
             type: type,
             sourceImagePath: picked.path,
           );
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.docUploadSuccess)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.docUploadSuccess)));
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.docUploadError)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.docUploadError)));
     }
   }
 
-  String _typeLabel(AppLocalizations l10n, DocumentType t) =>
-      switch (t) {
-        DocumentType.nationalId => l10n.docTypeNationalId,
-        DocumentType.driverLicense => l10n.docTypeDriverLicense,
-        DocumentType.vehicleCard => l10n.docTypeVehicleCard,
-        DocumentType.insurance => l10n.docTypeInsurance,
-        DocumentType.transportLicense => l10n.docTypeTransportLicense,
-        DocumentType.driverPhoto => l10n.docTypeDriverPhoto,
-        DocumentType.vehiclePhoto => l10n.docTypeVehiclePhoto,
-      };
+  String _typeLabel(AppLocalizations l10n, DocumentType t) => switch (t) {
+    DocumentType.nationalId => l10n.docTypeNationalId,
+    DocumentType.driverLicense => l10n.docTypeDriverLicense,
+    DocumentType.vehicleCard => l10n.docTypeVehicleCard,
+    DocumentType.insurance => l10n.docTypeInsurance,
+    DocumentType.transportLicense => l10n.docTypeTransportLicense,
+    DocumentType.driverPhoto => l10n.docTypeDriverPhoto,
+    DocumentType.vehiclePhoto => l10n.docTypeVehiclePhoto,
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -616,10 +603,7 @@ class _DocumentItem extends ConsumerWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _PreviewDialog extends StatelessWidget {
-  const _PreviewDialog({
-    required this.imagePath,
-    required this.title,
-  });
+  const _PreviewDialog({required this.imagePath, required this.title});
 
   final String imagePath;
   final String title;
@@ -632,8 +616,7 @@ class _PreviewDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title,
-              style: Theme.of(context).textTheme.titleSmall),
+          Text(title, style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 12),
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
@@ -683,16 +666,14 @@ class _LockedPreview extends StatelessWidget {
       children: [
         Text(
           l10n.docLockedPreviewTitle,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+          style: Theme.of(context).textTheme.titleMedium
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 8),
         Text(
           l10n.docLockedPreviewBody,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: colors.onSurfaceVariant),
         ),
         const SizedBox(height: 14),
         GridView.count(
@@ -740,9 +721,8 @@ class _LockedTile extends StatelessWidget {
                 label,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: colors.onSurfaceVariant,
-                    ),
+                style: Theme.of(context).textTheme.labelMedium
+                    ?.copyWith(color: colors.onSurfaceVariant),
               ),
             ),
           ],
@@ -772,9 +752,8 @@ class _HelpSection extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 l10n.docHelpTitle,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: Theme.of(context).textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -784,17 +763,18 @@ class _HelpSection extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             leading: Icon(Icons.quiz_outlined, color: colors.secondary),
             title: Text(l10n.docHelpFaq),
-            trailing: Icon(Icons.chevron_right,
-                color: colors.onSurfaceVariant),
+            trailing: Icon(Icons.chevron_right, color: colors.onSurfaceVariant),
             onTap: () => context.pushNamed('supportFaq'),
           ),
           ListTile(
             dense: true,
             contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.support_agent_outlined, color: colors.secondary),
+            leading: Icon(
+              Icons.support_agent_outlined,
+              color: colors.secondary,
+            ),
             title: Text(l10n.docHelpContact),
-            trailing: Icon(Icons.chevron_right,
-                color: colors.onSurfaceVariant),
+            trailing: Icon(Icons.chevron_right, color: colors.onSurfaceVariant),
             onTap: () => context.pushNamed('supportContact'),
           ),
         ],
@@ -845,9 +825,8 @@ class _DebugPanelState extends ConsumerState<_DebugPanel> {
               const SizedBox(width: 8),
               Text(
                 l10n.docDebugTitle,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: Theme.of(context).textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -870,10 +849,7 @@ class _DebugPanelState extends ConsumerState<_DebugPanel> {
               decoration: InputDecoration(labelText: l10n.docSectionTitle),
               items: [
                 for (final d in sentDocs)
-                  DropdownMenuItem(
-                    value: d,
-                    child: Text(d.type),
-                  ),
+                  DropdownMenuItem(value: d, child: Text(d.type)),
               ],
               onChanged: (v) => setState(() => _docToReject = v),
             ),
@@ -902,9 +878,7 @@ class _DebugPanelState extends ConsumerState<_DebugPanel> {
 
   Future<void> _approveAll(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
-    await ref
-        .read(documentRepositoryProvider)
-        .debugApproveAll(widget.driverId);
+    await ref.read(documentRepositoryProvider).debugApproveAll(widget.driverId);
     // Fire a local notification
     try {
       await ref
@@ -918,16 +892,17 @@ class _DebugPanelState extends ConsumerState<_DebugPanel> {
           );
     } catch (_) {}
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.docDebugNotifApproved)),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(l10n.docDebugNotifApproved)));
   }
 
   Future<void> _rejectDoc(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     final doc = _docToReject;
     if (doc == null) return;
-    await ref.read(documentRepositoryProvider).debugRejectDocument(
+    await ref
+        .read(documentRepositoryProvider)
+        .debugRejectDocument(
           driverId: widget.driverId,
           documentId: doc.id,
           reason: _reasonController.text.trim().isEmpty
@@ -948,8 +923,7 @@ class _DebugPanelState extends ConsumerState<_DebugPanel> {
     if (!context.mounted) return;
     setState(() => _docToReject = null);
     _reasonController.clear();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.docDebugNotifRejected)),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(l10n.docDebugNotifRejected)));
   }
 }

@@ -11,6 +11,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../presentation/providers/booking_provider.dart';
 import '../../../../models/booking.dart';
 import '../../data/ticket_pdf_service.dart';
+import '../widgets/louage_seat_layout.dart';
 
 class BookingFlowScreen extends ConsumerStatefulWidget {
   const BookingFlowScreen({super.key, required this.tripId});
@@ -29,6 +30,9 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     if (_confirmed != null) return _Ticket(booking: _confirmed!);
+    final occupiedSeatState = ref.watch(
+      occupiedSeatNumbersProvider(widget.tripId),
+    );
     return ref
         .watch(louageDetailDataProvider(widget.tripId))
         .when(
@@ -44,61 +48,114 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
             }
             final trip = detail.trip;
             final price = detail.route!.pricePerSeat;
+            final colors = Theme.of(context).colorScheme;
+            final darkHeader = colors.brightness == Brightness.dark
+                ? colors.surfaceContainerHigh
+                : colors.secondary;
             return Scaffold(
-              appBar: AppBar(title: Text(l10n.searchReservation)),
+              appBar: AppBar(
+                title: Text(l10n.searchReservation),
+                backgroundColor: darkHeader,
+                foregroundColor: colors.onPrimary,
+                iconTheme: IconThemeData(color: colors.onPrimary),
+              ),
               body: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  Text(
-                    '${detail.fromStation?.name ?? ''} → ${detail.toStation?.name ?? ''}',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text('${price.toStringAsFixed(2)} DT ${l10n.bookingPerSeat}'),
-                  const SizedBox(height: 18),
-                  _SeatLayout(
-                    totalSeats: trip.totalSeats,
-                    reservedSeats: trip.reservedSeats,
-                    selectedSeats: _selected,
-                    onSeatChanged: (seat, selected) => setState(() {
-                      selected ? _selected.add(seat) : _selected.remove(seat);
-                    }),
-                  ),
-                  const SizedBox(height: 18),
-                  Text(
-                    l10n.bookingSummary(_selected.length),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Text('${(_selected.length * price).toStringAsFixed(2)} DT'),
-                  const SizedBox(height: 14),
-                  Text(
-                    l10n.bookingPaymentSimulation,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  DropdownButtonFormField<String>(
-                    initialValue: _payment,
-                    decoration: InputDecoration(
-                      labelText: l10n.bookingPaymentMethod,
+                  AppCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          '${detail.fromStation?.name ?? ''} → ${detail.toStation?.name ?? ''}',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '${price.toStringAsFixed(2)} DT ${l10n.bookingPerSeat}',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: colors.inversePrimary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ],
                     ),
-                    items: [
-                      DropdownMenuItem(
-                        value: 'cash',
-                        child: Text(l10n.bookingPayOnBoarding),
-                      ),
-                      DropdownMenuItem(
-                        value: 'card',
-                        child: Text(l10n.bookingCardSimulation),
-                      ),
-                      DropdownMenuItem(
-                        value: 'mobile',
-                        child: Text(l10n.bookingMobileSimulation),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) setState(() => _payment = value);
-                    },
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 16),
+                  occupiedSeatState.when(
+                    data: (occupiedSeats) => LouageSeatLayout(
+                      totalSeats: trip.totalSeats,
+                      occupiedSeats: occupiedSeats,
+                      selectedSeats: _selected,
+                      onSeatChanged: (seat, selected) => setState(() {
+                        selected ? _selected.add(seat) : _selected.remove(seat);
+                      }),
+                    ),
+                    loading: () => const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                    error: (error, stack) => AppCard(
+                      child: Text(
+                        '$error',
+                        style: TextStyle(color: colors.error),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  AppCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          l10n.bookingSummary(_selected.length),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${(_selected.length * price).toStringAsFixed(2)} DT',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: colors.inversePrimary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.bookingPaymentSimulation,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          initialValue: _payment,
+                          decoration: InputDecoration(
+                            labelText: l10n.bookingPaymentMethod,
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: 'cash',
+                              child: Text(l10n.bookingPayOnBoarding),
+                            ),
+                            DropdownMenuItem(
+                              value: 'card',
+                              child: Text(l10n.bookingCardSimulation),
+                            ),
+                            DropdownMenuItem(
+                              value: 'mobile',
+                              child: Text(l10n.bookingMobileSimulation),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() => _payment = value);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
                   AppButton(
                     label: l10n.bookingReviewAction,
                     onPressed: _selected.isEmpty ? null : _confirm,
@@ -160,174 +217,6 @@ class _BookingFlowScreenState extends ConsumerState<BookingFlowScreen> {
   }
 }
 
-class _SeatLayout extends StatelessWidget {
-  const _SeatLayout({
-    required this.totalSeats,
-    required this.reservedSeats,
-    required this.selectedSeats,
-    required this.onSeatChanged,
-  });
-
-  final int totalSeats;
-  final int reservedSeats;
-  final Set<int> selectedSeats;
-  final void Function(int seat, bool selected) onSeatChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final occupiedCount = reservedSeats.clamp(0, totalSeats);
-    final rows = <Widget>[];
-    for (var firstSeat = 1; firstSeat <= totalSeats; firstSeat += 2) {
-      final secondSeat = firstSeat + 1;
-      rows.add(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _Seat(
-              number: firstSeat,
-              occupied: firstSeat <= occupiedCount,
-              selected: selectedSeats.contains(firstSeat),
-              onChanged: onSeatChanged,
-            ),
-            if (secondSeat <= totalSeats)
-              _Seat(
-                number: secondSeat,
-                occupied: secondSeat <= occupiedCount,
-                selected: selectedSeats.contains(secondSeat),
-                onChanged: onSeatChanged,
-              )
-            else
-              const SizedBox(width: 58),
-          ],
-        ),
-      );
-      if (firstSeat + 2 <= totalSeats) {
-        rows.add(const SizedBox(height: 10));
-      }
-    }
-
-    return AppCard(
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              color: colors.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              AppLocalizations.of(context)!.bookingDriverSeat,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
-          const SizedBox(height: 14),
-          ...rows,
-          const SizedBox(height: 16),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 14,
-            runSpacing: 8,
-            children: [
-              _Legend(
-                color: colors.outlineVariant,
-                label: AppLocalizations.of(context)!.bookingTaken,
-              ),
-              _Legend(
-                color: colors.primary,
-                label: AppLocalizations.of(context)!.bookingSelected,
-              ),
-              _Legend(
-                color: colors.surface,
-                label: AppLocalizations.of(context)!.bookingFree,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Seat extends StatelessWidget {
-  const _Seat({
-    required this.number,
-    required this.occupied,
-    required this.selected,
-    required this.onChanged,
-  });
-
-  final int number;
-  final bool occupied;
-  final bool selected;
-  final void Function(int seat, bool selected) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final background = occupied
-        ? colors.surfaceContainerHighest
-        : selected
-        ? colors.primary
-        : colors.surface;
-    final foreground = occupied
-        ? colors.onSurfaceVariant
-        : selected
-        ? colors.onPrimary
-        : colors.primary;
-
-    return Semantics(
-      button: !occupied,
-      label: 'Seat $number${occupied ? ', taken' : ', free'}',
-      child: InkWell(
-        onTap: occupied ? null : () => onChanged(number, !selected),
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          width: 58,
-          height: 50,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: colors.primary),
-          ),
-          child: Text(
-            '$number',
-            style: TextStyle(color: foreground, fontWeight: FontWeight.w700),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Legend extends StatelessWidget {
-  const _Legend({required this.color, required this.label});
-
-  final Color color;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Container(
-        width: 14,
-        height: 14,
-        decoration: BoxDecoration(
-          color: color,
-          border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(4),
-        ),
-      ),
-      const SizedBox(width: 5),
-      Text(label),
-    ],
-  );
-}
-
 class _Ticket extends StatelessWidget {
   const _Ticket({required this.booking});
   final Booking booking;
@@ -335,16 +224,21 @@ class _Ticket extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = Theme.of(context).colorScheme;
+    final darkHeader = colors.brightness == Brightness.dark
+        ? colors.surfaceContainerHigh
+        : colors.secondary;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.bookingConfirmed)),
+      appBar: AppBar(
+        title: Text(l10n.bookingConfirmed),
+        backgroundColor: darkHeader,
+        foregroundColor: colors.onPrimary,
+        iconTheme: IconThemeData(color: colors.onPrimary),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Icon(
-            Icons.check_circle,
-            color: Theme.of(context).colorScheme.tertiary,
-            size: 72,
-          ),
+          Icon(Icons.check_circle, color: colors.tertiary, size: 72),
           const SizedBox(height: 12),
           Text(
             l10n.bookingTicketReady,
@@ -353,16 +247,41 @@ class _Ticket extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           AppCard(
+            shape: _NotchedTicketBorder(
+              side: BorderSide(color: colors.outline),
+            ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                QrImageView(data: booking.qrCode, size: 220),
-                Text('${l10n.bookingReference}: ${booking.id}'),
+                Icon(
+                  Icons.confirmation_number_rounded,
+                  color: colors.primary,
+                  size: 32,
+                ),
+                const SizedBox(height: 10),
+                Center(child: QrImageView(data: booking.qrCode, size: 220)),
+                const SizedBox(height: 18),
+                Divider(color: colors.outlineVariant),
+                const SizedBox(height: 10),
+                Text(
+                  '${l10n.bookingReference}: ${booking.id}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 6),
                 Text(
                   '${l10n.bookingSeats}: ${booking.selectedSeats.join(', ')}',
                 ),
                 Text('${l10n.bookingDriver}: ${booking.driverName}'),
                 Text('${l10n.bookingMatricule}: ${booking.matricule}'),
-                Text('${booking.totalPrice.toStringAsFixed(2)} DT'),
+                const SizedBox(height: 10),
+                Text(
+                  '${booking.totalPrice.toStringAsFixed(2)} DT',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: colors.inversePrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
               ],
             ),
           ),
@@ -390,4 +309,70 @@ class _Ticket extends StatelessWidget {
       ),
     );
   }
+}
+
+class _NotchedTicketBorder extends ShapeBorder {
+  const _NotchedTicketBorder({required this.side});
+
+  final BorderSide side;
+  static const _radius = 16.0;
+  static const _notchRadius = 12.0;
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(side.width);
+
+  Path _path(Rect rect) {
+    final middle = rect.center.dy;
+    return Path()
+      ..moveTo(rect.left + _radius, rect.top)
+      ..lineTo(rect.right - _radius, rect.top)
+      ..quadraticBezierTo(rect.right, rect.top, rect.right, rect.top + _radius)
+      ..lineTo(rect.right, middle - _notchRadius)
+      ..quadraticBezierTo(
+        rect.right - _notchRadius,
+        middle,
+        rect.right,
+        middle + _notchRadius,
+      )
+      ..lineTo(rect.right, rect.bottom - _radius)
+      ..quadraticBezierTo(
+        rect.right,
+        rect.bottom,
+        rect.right - _radius,
+        rect.bottom,
+      )
+      ..lineTo(rect.left + _radius, rect.bottom)
+      ..quadraticBezierTo(
+        rect.left,
+        rect.bottom,
+        rect.left,
+        rect.bottom - _radius,
+      )
+      ..lineTo(rect.left, middle + _notchRadius)
+      ..quadraticBezierTo(
+        rect.left + _notchRadius,
+        middle,
+        rect.left,
+        middle - _notchRadius,
+      )
+      ..lineTo(rect.left, rect.top + _radius)
+      ..quadraticBezierTo(rect.left, rect.top, rect.left + _radius, rect.top)
+      ..close();
+  }
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) => _path(rect);
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) =>
+      _path(rect.deflate(side.width));
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
+    if (side.style == BorderStyle.none) return;
+    canvas.drawPath(_path(rect), side.toPaint());
+  }
+
+  @override
+  ShapeBorder scale(double t) => _NotchedTicketBorder(side: side.scale(t));
 }

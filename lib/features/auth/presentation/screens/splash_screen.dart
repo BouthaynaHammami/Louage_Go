@@ -58,11 +58,14 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final background = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainer
+        : colorScheme.secondary;
     final textColor = colorScheme.onPrimary;
     final slogan = AppLocalizations.of(context)!.splashSlogan;
 
     return Scaffold(
-      backgroundColor: colorScheme.primary,
+      backgroundColor: background,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -85,8 +88,8 @@ class _SplashScreenState extends State<SplashScreen>
                           child: Container(
                             height: 2,
                             decoration: BoxDecoration(
-                              color: colorScheme.secondary.withValues(
-                                alpha: 0.45,
+                              color: colorScheme.onPrimary.withValues(
+                                alpha: 0.28,
                               ),
                               borderRadius: BorderRadius.circular(2),
                             ),
@@ -107,12 +110,12 @@ class _SplashScreenState extends State<SplashScreen>
                         Icon(
                           Icons.location_pin,
                           size: 30,
-                          color: colorScheme.secondary,
+                          color: colorScheme.primary,
                         ),
                         Icon(
                           Icons.airport_shuttle_rounded,
                           size: 64,
-                          color: textColor,
+                          color: colorScheme.primary,
                         ),
                       ],
                     ),
@@ -137,7 +140,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: AppLogoMark(size: logoSize),
                       ),
                       const SizedBox(height: 12),
-                      const AppWordmark(),
+                      const AppWordmark(onDark: true),
                       const SizedBox(height: 16),
                       const SizedBox(height: 8),
                       Text(

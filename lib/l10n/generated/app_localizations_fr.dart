@@ -221,7 +221,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get bookingLouageUnavailable => 'Ce louage n’est plus disponible.';
 
   @override
-  String get bookingPaymentSimulation => 'Paiement (simulation)';
+  String get bookingPaymentSimulation => 'Paiement';
 
   @override
   String get bookingPaymentMethod => 'Mode de paiement';
@@ -230,10 +230,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get bookingPayOnBoarding => 'Paiement à l’embarquement';
 
   @override
-  String get bookingCardSimulation => 'Carte bancaire (simulation)';
+  String get bookingCardSimulation => 'Carte bancaire';
 
   @override
-  String get bookingMobileSimulation => 'Portefeuille mobile (simulation)';
+  String get bookingMobileSimulation => 'Portefeuille mobile';
 
   @override
   String get bookingDriverSeat => 'Conducteur';
@@ -252,6 +252,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get statusWaiting => 'En attente';
+
+  @override
+  String get statusConfirmed => 'Confirmé';
 
   @override
   String get statusFull => 'Complet';
@@ -1301,6 +1304,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get driverCompletedTrips => 'Trajets effectués';
+
+  @override
+  String get driverDashboardStatsTitle => 'Statistiques';
+
+  @override
+  String get driverDashboardRevenueTitle => 'Revenus';
+
+  @override
+  String get driverRevenueToday => 'Aujourd’hui';
+
+  @override
+  String get driverRevenueWeek => 'Cette semaine';
 
   @override
   String get driverSaveLouage => 'Enregistrer le louage';

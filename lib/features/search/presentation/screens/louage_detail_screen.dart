@@ -82,6 +82,9 @@ class LouageDetailScreen extends ConsumerWidget {
     final departure = DateTime.tryParse(trip.departureTime);
     final full = trip.freeSeats == 0 || trip.status == 'full';
     final colorScheme = Theme.of(context).colorScheme;
+    final darkHeader = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainerHigh
+        : colorScheme.secondary;
     final driverProfile = detail.driverProfile;
     final driverName = detail.driverName.trim().isEmpty
         ? l10n.profileDriverFallback
@@ -89,6 +92,10 @@ class LouageDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: darkHeader,
+        foregroundColor: colorScheme.onPrimary,
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
+        actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
         title: Text(l10n.louageDetailTitle),
         actions: [FavoriteButton.route(routeId: route.id)],
       ),
@@ -125,6 +132,19 @@ class LouageDetailScreen extends ConsumerWidget {
                           StatusChip(status: full ? 'full' : trip.status),
                         ],
                       ),
+                      const SizedBox(height: 16),
+                      _RouteStops(
+                        departure:
+                            from?.localizedName(
+                              Localizations.localeOf(context),
+                            ) ??
+                            l10n.searchDeparture,
+                        arrival:
+                            to?.localizedName(
+                              Localizations.localeOf(context),
+                            ) ??
+                            l10n.searchDestination,
+                      ),
                       const SizedBox(height: 18),
                       Row(
                         children: [
@@ -139,7 +159,7 @@ class LouageDetailScreen extends ConsumerWidget {
                               dimension: 48,
                               child: Icon(
                                 Icons.schedule_rounded,
-                                color: colorScheme.primary,
+                                color: colorScheme.inversePrimary,
                               ),
                             ),
                           ),
@@ -193,7 +213,7 @@ class LouageDetailScreen extends ConsumerWidget {
                             '${_formatPrice(route.pricePerSeat)} DT',
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
-                                  color: colorScheme.primary,
+                                  color: colorScheme.inversePrimary,
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),
@@ -229,6 +249,8 @@ class LouageDetailScreen extends ConsumerWidget {
                       SeatDots(
                         freeSeats: trip.freeSeats,
                         totalSeats: trip.totalSeats,
+                        diameter: 14,
+                        spacing: 9,
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -254,6 +276,88 @@ class LouageDetailScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+class _RouteStops extends StatelessWidget {
+  const _RouteStops({required this.departure, required this.arrival});
+
+  final String departure;
+  final String arrival;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Row(
+      children: [
+        SizedBox(
+          width: 20,
+          height: 66,
+          child: Column(
+            children: [
+              Icon(Icons.trip_origin_rounded, size: 14, color: colors.primary),
+              Expanded(
+                child: CustomPaint(
+                  painter: _RouteDotsPainter(color: colors.outline),
+                  child: const SizedBox.expand(),
+                ),
+              ),
+              Icon(
+                Icons.location_on_rounded,
+                size: 18,
+                color: colors.secondary,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                departure,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                arrival,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RouteDotsPainter extends CustomPainter {
+  const _RouteDotsPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+    for (var y = 1.0; y < size.height; y += 7) {
+      canvas.drawLine(
+        Offset(size.width / 2, y),
+        Offset(size.width / 2, (y + 3).clamp(0, size.height)),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _RouteDotsPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 class _DriverReviewsPreview extends ConsumerWidget {

@@ -112,9 +112,16 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
     final l10n = AppLocalizations.of(context)!;
     final resultsAsync = ref.watch(tripSearchResultsProvider(widget.criteria));
     final colorScheme = Theme.of(context).colorScheme;
+    final darkHeader = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainerHigh
+        : colorScheme.secondary;
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: darkHeader,
+        foregroundColor: colorScheme.onPrimary,
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
+        actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
         title: Text(
           l10n.searchRoutePair(widget.criteria.from, widget.criteria.to),
         ),
@@ -213,14 +220,19 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
           return ChoiceChip(
             selected: selected,
             onSelected: (_) => setState(() => _selectedDate = day),
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            selectedColor: Theme.of(context).colorScheme.primary,
             label: Column(
               mainAxisSize: MainAxisSize.min,
               children: [Text(label), Text('${day.day}/${day.month}')],
             ),
             labelStyle: TextStyle(
               color: selected
-                  ? Theme.of(context).colorScheme.onSecondary
+                  ? Theme.of(context).colorScheme.onPrimary
                   : Theme.of(context).colorScheme.onSurface,
+            ),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outlineVariant,
             ),
           );
         },
@@ -528,7 +540,7 @@ class _StaggeredTripCardState extends State<_StaggeredTripCard>
     final result = widget.result;
     final full = result.isFull;
     final colorScheme = Theme.of(context).colorScheme;
-    final priceColor = colorScheme.primary;
+    final priceColor = colorScheme.inversePrimary;
     final locale = Localizations.localeOf(context);
     final fromStation = _stationLabel(
       result.fromStation.localizedName(locale),

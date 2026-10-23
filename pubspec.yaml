@@ -45,14 +45,14 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/louagego_mark.png"
-  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_background: "#F9FBFA"
   adaptive_icon_foreground: "assets/images/louagego_mark.png"
   remove_alpha_ios: true
   web:
     generate: true
     image_path: "assets/images/louagego_mark.png"
-    background_color: "#FFFFFF"
-    theme_color: "#E53935"
+    background_color: "#F9FBFA"
+    theme_color: "#DC2D2A"
 
 flutter:
   uses-material-design: true
@@ -60,22 +60,24 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
-  # fonts:
-  #   - family: Poppins
-  #     fonts:
-  #       - asset: assets/fonts/Poppins-Regular.ttf
-  #         weight: 400
-  #       - asset: assets/fonts/Poppins-Medium.ttf
-  #         weight: 500
-  #       - asset: assets/fonts/Poppins-SemiBold.ttf
-  #         weight: 600
-  #       - asset: assets/fonts/Poppins-Bold.ttf
-  #         weight: 700
-  #   - family: Cairo
-  #     fonts:
-  #       - asset: assets/fonts/Cairo-Regular.ttf
-  #         weight: 400
-  #       - asset: assets/fonts/Cairo-SemiBold.ttf
-  #         weight: 600
-  #       - asset: assets/fonts/Cairo-Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Cairo-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Cairo-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Cairo-Bold.ttf
+          weight: 700

@@ -172,6 +172,7 @@ class _StationsMapScreenState extends ConsumerState<StationsMapScreen> {
             .expand((group) => group.stations)
             .toList(growable: false) ??
         const <Station>[];
+    final closestStationId = _closestStationId(stations);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.stationsMapTitle)),
       body: Stack(
@@ -216,18 +217,48 @@ class _StationsMapScreenState extends ConsumerState<StationsMapScreen> {
                   for (final station in stations)
                     Marker(
                       point: LatLng(station.lat, station.lng),
-                      width: 44,
-                      height: 48,
+                      width: 52,
+                      height: 56,
                       child: IconButton(
                         tooltip: station.localizedName(
                           Localizations.localeOf(context),
                         ),
                         padding: EdgeInsets.zero,
                         onPressed: () => _showStation(station),
-                        icon: Icon(
-                          Icons.location_on_rounded,
-                          size: 40,
-                          color: colorScheme.secondary,
+                        icon: Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.bottomCenter,
+                          children: [
+                            Icon(
+                              Icons.location_on_rounded,
+                              size: station.id == closestStationId ? 46 : 38,
+                              color: colorScheme.primary.withValues(
+                                alpha: station.id == closestStationId
+                                    ? 1
+                                    : 0.78,
+                              ),
+                            ),
+                            if (station.id == closestStationId)
+                              Positioned(
+                                top: -2,
+                                right: -2,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surface,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: colorScheme.primary,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.near_me_rounded,
+                                    size: 16,
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
@@ -315,6 +346,33 @@ class _StationsMapScreenState extends ConsumerState<StationsMapScreen> {
       ),
     );
   }
+
+  String? _closestStationId(List<Station> stations) {
+    if (stations.isEmpty) return null;
+    final position = _userPosition;
+    if (position == null) return _focusedStation?.id;
+
+    var closest = stations.first;
+    var closestDistance = Geolocator.distanceBetween(
+      position.latitude,
+      position.longitude,
+      closest.lat,
+      closest.lng,
+    );
+    for (final station in stations.skip(1)) {
+      final distance = Geolocator.distanceBetween(
+        position.latitude,
+        position.longitude,
+        station.lat,
+        station.lng,
+      );
+      if (distance < closestDistance) {
+        closest = station;
+        closestDistance = distance;
+      }
+    }
+    return closest.id;
+  }
 }
 
 class _MapControl extends StatelessWidget {
@@ -337,7 +395,7 @@ class _MapControl extends StatelessWidget {
       child: IconButton(
         tooltip: tooltip,
         onPressed: onPressed,
-        icon: Icon(icon, color: Theme.of(context).colorScheme.primary),
+        icon: Icon(icon, color: Theme.of(context).colorScheme.inversePrimary),
       ),
     );
   }

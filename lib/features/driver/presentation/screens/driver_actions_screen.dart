@@ -10,6 +10,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/booking.dart';
 import '../../../../models/station.dart';
 import '../../../../models/trip.dart';
+import '../widgets/driver_app_bar.dart';
 import '../providers/driver_home_provider.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -25,25 +26,30 @@ class DriverActionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    return ref.watch(currentUserProvider).when(
-          loading: () => const Scaffold(
-              body: Center(child: CircularProgressIndicator())),
+    return ref
+        .watch(currentUserProvider)
+        .when(
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (err, _) => Scaffold(
-            appBar: AppBar(title: Text(l10n.driverHomeTitle)),
+            appBar: driverAppBar(context, l10n.driverHomeTitle),
             body: Center(child: Text(l10n.driverProfileUnavailable)),
           ),
           data: (user) {
             if (user == null) {
               return Scaffold(
-                appBar: AppBar(title: Text(l10n.driverHomeTitle)),
+                appBar: driverAppBar(context, l10n.driverHomeTitle),
                 body: Center(child: Text(l10n.sessionExpired)),
               );
             }
-            return ref.watch(driverDashboardProvider(user.id)).when(
+            return ref
+                .watch(driverDashboardProvider(user.id))
+                .when(
                   loading: () => const Scaffold(
-                      body: Center(child: CircularProgressIndicator())),
+                    body: Center(child: CircularProgressIndicator()),
+                  ),
                   error: (err, _) => Scaffold(
-                    appBar: AppBar(title: Text(l10n.driverHomeTitle)),
+                    appBar: driverAppBar(context, l10n.driverHomeTitle),
                     body: Center(child: Text(l10n.driverProfileUnavailable)),
                   ),
                   data: (dashboard) {
@@ -56,11 +62,11 @@ class DriverActionsScreen extends ConsumerWidget {
                                 trips.isEmpty ? const Trip() : trips.first,
                           )
                         : trips.isEmpty
-                            ? null
-                            : _selectNext(trips);
+                        ? null
+                        : _selectNext(trips);
 
                     return Scaffold(
-                      appBar: AppBar(title: Text(l10n.driverHomeTitle)),
+                      appBar: driverAppBar(context, l10n.driverHomeTitle),
                       body: ListView(
                         padding: const EdgeInsetsDirectional.all(20),
                         children: [
@@ -150,9 +156,8 @@ class _DelayCardState extends ConsumerState<_DelayCard> {
               const SizedBox(width: 8),
               Text(
                 l10n.driverDelayTitle,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -160,9 +165,8 @@ class _DelayCardState extends ConsumerState<_DelayCard> {
           if (dep != null)
             Text(
               '${l10n.bookingDeparture} : ${depTime?.format(context) ?? '—'}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: colors.onSurfaceVariant),
             ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
@@ -210,9 +214,11 @@ class _DelayCardState extends ConsumerState<_DelayCard> {
     try {
       final notifRepo = ref.read(notificationRepositoryProvider);
       final passengerIds = widget.bookings
-          .where((b) =>
-              b.tripId == widget.trip.id &&
-              !const {'cancelled', 'rejected'}.contains(b.status))
+          .where(
+            (b) =>
+                b.tripId == widget.trip.id &&
+                !const {'cancelled', 'rejected'}.contains(b.status),
+          )
           .map((b) => b.userId)
           .toSet();
 
@@ -233,14 +239,14 @@ class _DelayCardState extends ConsumerState<_DelayCard> {
       }
 
       if (!mounted) return;
-      messenger
-          .showSnackBar(SnackBar(content: Text(l10n.driverDelaySuccess)));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.driverDelaySuccess)));
       setState(() => _newTime = null);
       _reasonCtrl.clear();
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-          SnackBar(content: Text(l10n.driverOperationFailed)));
+        SnackBar(content: Text(l10n.driverOperationFailed)),
+      );
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -298,9 +304,8 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
               const SizedBox(width: 8),
               Text(
                 l10n.driverReportTitle,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -355,9 +360,11 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
     try {
       final notifRepo = ref.read(notificationRepositoryProvider);
       final passengerIds = widget.bookings
-          .where((b) =>
-              b.tripId == widget.trip.id &&
-              !const {'cancelled', 'rejected'}.contains(b.status))
+          .where(
+            (b) =>
+                b.tripId == widget.trip.id &&
+                !const {'cancelled', 'rejected'}.contains(b.status),
+          )
           .map((b) => b.userId)
           .toSet();
 
@@ -381,13 +388,13 @@ class _ReportCardState extends ConsumerState<_ReportCard> {
       }
 
       if (!mounted) return;
-      messenger.showSnackBar(
-          SnackBar(content: Text(l10n.driverReportSuccess)));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.driverReportSuccess)));
       _detailCtrl.clear();
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-          SnackBar(content: Text(l10n.driverOperationFailed)));
+        SnackBar(content: Text(l10n.driverOperationFailed)),
+      );
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -419,9 +426,8 @@ class _NavigateCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 l10n.driverNavigateTitle,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -429,23 +435,20 @@ class _NavigateCard extends StatelessWidget {
           if (st != null) ...[
             Text(
               st.localizedName(locale),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: colors.onSurfaceVariant),
             ),
             if (st.address.isNotEmpty)
               Text(
                 st.address,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: colors.onSurfaceVariant,
-                    ),
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: colors.onSurfaceVariant),
               ),
           ] else
             Text(
               l10n.driverStationUnavailable,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: colors.onSurfaceVariant),
             ),
           const SizedBox(height: 12),
           Row(
@@ -476,9 +479,8 @@ class _NavigateCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               l10n.driverNavigateNoCoords,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colors.error,
-                  ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: colors.error),
             ),
           ],
         ],
@@ -497,13 +499,14 @@ class _NavigateCard extends StatelessWidget {
     final uri = app == 'waze'
         ? Uri.parse('https://waze.com/ul?ll=$lat,$lng&navigate=yes')
         : Uri.parse(
-            'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng');
+            'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng',
+          );
 
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.supportContactUnavailable)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.supportContactUnavailable)));
       }
     }
   }

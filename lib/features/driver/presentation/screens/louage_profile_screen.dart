@@ -11,6 +11,7 @@ import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/louage.dart';
 import '../../../../models/station.dart';
+import '../widgets/driver_app_bar.dart';
 import '../providers/louage_provider.dart';
 
 class LouageProfileScreen extends ConsumerStatefulWidget {
@@ -59,7 +60,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stackTrace) => Scaffold(
-        appBar: AppBar(title: Text(l10n.driverLouageProfileTitle)),
+        appBar: driverAppBar(context, l10n.driverLouageProfileTitle),
         body: EmptyState(
           icon: Icons.error_outline,
           title: l10n.driverProfileUnavailable,
@@ -68,7 +69,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
       data: (driver) {
         if (driver == null || driver.role != 'driver') {
           return Scaffold(
-            appBar: AppBar(title: Text(l10n.driverLouageProfileTitle)),
+            appBar: driverAppBar(context, l10n.driverLouageProfileTitle),
             body: EmptyState(
               icon: Icons.person_off_outlined,
               title: l10n.sessionExpired,
@@ -79,11 +80,11 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
             .watch(driverLouageProvider(driver.id))
             .when(
               loading: () => Scaffold(
-                appBar: AppBar(title: Text(l10n.driverLouageProfileTitle)),
+                appBar: driverAppBar(context, l10n.driverLouageProfileTitle),
                 body: const Center(child: CircularProgressIndicator()),
               ),
               error: (error, stackTrace) => Scaffold(
-                appBar: AppBar(title: Text(l10n.driverLouageProfileTitle)),
+                appBar: driverAppBar(context, l10n.driverLouageProfileTitle),
                 body: EmptyState(
                   icon: Icons.error_outline,
                   title: l10n.driverProfileUnavailable,
@@ -110,7 +111,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
         : null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.driverLouageProfileTitle)),
+      appBar: driverAppBar(context, l10n.driverLouageProfileTitle),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -118,9 +119,27 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
             child: ListView(
               padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 28),
               children: [
-                Text(
-                  l10n.driverLouageProfileSubtitle,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                AppCard(
+                  color: scheme.brightness == Brightness.dark
+                      ? scheme.surfaceContainerHigh
+                      : scheme.secondary,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.airport_shuttle_rounded,
+                        size: 32,
+                        color: scheme.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.driverLouageProfileSubtitle,
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(color: scheme.onPrimary),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
                 AppCard(
@@ -380,14 +399,12 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
           .read(louageRepositoryProvider)
           .updateStatus(louage.id, selected);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.driverStatusUpdated)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.driverStatusUpdated)));
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.driverStatusUpdateFailed)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.driverStatusUpdateFailed)));
     }
   }
 

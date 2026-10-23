@@ -6,12 +6,14 @@ import '../../../../core/storage/hive_service.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/empty_state.dart';
+import '../../../../core/widgets/seat_dots.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/louage.dart';
 import '../../../../models/route_line.dart';
 import '../../../../models/station.dart';
 import '../../../../models/trip.dart';
+import '../widgets/driver_app_bar.dart';
 import '../providers/louage_provider.dart';
 
 class DriverTripDetailScreen extends ConsumerWidget {
@@ -26,11 +28,11 @@ class DriverTripDetailScreen extends ConsumerWidget {
         .watch(currentUserProvider)
         .when(
           loading: () => Scaffold(
-            appBar: AppBar(title: Text(l10n.driverTripDetail)),
+            appBar: driverAppBar(context, l10n.driverTripDetail),
             body: const Center(child: CircularProgressIndicator()),
           ),
           error: (error, stackTrace) => Scaffold(
-            appBar: AppBar(title: Text(l10n.driverTripDetail)),
+            appBar: driverAppBar(context, l10n.driverTripDetail),
             body: EmptyState(
               icon: Icons.error_outline,
               title: l10n.driverOperationFailed,
@@ -39,7 +41,7 @@ class DriverTripDetailScreen extends ConsumerWidget {
           data: (user) {
             if (user == null || user.role != 'driver') {
               return Scaffold(
-                appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                appBar: driverAppBar(context, l10n.driverTripDetail),
                 body: EmptyState(
                   icon: Icons.person_off_outlined,
                   title: l10n.sessionExpired,
@@ -50,11 +52,11 @@ class DriverTripDetailScreen extends ConsumerWidget {
                 .watch(driverTripsProvider(user.id))
                 .when(
                   loading: () => Scaffold(
-                    appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                    appBar: driverAppBar(context, l10n.driverTripDetail),
                     body: const Center(child: CircularProgressIndicator()),
                   ),
                   error: (error, stackTrace) => Scaffold(
-                    appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                    appBar: driverAppBar(context, l10n.driverTripDetail),
                     body: EmptyState(
                       icon: Icons.error_outline,
                       title: l10n.driverOperationFailed,
@@ -64,7 +66,7 @@ class DriverTripDetailScreen extends ConsumerWidget {
                     final matches = trips.where((trip) => trip.id == tripId);
                     if (matches.isEmpty) {
                       return Scaffold(
-                        appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                        appBar: driverAppBar(context, l10n.driverTripDetail),
                         body: EmptyState(
                           icon: Icons.route_outlined,
                           title: l10n.louageNotFound,
@@ -76,7 +78,7 @@ class DriverTripDetailScreen extends ConsumerWidget {
                       driverLouageProvider(user.id),
                     );
                     return Scaffold(
-                      appBar: AppBar(title: Text(l10n.driverTripDetail)),
+                      appBar: driverAppBar(context, l10n.driverTripDetail),
                       body: Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 760),
@@ -320,19 +322,58 @@ class _TripSummary extends StatelessWidget {
         ? ''
         : MaterialLocalizations.of(context)
               .formatTimeOfDay(TimeOfDay.fromDateTime(departure));
+    final colors = Theme.of(context).colorScheme;
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('$from → $to', style: Theme.of(context).textTheme.titleLarge),
+          Row(
+            children: [
+              Icon(Icons.trip_origin_rounded, color: colors.primary, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '$from → $to',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           Text('${l10n.driverTripDateTime} : $departureText $timeText'),
-          Text('${l10n.driverTripPrice} : ${route?.pricePerSeat ?? 0} DT'),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.driverTripPrice,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+              Text(
+                '${route?.pricePerSeat ?? 0} DT',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: colors.inversePrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SeatDots(
+            freeSeats: trip.freeSeats,
+            totalSeats: trip.totalSeats,
+            diameter: 11,
+            spacing: 7,
+          ),
+          const SizedBox(height: 6),
           Text(
             l10n.driverTripSeatsAvailable(
               trip.freeSeats.toString(),
               trip.totalSeats.toString(),
             ),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: colors.onSurfaceVariant),
           ),
         ],
       ),

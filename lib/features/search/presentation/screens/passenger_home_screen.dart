@@ -239,8 +239,9 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
         : ref.watch(unreadNotificationCountProvider(userId)).asData?.value ?? 0;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.surfaceContainerLow,
       body: SafeArea(
+        top: false,
         bottom: false,
         child: CustomScrollView(
           slivers: [
@@ -255,13 +256,14 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
                 profileTooltip: l10n.profileTitle,
                 notificationsTooltip: l10n.adminNavNotifications,
                 unreadCount: unreadCount,
+                compact: true,
                 onNotifications: () => context.pushNamed('notifications'),
                 onProfile: () => context.goNamed('passengerProfile'),
               ),
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 28),
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 28),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 760),
@@ -270,72 +272,74 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
                       children: [
                         _buildSearchCard(context),
                         const SizedBox(height: 28),
-                        if (lastTrips.isNotEmpty) ...[
-                          SectionHeader(title: l10n.searchLastTrips),
-                          const SizedBox(height: 12),
-                          _buildRouteChips(lastTrips, stations),
-                          const SizedBox(height: 24),
-                        ],
-                        if (favorites != null &&
-                            favorites.routes.isNotEmpty) ...[
-                          SectionHeader(title: l10n.searchFavorites),
-                          const SizedBox(height: 12),
-                          _buildRouteChips(
-                            favorites.routes
-                                .map(
-                                  (favorite) => SearchRouteShortcut(
-                                    from: favorite.from,
-                                    to: favorite.to,
-                                    isFavorite: true,
-                                  ),
-                                )
-                                .toList(growable: false),
-                            stations,
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                        if (favorites != null &&
-                            favorites.offers.isNotEmpty) ...[
-                          SectionHeader(title: l10n.favoritesMyOffers),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              for (final offer in favorites.offers)
-                                ActionChip(
-                                  avatar: Icon(
-                                    Icons.schedule_rounded,
-                                    size: 16,
-                                    color: colorScheme.primary,
-                                  ),
-                                  label: Text(
-                                    '${offer.favorite.departureHm} · '
-                                    '${offer.favorite.matricule.isEmpty ? offer.louage.matricule : offer.favorite.matricule}',
-                                  ),
-                                  onPressed: () => context.pushNamed(
-                                    'passengerSearchResults',
-                                    extra: TripSearchCriteria(
-                                      from: offer.fromStation.city,
-                                      to: offer.toStation.city,
-                                      date: DateUtils.dateOnly(DateTime.now()),
-                                      time: _favoriteTime(
-                                        offer.favorite.departureHm,
+                          if (lastTrips.isNotEmpty) ...[
+                            SectionHeader(title: l10n.searchLastTrips),
+                            const SizedBox(height: 12),
+                            _buildRouteChips(lastTrips, stations),
+                            const SizedBox(height: 24),
+                          ],
+                          if (favorites != null &&
+                              favorites.routes.isNotEmpty) ...[
+                            SectionHeader(title: l10n.searchFavorites),
+                            const SizedBox(height: 12),
+                            _buildRouteChips(
+                              favorites.routes
+                                  .map(
+                                    (favorite) => SearchRouteShortcut(
+                                      from: favorite.from,
+                                      to: favorite.to,
+                                      isFavorite: true,
+                                    ),
+                                  )
+                                  .toList(growable: false),
+                              stations,
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                          if (favorites != null &&
+                              favorites.offers.isNotEmpty) ...[
+                            SectionHeader(title: l10n.favoritesMyOffers),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                for (final offer in favorites.offers)
+                                  ActionChip(
+                                    avatar: Icon(
+                                      Icons.schedule_rounded,
+                                      size: 16,
+                                      color: colorScheme.inversePrimary,
+                                    ),
+                                    label: Text(
+                                      '${offer.favorite.departureHm} · '
+                                      '${offer.favorite.matricule.isEmpty ? offer.louage.matricule : offer.favorite.matricule}',
+                                    ),
+                                    onPressed: () => context.pushNamed(
+                                      'passengerSearchResults',
+                                      extra: TripSearchCriteria(
+                                        from: offer.fromStation.city,
+                                        to: offer.toStation.city,
+                                        date: DateUtils.dateOnly(
+                                          DateTime.now(),
+                                        ),
+                                        time: _favoriteTime(
+                                          offer.favorite.departureHm,
+                                        ),
+                                        fromStationId: offer.fromStation.id,
+                                        toStationId: offer.toStation.id,
                                       ),
-                                      fromStationId: offer.fromStation.id,
-                                      toStationId: offer.toStation.id,
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                          SectionHeader(title: l10n.searchPopularTrips),
+                          const SizedBox(height: 12),
+                          _buildPopularRoutes(routes, stationById),
                           const SizedBox(height: 24),
-                        ],
-                        SectionHeader(title: l10n.searchPopularTrips),
-                        const SizedBox(height: 12),
-                        _buildPopularRoutes(routes, stationById),
-                        const SizedBox(height: 24),
-                        NearestStationCard(stations: stations),
+                          NearestStationCard(stations: stations),
                       ],
                     ),
                   ),

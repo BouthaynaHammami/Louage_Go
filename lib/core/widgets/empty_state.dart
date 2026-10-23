@@ -30,12 +30,16 @@ class EmptyState extends StatelessWidget {
           children: [
             DecoratedBox(
               decoration: BoxDecoration(
-                color: colorScheme.secondary.withValues(alpha: 0.16),
+                color: colorScheme.outline.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: SizedBox.square(
                 dimension: 80,
-                child: Icon(icon, size: 36, color: colorScheme.onSurface),
+                child: Icon(
+                  icon,
+                  size: 36,
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             const SizedBox(height: 20),

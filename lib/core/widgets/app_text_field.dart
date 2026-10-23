@@ -78,8 +78,8 @@ class _AppTextFieldState extends State<AppTextField> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _focused
-              ? colorScheme.secondary
-              : colorScheme.surface.withValues(alpha: 0),
+              ? colorScheme.primary
+              : colorScheme.outline.withValues(alpha: 0),
           width: 1.5,
         ),
       ),
@@ -117,8 +117,13 @@ class _AppTextFieldState extends State<AppTextField> {
                 ),
           labelStyle: Theme.of(context).textTheme.bodyMedium,
           floatingLabelStyle: Theme.of(context).textTheme.bodyMedium
-              ?.copyWith(color: colorScheme.secondary),
-          prefixIcon: Icon(widget.icon),
+              ?.copyWith(color: colorScheme.primary),
+          prefixIcon: Icon(
+            widget.icon,
+            color: _focused
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant,
+          ),
           contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 18, 16, 18),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -126,19 +131,19 @@ class _AppTextFieldState extends State<AppTextField> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: colorScheme.outline),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: colorScheme.error),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: colorScheme.error, width: 1.5),
           ),
           errorMaxLines: 2,
           errorStyle: Theme.of(context).textTheme.bodySmall

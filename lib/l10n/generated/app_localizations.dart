@@ -481,7 +481,7 @@ abstract class AppLocalizations {
   /// No description provided for @bookingPaymentSimulation.
   ///
   /// In fr, this message translates to:
-  /// **'Paiement (simulation)'**
+  /// **'Paiement'**
   String get bookingPaymentSimulation;
 
   /// No description provided for @bookingPaymentMethod.
@@ -499,13 +499,13 @@ abstract class AppLocalizations {
   /// No description provided for @bookingCardSimulation.
   ///
   /// In fr, this message translates to:
-  /// **'Carte bancaire (simulation)'**
+  /// **'Carte bancaire'**
   String get bookingCardSimulation;
 
   /// No description provided for @bookingMobileSimulation.
   ///
   /// In fr, this message translates to:
-  /// **'Portefeuille mobile (simulation)'**
+  /// **'Portefeuille mobile'**
   String get bookingMobileSimulation;
 
   /// No description provided for @bookingDriverSeat.
@@ -543,6 +543,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En attente'**
   String get statusWaiting;
+
+  /// No description provided for @statusConfirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmé'**
+  String get statusConfirmed;
 
   /// No description provided for @statusFull.
   ///
@@ -2463,6 +2469,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Trajets effectués'**
   String get driverCompletedTrips;
+
+  /// No description provided for @driverDashboardStatsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statistiques'**
+  String get driverDashboardStatsTitle;
+
+  /// No description provided for @driverDashboardRevenueTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenus'**
+  String get driverDashboardRevenueTitle;
+
+  /// No description provided for @driverRevenueToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd’hui'**
+  String get driverRevenueToday;
+
+  /// No description provided for @driverRevenueWeek.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette semaine'**
+  String get driverRevenueWeek;
 
   /// No description provided for @driverSaveLouage.
   ///

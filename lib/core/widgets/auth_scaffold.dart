@@ -90,38 +90,53 @@ class _AuthScaffoldState extends State<AuthScaffold>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isWide = MediaQuery.sizeOf(context).width >= 800;
+    final linkColor = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainer
+        : colorScheme.secondary;
 
     return _AuthStaggerScope(
       animations: _staggerAnimations,
       disabled: _motionDisabled ?? false,
-      child: Scaffold(
-        body: SafeArea(
-          child: Stack(
-            children: [
-              if (isWide)
-                _buildWideLayout(context)
-              else
-                _buildMobileLayout(context),
-              if (widget.showBackButton)
-                PositionedDirectional(
-                  top: 8,
-                  start: 8,
-                  child: IconButton(
-                    onPressed: widget.onBack ?? Navigator.of(context).maybePop,
-                    tooltip: MaterialLocalizations.of(context)
-                        .backButtonTooltip,
-                    constraints: const BoxConstraints.tightFor(
-                      width: 48,
-                      height: 48,
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          scaffoldBackgroundColor: colorScheme.surfaceContainerLow,
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(foregroundColor: linkColor),
+          ),
+        ),
+        child: Scaffold(
+          body: SafeArea(
+            top: isWide,
+            child: Stack(
+              children: [
+                if (isWide)
+                  _buildWideLayout(context)
+                else
+                  _buildMobileLayout(context),
+                if (widget.showBackButton)
+                  PositionedDirectional(
+                    top: isWide ? 8 : MediaQuery.viewPaddingOf(context).top + 8,
+                    start: 8,
+                    child: IconButton(
+                      onPressed:
+                          widget.onBack ?? Navigator.of(context).maybePop,
+                      tooltip: MaterialLocalizations.of(context)
+                          .backButtonTooltip,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 48,
+                        height: 48,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: colorScheme.onPrimary.withValues(
+                          alpha: 0.12,
+                        ),
+                        foregroundColor: colorScheme.onPrimary,
+                      ),
+                      icon: const Icon(Icons.arrow_back_ios_new),
                     ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: colorScheme.surfaceContainerHighest,
-                      foregroundColor: colorScheme.onSurface,
-                    ),
-                    icon: const Icon(Icons.arrow_back_ios_new),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -131,71 +146,96 @@ class _AuthScaffoldState extends State<AuthScaffold>
   Widget _buildMobileLayout(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Stack(
+    final headerBackground = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainer
+        : colorScheme.secondary;
+    return Column(
       children: [
-        PositionedDirectional(
-          top: 0,
-          start: 0,
-          end: 0,
-          child: _AuthRouteAnimation(
-            controller: _routeController,
-            height: 190,
-            reducedMotion: _motionDisabled ?? false,
-          ),
-        ),
-        SingleChildScrollView(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 14, 20, 32),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 520),
-              child: Column(
-                children: [
-                  const AuthStaggerItem(
-                    index: 0,
-                    child: AppLogoMark(size: 104),
-                  ),
-                  const SizedBox(height: 12),
-                  AuthStaggerItem(
-                    index: 1,
-                    child: Column(
-                      children: [
-                        const AppWordmark(),
-                        if (widget.subtitle case final subtitle?) ...[
-                          const SizedBox(height: 6),
-                          Text(
-                            subtitle,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: colorScheme.onSurfaceVariant),
-                          ),
-                        ],
-                      ],
+        SizedBox(
+          height: 208,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: headerBackground,
+                    borderRadius: const BorderRadiusDirectional.vertical(
+                      bottom: Radius.circular(32),
                     ),
                   ),
-                  const SizedBox(height: 26),
-                  AuthStaggerItem(
-                    index: 2,
-                    child: _GlassCard(
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.all(24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (widget.title case final title?) ...[
+                  child: ClipRRect(
+                    borderRadius: const BorderRadiusDirectional.vertical(
+                      bottom: Radius.circular(32),
+                    ),
+                    child: _AuthRouteAnimation(
+                      controller: _routeController,
+                      height: 190,
+                      reducedMotion: _motionDisabled ?? false,
+                    ),
+                  ),
+                ),
+              ),
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const AuthStaggerItem(
+                      index: 0,
+                      child: AppLogoMark(size: 76),
+                    ),
+                    const SizedBox(height: 8),
+                    AuthStaggerItem(
+                      index: 1,
+                      child: AppWordmark(
+                        onDark: true,
+                        key: const ValueKey('auth-wordmark'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 32),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 520),
+                child: AuthStaggerItem(
+                  index: 2,
+                  child: _GlassCard(
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (widget.title case final title?) ...[
+                            Text(
+                              title,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            if (widget.subtitle case final subtitle?) ...[
+                              const SizedBox(height: 8),
                               Text(
-                                title,
+                                subtitle,
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleLarge,
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
                               ),
-                              const SizedBox(height: 20),
                             ],
-                            widget.child,
+                            const SizedBox(height: 20),
                           ],
-                        ),
+                          widget.child,
+                        ],
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -299,12 +339,19 @@ class _GlassCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
+      borderRadius: BorderRadius.circular(24),
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: colorScheme.outlineVariant),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow.withValues(alpha: 0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
         child: child,
       ),
@@ -363,8 +410,8 @@ class _AuthRouteAnimation extends StatelessWidget {
                     child: CustomPaint(
                       painter: _AuthRoutePainter(
                         path: path,
-                        accent: colorScheme.secondary,
-                        dash: colorScheme.outlineVariant,
+                        accent: colorScheme.primary,
+                        dash: colorScheme.onPrimary,
                       ),
                     ),
                   ),
@@ -377,7 +424,7 @@ class _AuthRouteAnimation extends StatelessWidget {
                     child: Icon(
                       Icons.airport_shuttle_rounded,
                       size: 26,
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     ),
                   ),
                 ),
@@ -389,7 +436,7 @@ class _AuthRouteAnimation extends StatelessWidget {
                     child: Icon(
                       Icons.location_on,
                       size: 28,
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     ),
                   ),
                 ),
@@ -474,42 +521,55 @@ class _BrandPanel extends StatelessWidget {
       (Icons.account_balance_wallet_outlined, l10n.onboardingPayTitle),
     ];
 
-    return DecoratedBox(
-      decoration: BoxDecoration(color: colorScheme.surfaceContainerLow),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsetsDirectional.all(48),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 430),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const AuthStaggerItem(index: 0, child: AppLogoMark(size: 160)),
-                const SizedBox(height: 20),
-                const AuthStaggerItem(
-                  index: 1,
-                  child: AppWordmark(prominent: true),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.splashSlogan,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium
-                      ?.copyWith(color: colorScheme.onSurfaceVariant),
-                ),
-                const SizedBox(height: 40),
-                for (var index = 0; index < features.length; index++) ...[
-                  AuthStaggerItem(
-                    index: index + 2,
-                    child: _BrandFeature(
-                      icon: features[index].$1,
-                      label: features[index].$2,
-                      color: colorScheme,
-                    ),
+    final background = colorScheme.brightness == Brightness.dark
+        ? colorScheme.surfaceContainer
+        : colorScheme.secondary;
+
+    return ClipRRect(
+      borderRadius: const BorderRadiusDirectional.only(
+        bottomEnd: Radius.circular(32),
+      ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: background),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsetsDirectional.all(48),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 430),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const AuthStaggerItem(
+                    index: 0,
+                    child: AppLogoMark(size: 144),
                   ),
-                  if (index != features.length - 1) const SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  const AuthStaggerItem(
+                    index: 1,
+                    child: AppWordmark(prominent: true, onDark: true),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.splashSlogan,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(color: colorScheme.onPrimary),
+                  ),
+                  const SizedBox(height: 40),
+                  for (var index = 0; index < features.length; index++) ...[
+                    AuthStaggerItem(
+                      index: index + 2,
+                      child: _BrandFeature(
+                        icon: features[index].$1,
+                        label: features[index].$2,
+                        color: colorScheme,
+                      ),
+                    ),
+                    if (index != features.length - 1)
+                      const SizedBox(height: 20),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -534,13 +594,13 @@ class _BrandFeature extends StatelessWidget {
     return Row(
       textDirection: Directionality.of(context),
       children: [
-        Icon(icon, size: 24, color: color.secondary),
+        Icon(icon, size: 24, color: color.primary),
         const SizedBox(width: 14),
         Expanded(
           child: Text(
             label,
             style: Theme.of(context).textTheme.titleMedium
-                ?.copyWith(color: color.onSurface),
+                ?.copyWith(color: color.onPrimary),
           ),
         ),
       ],

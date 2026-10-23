@@ -516,10 +516,11 @@ class _PassengerShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _BottomNavigationShell(
-        destinations: _passengerDestinations(AppLocalizations.of(context)!),
-        state: state,
-        child: child,
-      );
+    destinations: _passengerDestinations(AppLocalizations.of(context)!),
+    state: state,
+    passenger: true,
+    child: child,
+  );
 }
 
 class _DriverShell extends StatelessWidget {
@@ -529,21 +530,24 @@ class _DriverShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _BottomNavigationShell(
-        destinations: _driverDestinations(AppLocalizations.of(context)!),
-        state: state,
-        child: child,
-      );
+    destinations: _driverDestinations(AppLocalizations.of(context)!),
+    state: state,
+    passenger: false,
+    child: child,
+  );
 }
 
 class _BottomNavigationShell extends StatelessWidget {
   final GoRouterState state;
   final Widget child;
   final List<_NavDestination> destinations;
+  final bool passenger;
 
   const _BottomNavigationShell({
     required this.state,
     required this.child,
     required this.destinations,
+    required this.passenger,
   });
 
   @override
@@ -556,24 +560,46 @@ class _BottomNavigationShell extends StatelessWidget {
       body: child,
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          indicatorColor: colorScheme.secondaryContainer,
+          backgroundColor: passenger ? colorScheme.surfaceContainerLow : null,
+          indicatorColor: passenger
+              ? colorScheme.primaryContainer
+              : colorScheme.secondaryContainer,
+          elevation: 0,
           iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
             (states) => IconThemeData(
-              color: states.contains(WidgetState.selected)
+              color: passenger
+                  ? states.contains(WidgetState.selected)
+                        ? colorScheme.brightness == Brightness.dark
+                              ? colorScheme.inversePrimary
+                              : colorScheme.primary
+                        : colorScheme.outline
+                  : states.contains(WidgetState.selected)
                   ? colorScheme.onSecondaryContainer
                   : colorScheme.onSurfaceVariant,
             ),
           ),
-          labelTextStyle: WidgetStatePropertyAll(
-            Theme.of(context)
-                .textTheme
-                .labelSmall
-                ?.copyWith(color: colorScheme.onSurface),
+          labelTextStyle: WidgetStateProperty.resolveWith(
+            (states) => Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: passenger
+                  ? states.contains(WidgetState.selected)
+                        ? colorScheme.brightness == Brightness.dark
+                              ? colorScheme.inversePrimary
+                              : colorScheme.primary
+                        : colorScheme.outline
+                  : colorScheme.onSurface,
+              fontWeight: passenger && states.contains(WidgetState.selected)
+                  ? FontWeight.w600
+                  : FontWeight.w400,
+            ),
           ),
         ),
         child: NavigationBar(
           selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          backgroundColor: passenger ? colorScheme.surfaceContainerLow : null,
+          indicatorColor: passenger
+              ? colorScheme.primaryContainer
+              : colorScheme.secondaryContainer,
           onDestinationSelected: (index) =>
               context.goNamed(destinations[index].name),
           destinations: [
@@ -601,18 +627,18 @@ class _SimplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(title)),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 48),
-              const SizedBox(height: 12),
-              Text(title, style: Theme.of(context).textTheme.titleLarge),
-            ],
-          ),
-        ),
-      );
+    appBar: AppBar(title: Text(title)),
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 48),
+          const SizedBox(height: 12),
+          Text(title, style: Theme.of(context).textTheme.titleLarge),
+        ],
+      ),
+    ),
+  );
 }
 
 class _NotFoundPage extends StatelessWidget {
@@ -628,8 +654,10 @@ class _NotFoundPage extends StatelessWidget {
           children: [
             const Icon(Icons.search_off, size: 48),
             const SizedBox(height: 12),
-            Text(l10n.pageNotFound,
-                style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              l10n.pageNotFound,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
           ],
         ),
       ),

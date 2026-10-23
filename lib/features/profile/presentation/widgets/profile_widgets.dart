@@ -26,56 +26,80 @@ class ProfileSummaryCard extends StatelessWidget {
     final photo = user?.photo ?? '';
     final photoProvider = photo.isEmpty ? null : profilePhotoProvider(photo);
     return Card(
-      child: Padding(
-        padding: const EdgeInsetsDirectional.all(16),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 38,
-              backgroundColor: colorScheme.secondaryContainer,
-              child: photoProvider == null
-                  ? Icon(
-                      Icons.person_outline,
-                      size: 38,
-                      color: colorScheme.onSecondaryContainer,
-                    )
-                  : ClipOval(
-                      child: Image(
-                        image: photoProvider,
-                        width: 76,
-                        height: 76,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => Icon(
+      color: colorScheme.secondaryContainer,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          Container(height: 4, color: colorScheme.primary),
+          Padding(
+            padding: const EdgeInsetsDirectional.all(16),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 38,
+                  backgroundColor: colorScheme.primary,
+                  child: photoProvider == null
+                      ? Icon(
                           Icons.person_outline,
                           size: 38,
+                          color: colorScheme.onPrimary,
+                        )
+                      : ClipOval(
+                          child: Image(
+                            image: photoProvider,
+                            width: 76,
+                            height: 76,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => Icon(
+                              Icons.person_outline,
+                              size: 38,
+                              color: colorScheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user?.name.isNotEmpty == true
+                            ? user!.name
+                            : fallbackName,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: colorScheme.onSecondaryContainer,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user?.name.isNotEmpty == true ? user!.name : fallbackName,
-                    style: Theme.of(context).textTheme.titleLarge,
+                      if (user?.phone.isNotEmpty == true)
+                        Text(
+                          '${AppLocalizations.of(context)!.loginPhoneLabel}: ${user!.phone}',
+                          style: TextStyle(
+                            color: colorScheme.onSecondaryContainer,
+                          ),
+                        ),
+                      if (user?.email.isNotEmpty == true)
+                        Text(
+                          user!.email,
+                          style: TextStyle(
+                            color: colorScheme.onSecondaryContainer,
+                          ),
+                        ),
+                      if (user?.city.isNotEmpty == true)
+                        Text(
+                          '${AppLocalizations.of(context)!.profileCityLabel}: ${user!.city}',
+                          style: TextStyle(
+                            color: colorScheme.onSecondaryContainer,
+                          ),
+                        ),
+                    ],
                   ),
-                  if (user?.phone.isNotEmpty == true)
-                    Text(
-                      '${AppLocalizations.of(context)!.loginPhoneLabel}: ${user!.phone}',
-                    ),
-                  if (user?.email.isNotEmpty == true) Text(user!.email),
-                  if (user?.city.isNotEmpty == true)
-                    Text(
-                      '${AppLocalizations.of(context)!.profileCityLabel}: ${user!.city}',
-                    ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -108,7 +132,15 @@ class ProfileOptionRow extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          leading: Icon(icon, color: colorScheme.secondary),
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: colorScheme.inversePrimary),
+          ),
           title: Text(title),
           subtitle: value == null ? null : Text(value!),
           trailing: onTap == null
@@ -246,6 +278,7 @@ class DeleteAccountButton extends ConsumerWidget {
   const DeleteAccountButton({required this.user, this.hide = false, super.key});
 
   final AppUser? user;
+
   /// When true the widget renders nothing (e.g. for driver accounts).
   final bool hide;
 

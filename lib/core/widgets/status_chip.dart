@@ -12,28 +12,72 @@ class StatusChip extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final normalized = status.toLowerCase();
     final l10n = AppLocalizations.of(context)!;
-    final (label, icon, isError) = switch (normalized) {
-      'full' => (l10n.statusFull, Icons.event_busy_outlined, true),
-      'departed' => (l10n.statusDeparted, Icons.directions_bus_outlined, false),
-      'arrived' => (l10n.statusArrived, Icons.check_circle_outline, false),
-      'cancelled' => (l10n.statusCancelled, Icons.cancel_outlined, true),
-      'open' => (l10n.supportStatusOpen, Icons.mark_email_unread_outlined, false),
+    final isDark = colorScheme.brightness == Brightness.dark;
+    final (label, icon, foreground, background, border) = switch (normalized) {
+      'full' => (
+        l10n.statusFull,
+        Icons.event_busy_outlined,
+        colorScheme.error,
+        colorScheme.errorContainer,
+        colorScheme.error,
+      ),
+      'cancelled' => (
+        l10n.statusCancelled,
+        Icons.cancel_outlined,
+        colorScheme.error,
+        colorScheme.errorContainer,
+        colorScheme.error,
+      ),
+      'confirmed' => (
+        l10n.statusConfirmed,
+        Icons.verified_outlined,
+        colorScheme.tertiary,
+        colorScheme.tertiary.withValues(alpha: 0.12),
+        colorScheme.tertiary,
+      ),
+      'arrived' => (
+        l10n.statusArrived,
+        Icons.check_circle_outline,
+        colorScheme.tertiary,
+        colorScheme.tertiary.withValues(alpha: 0.12),
+        colorScheme.tertiary,
+      ),
+      'departed' => (
+        l10n.statusDeparted,
+        Icons.directions_bus_outlined,
+        isDark ? colorScheme.onSurface : colorScheme.onSecondary,
+        isDark ? colorScheme.surfaceContainer : colorScheme.secondary,
+        isDark ? colorScheme.surfaceContainer : colorScheme.secondary,
+      ),
+      'open' => (
+        l10n.supportStatusOpen,
+        Icons.mark_email_unread_outlined,
+        colorScheme.onSurface,
+        colorScheme.surface,
+        colorScheme.outline,
+      ),
       'inprogress' || 'in_progress' => (
         l10n.supportStatusInProgress,
         Icons.hourglass_top_rounded,
-        false,
+        colorScheme.onSurface,
+        colorScheme.surface,
+        colorScheme.outline,
       ),
       'resolved' => (
         l10n.supportStatusResolved,
         Icons.task_alt_rounded,
-        false,
+        colorScheme.tertiary,
+        colorScheme.tertiary.withValues(alpha: 0.12),
+        colorScheme.tertiary,
       ),
-      _ => (l10n.statusWaiting, Icons.schedule_outlined, false),
+      _ => (
+        l10n.statusWaiting,
+        Icons.schedule_outlined,
+        colorScheme.onSurface,
+        colorScheme.surface,
+        colorScheme.outline,
+      ),
     };
-    final foreground = isError ? colorScheme.error : colorScheme.onSurface;
-    final background = isError
-        ? colorScheme.error.withValues(alpha: 0.12)
-        : colorScheme.surface;
 
     return Container(
       constraints: const BoxConstraints(minHeight: 36),
@@ -43,10 +87,8 @@ class StatusChip extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: background,
-        border: Border.all(
-          color: isError ? colorScheme.error : colorScheme.outline,
-        ),
-        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: border),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

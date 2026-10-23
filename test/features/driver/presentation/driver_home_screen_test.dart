@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:louage_go/core/theme/app_theme.dart';
+import 'package:louage_go/core/widgets/app_logo.dart';
 import 'package:louage_go/features/auth/auth_providers.dart';
 import 'package:louage_go/features/driver/domain/driver_repository.dart';
 import 'package:louage_go/features/driver/domain/entities/driver_dashboard_data.dart';
@@ -69,11 +70,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Bonjour Sami'), findsOneWidget);
+    expect(find.byType(AppLogoMark), findsNothing);
     expect(find.text('511 TUN 6307'), findsOneWidget);
     expect(find.text('Station Beja'), findsOneWidget);
     expect(find.text('Passenger Only'), findsNothing);
     expect(find.text('5/8'), findsOneWidget);
-    expect(tester.takeException(), isNull);
+    final layoutException = tester.takeException();
+    expect(layoutException, isNull, reason: '$layoutException');
   });
 
   testWidgets('profile and trip queue actions use the existing driver routes', (
@@ -102,6 +105,8 @@ void main() {
     router.go('/driver/home');
     await tester.pumpAndSettle();
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Rejoindre la file'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Rejoindre la file'));
     await tester.pumpAndSettle();

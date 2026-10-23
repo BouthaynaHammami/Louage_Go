@@ -209,7 +209,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingLouageUnavailable => 'لم يعد هذا اللواج متاحًا.';
 
   @override
-  String get bookingPaymentSimulation => 'الدفع (محاكاة)';
+  String get bookingPaymentSimulation => 'الدفع';
 
   @override
   String get bookingPaymentMethod => 'طريقة الدفع';
@@ -218,10 +218,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingPayOnBoarding => 'الدفع عند الصعود';
 
   @override
-  String get bookingCardSimulation => 'بطاقة بنكية (محاكاة)';
+  String get bookingCardSimulation => 'بطاقة بنكية';
 
   @override
-  String get bookingMobileSimulation => 'محفظة الهاتف (محاكاة)';
+  String get bookingMobileSimulation => 'محفظة الهاتف';
 
   @override
   String get bookingDriverSeat => 'السائق';
@@ -240,6 +240,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statusWaiting => 'بانتظار الانطلاق';
+
+  @override
+  String get statusConfirmed => 'مؤكد';
 
   @override
   String get statusFull => 'مكتمل';
@@ -1272,6 +1275,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get driverCompletedTrips => 'الرحلات المنجزة';
+
+  @override
+  String get driverDashboardStatsTitle => 'الإحصائيات';
+
+  @override
+  String get driverDashboardRevenueTitle => 'الإيرادات';
+
+  @override
+  String get driverRevenueToday => 'اليوم';
+
+  @override
+  String get driverRevenueWeek => 'هذا الأسبوع';
 
   @override
   String get driverSaveLouage => 'حفظ بيانات اللواج';

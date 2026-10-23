@@ -13,9 +13,10 @@ import '../../../../core/widgets/status_chip.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../features/notifications/presentation/providers/notifications_provider.dart';
 import '../../../../features/driver/domain/entities/driver_dashboard_data.dart';
-import '../../../../features/driver/domain/entities/driver_passenger.dart';
 import '../../../../features/driver/presentation/providers/driver_home_provider.dart';
 import '../../../../features/driver/presentation/providers/louage_provider.dart';
+import '../widgets/driver_dashboard_stats.dart';
+import '../widgets/driver_seat_map_card.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/app_user.dart';
 import '../../../../models/booking.dart';
@@ -33,7 +34,9 @@ class DriverHomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    return ref.watch(currentUserProvider).when(
+    return ref
+        .watch(currentUserProvider)
+        .when(
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (error, _) => Scaffold(
@@ -49,19 +52,21 @@ class DriverHomeScreen extends ConsumerWidget {
                     title: l10n.sessionExpired,
                   ),
                 )
-              : ref.watch(driverDashboardProvider(user.id)).when(
-                    loading: () => const Scaffold(
-                      body: Center(child: CircularProgressIndicator()),
-                    ),
-                    error: (error, _) => Scaffold(
-                      body: EmptyState(
-                        icon: Icons.error_outline,
-                        title: l10n.driverProfileUnavailable,
+              : ref
+                    .watch(driverDashboardProvider(user.id))
+                    .when(
+                      loading: () => const Scaffold(
+                        body: Center(child: CircularProgressIndicator()),
                       ),
+                      error: (error, _) => Scaffold(
+                        body: EmptyState(
+                          icon: Icons.error_outline,
+                          title: l10n.driverProfileUnavailable,
+                        ),
+                      ),
+                      data: (dashboard) =>
+                          _DriverDashboard(user: user, dashboard: dashboard),
                     ),
-                    data: (dashboard) =>
-                        _DriverDashboard(user: user, dashboard: dashboard),
-                  ),
         );
   }
 }
@@ -80,10 +85,8 @@ class _DriverDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = dashboard.profile;
     final status = profile.validationStatus.toLowerCase();
-    final validated =
-        const {'approved', 'validated'}.contains(status);
-    final rejected =
-        const {'rejected', 'declined'}.contains(status);
+    final validated = const {'approved', 'validated'}.contains(status);
+    final rejected = const {'rejected', 'declined'}.contains(status);
 
     if (!validated) {
       return _PendingDashboard(
@@ -119,6 +122,8 @@ class _GreetingHeader extends ConsumerWidget {
       profileTooltip: l10n.profileTitle,
       notificationsTooltip: l10n.adminNavNotifications,
       unreadCount: unreadCount,
+      dark: true,
+      compact: true,
       onNotifications: () => context.pushNamed('notifications'),
       onProfile: () => context.goNamed('driverProfile'),
     );
@@ -144,8 +149,9 @@ class _PendingDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       body: SafeArea(
+        top: false,
         bottom: false,
         child: CustomScrollView(
           slivers: [
@@ -165,8 +171,8 @@ class _PendingDashboard extends StatelessWidget {
                           status: rejected
                               ? _ValidationStatus.rejected
                               : documentsSubmitted
-                                  ? _ValidationStatus.submitted
-                                  : _ValidationStatus.pending,
+                              ? _ValidationStatus.submitted
+                              : _ValidationStatus.pending,
                         ),
                         const SizedBox(height: 20),
                         Text(
@@ -211,12 +217,12 @@ class _ValidatedDashboard extends ConsumerWidget {
     final louage = dashboard.louage;
     final station = dashboard.station;
     final trips = dashboard.trips;
-    final nextTrip =
-        trips.isEmpty ? null : _selectNextTrip(trips);
+    final nextTrip = trips.isEmpty ? null : _selectNextTrip(trips);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       body: SafeArea(
+        top: false,
         bottom: false,
         child: CustomScrollView(
           slivers: [
@@ -235,8 +241,7 @@ class _ValidatedDashboard extends ConsumerWidget {
                         const SizedBox(height: 16),
 
                         // ── 2. Status switcher ──────────────────────────
-                        if (louage != null)
-                          _StatusSwitcher(louage: louage),
+                        if (louage != null) _StatusSwitcher(louage: louage),
                         const SizedBox(height: 20),
 
                         // ── 3. Next departure card ──────────────────────
@@ -264,7 +269,7 @@ class _ValidatedDashboard extends ConsumerWidget {
                         const SizedBox(height: 20),
 
                         // ── 5. Statistics ───────────────────────────────
-                        _StatsSection(
+                        DriverDashboardStats(
                           driverId: user.id,
                           bookings: dashboard.bookings,
                         ),
@@ -274,7 +279,7 @@ class _ValidatedDashboard extends ConsumerWidget {
                         if (nextTrip != null) ...[
                           SectionHeader(title: l10n.driverPassengersReserved),
                           const SizedBox(height: 8),
-                          _SeatMapCard(
+                          DriverSeatMapCard(
                             trip: nextTrip,
                             bookings: dashboard.bookings,
                             passengers: dashboard.passengers,
@@ -291,14 +296,26 @@ class _ValidatedDashboard extends ConsumerWidget {
                         const SizedBox(height: 12),
 
                         // ── Phase 5: Actions bonus ───────────────────────
-                        OutlinedButton.icon(
-                          icon: const Icon(Icons.more_horiz_rounded),
-                          label: const Text('Annonce / Signalement / Itinéraire'),
+                        OutlinedButton(
                           onPressed: () => context.pushNamed(
                             'driverActions',
                             queryParameters: nextTrip != null
                                 ? {'tripId': nextTrip.id}
                                 : {},
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.more_horiz_rounded),
+                              const SizedBox(width: 8),
+                              const Expanded(
+                                child: Text(
+                                  'Annonce / Signalement / Itinéraire',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -364,32 +381,32 @@ class _LouageInfoCard extends StatelessWidget {
                   louage?.matricule.isEmpty != false
                       ? l10n.driverNoLouage
                       : louage!.matricule,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                  style: Theme.of(context).textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 if (louage?.modele.isNotEmpty == true) ...[
                   const SizedBox(height: 2),
                   Text(
                     louage!.modele,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colors.onSurfaceVariant,
-                        ),
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: colors.onSurfaceVariant),
                   ),
                 ],
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.location_on_outlined,
-                        size: 14, color: colors.onSurfaceVariant),
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 14,
+                      color: colors.onSurfaceVariant,
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         station?.localizedName(locale) ??
                             l10n.driverStationUnavailable,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: colors.onSurfaceVariant,
-                            ),
+                        style: Theme.of(context).textTheme.bodySmall
+                            ?.copyWith(color: colors.onSurfaceVariant),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -406,15 +423,14 @@ class _LouageInfoCard extends StatelessWidget {
                 Text(
                   '${louage!.placesTotal}',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: colors.primary,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: colors.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 Text(
                   l10n.driverSeatWord,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
+                  style: Theme.of(context).textTheme.labelSmall
+                      ?.copyWith(color: colors.onSurfaceVariant),
                 ),
               ],
             ),
@@ -440,22 +456,34 @@ class _StatusSwitcher extends ConsumerWidget {
     final current = louage.statut;
 
     final statuses = [
-      (LouageStatus.disponible, l10n.driverStatusAvailable,
-          Icons.check_circle_outline),
-      (LouageStatus.enAttente, l10n.driverStatusWaiting,
-          Icons.hourglass_top_rounded),
-      (LouageStatus.enDeplacement, l10n.driverStatusInTransit,
-          Icons.directions_car_rounded),
-      (LouageStatus.horsService, l10n.driverStatusOutOfService,
-          Icons.cancel_outlined),
+      (
+        LouageStatus.disponible,
+        l10n.driverStatusAvailable,
+        Icons.check_circle_outline,
+      ),
+      (
+        LouageStatus.enAttente,
+        l10n.driverStatusWaiting,
+        Icons.hourglass_top_rounded,
+      ),
+      (
+        LouageStatus.enDeplacement,
+        l10n.driverStatusInTransit,
+        Icons.directions_car_rounded,
+      ),
+      (
+        LouageStatus.horsService,
+        l10n.driverStatusOutOfService,
+        Icons.cancel_outlined,
+      ),
     ];
 
     Color chipColor(LouageStatus s) => switch (s) {
-          LouageStatus.disponible => colors.tertiary,
-          LouageStatus.enAttente => colors.secondary,
-          LouageStatus.enDeplacement => colors.primary,
-          LouageStatus.horsService => colors.error,
-        };
+      LouageStatus.disponible => colors.tertiary,
+      LouageStatus.enAttente => colors.secondary,
+      LouageStatus.enDeplacement => colors.primary,
+      LouageStatus.horsService => colors.error,
+    };
 
     return AppCard(
       child: Column(
@@ -463,9 +491,8 @@ class _StatusSwitcher extends ConsumerWidget {
         children: [
           Text(
             l10n.driverChangeStatus,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(context).textTheme.titleSmall
+                ?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
           Wrap(
@@ -475,13 +502,11 @@ class _StatusSwitcher extends ConsumerWidget {
               for (final (status, label, icon) in statuses)
                 FilterChip(
                   selected: current == status,
-                  label: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(icon, size: 16),
-                      const SizedBox(width: 4),
-                      Text(label),
-                    ],
+                  avatar: Icon(icon, size: 16),
+                  label: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   selectedColor: chipColor(status).withValues(alpha: 0.18),
                   checkmarkColor: chipColor(status),
@@ -528,14 +553,12 @@ class _StatusSwitcher extends ConsumerWidget {
           .read(louageRepositoryProvider)
           .updateStatus(louage.id, newStatus);
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.driverStatusUpdated)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.driverStatusUpdated)));
     } catch (_) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.driverStatusUpdateFailed)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.driverStatusUpdateFailed)));
     }
   }
 }
@@ -605,9 +628,11 @@ class _NextDepartureCardState extends State<_NextDepartureCard> {
     final reserved = trip.reservedSeats;
     final total = trip.totalSeats;
     final tripBookings = widget.bookings
-        .where((b) =>
-            b.tripId == trip.id &&
-            !const {'cancelled', 'rejected'}.contains(b.status))
+        .where(
+          (b) =>
+              b.tripId == trip.id &&
+              !const {'cancelled', 'rejected'}.contains(b.status),
+        )
         .toList();
 
     return AppCard(
@@ -615,20 +640,28 @@ class _NextDepartureCardState extends State<_NextDepartureCard> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Departure time
-          Row(
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Icon(Icons.schedule_rounded, color: colors.primary, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                dep == null
-                    ? l10n.louageDepartureUnavailable
-                    : TimeOfDay.fromDateTime(dep).format(context),
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.schedule_rounded, color: colors.primary, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    dep == null
+                        ? l10n.louageDepartureUnavailable
+                        : TimeOfDay.fromDateTime(dep).format(context),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: colors.primary,
                       fontWeight: FontWeight.w700,
                     ),
+                  ),
+                ],
               ),
-              const Spacer(),
               StatusChip(status: trip.status),
             ],
           ),
@@ -636,9 +669,8 @@ class _NextDepartureCardState extends State<_NextDepartureCard> {
             const SizedBox(height: 4),
             Text(
               MaterialLocalizations.of(context).formatFullDate(dep),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: colors.onSurfaceVariant),
             ),
           ],
           const SizedBox(height: 12),
@@ -658,9 +690,8 @@ class _NextDepartureCardState extends State<_NextDepartureCard> {
               const SizedBox(width: 10),
               Text(
                 '$reserved/$total',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -670,9 +701,8 @@ class _NextDepartureCardState extends State<_NextDepartureCard> {
               reserved.toString(),
               trip.freeSeats.toString(),
             ),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: colors.onSurfaceVariant),
           ),
           const SizedBox(height: 12),
 
@@ -687,9 +717,8 @@ class _NextDepartureCardState extends State<_NextDepartureCard> {
             const Divider(height: 16),
             Text(
               l10n.driverPassengersReserved,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.labelLarge
+                  ?.copyWith(color: colors.onSurfaceVariant),
             ),
             const SizedBox(height: 6),
             for (final b in tripBookings.take(3))
@@ -697,8 +726,11 @@ class _NextDepartureCardState extends State<_NextDepartureCard> {
                 padding: const EdgeInsetsDirectional.only(bottom: 2),
                 child: Row(
                   children: [
-                    Icon(Icons.person_outline, size: 14,
-                        color: colors.onSurfaceVariant),
+                    Icon(
+                      Icons.person_outline,
+                      size: 14,
+                      color: colors.onSurfaceVariant,
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
@@ -710,9 +742,8 @@ class _NextDepartureCardState extends State<_NextDepartureCard> {
                     ),
                     Text(
                       '${b.seats} pl.',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colors.onSurfaceVariant,
-                          ),
+                      style: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(color: colors.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -746,7 +777,9 @@ class _CountdownBadge extends StatelessWidget {
     final urgent = remaining.inMinutes < 15;
     return Container(
       padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 12, vertical: 6),
+        horizontal: 12,
+        vertical: 6,
+      ),
       decoration: BoxDecoration(
         color: urgent
             ? colors.error.withValues(alpha: 0.10)
@@ -756,16 +789,18 @@ class _CountdownBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.timer_outlined,
-              size: 16,
-              color: urgent ? colors.error : colors.onPrimaryContainer),
+          Icon(
+            Icons.timer_outlined,
+            size: 16,
+            color: urgent ? colors.error : colors.onPrimaryContainer,
+          ),
           const SizedBox(width: 6),
           Text(
             label,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: urgent ? colors.error : colors.onPrimaryContainer,
-                  fontWeight: FontWeight.w700,
-                ),
+              color: urgent ? colors.error : colors.onPrimaryContainer,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -794,10 +829,9 @@ class _QuickActions extends StatelessWidget {
         l10n.driverScanTitle,
         colors.primary,
         () => context.pushNamed(
-              'driverScan',
-              queryParameters:
-                  tripId != null ? {'tripId': tripId!} : {},
-            ),
+          'driverScan',
+          queryParameters: tripId != null ? {'tripId': tripId!} : {},
+        ),
       ),
       (
         Icons.people_outline,
@@ -875,352 +909,10 @@ class _QuickActionTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: colors.onSurface,
-                      ),
+                  style: Theme.of(context).textTheme.titleSmall
+                      ?.copyWith(color: colors.onSurface),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 5. Statistics section
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _StatsSection extends ConsumerWidget {
-  const _StatsSection({
-    required this.driverId,
-    required this.bookings,
-  });
-
-  final String driverId;
-  final List<Booking> bookings;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = Theme.of(context).colorScheme;
-
-    final stats = ref.watch(driverLouageStatsProvider(driverId));
-    final rating = stats.asData?.value.$1 ?? 0.0;
-    final completedTrips = stats.asData?.value.$2 ?? 0;
-
-    final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
-    final weekStart = todayStart.subtract(Duration(days: now.weekday - 1));
-
-    double revenueDay = 0;
-    double revenueWeek = 0;
-    int passengersTotal = 0;
-    for (final b in bookings) {
-      if (const {'confirmed', 'validated'}.contains(b.status)) {
-        passengersTotal += b.seats;
-        final created = DateTime.tryParse(b.createdAt);
-        if (created != null) {
-          if (created.isAfter(todayStart)) revenueDay += b.totalPrice;
-          if (created.isAfter(weekStart)) revenueWeek += b.totalPrice;
-        }
-      }
-    }
-
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            l10n.driverStatsUnavailable.contains('ind')
-                ? 'Statistiques'
-                : l10n.driverStatsUnavailable,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _StatChip(
-                icon: Icons.star_rounded,
-                value: rating == 0 ? '—' : rating.toStringAsFixed(1),
-                label: l10n.driverRatingAverage,
-                color: colors.secondary,
-              ),
-              _StatChip(
-                icon: Icons.check_circle_outline,
-                value: '$completedTrips',
-                label: l10n.driverCompletedTrips,
-                color: colors.tertiary,
-              ),
-              _StatChip(
-                icon: Icons.people_outline,
-                value: '$passengersTotal',
-                label: l10n.driverPassengersReserved,
-                color: colors.primary,
-              ),
-              _StatChip(
-                icon: Icons.today_rounded,
-                value: '${revenueDay.toStringAsFixed(0)} DT',
-                label: 'Aujourd\'hui',
-                color: colors.primary,
-              ),
-              _StatChip(
-                icon: Icons.calendar_view_week_rounded,
-                value: '${revenueWeek.toStringAsFixed(0)} DT',
-                label: 'Cette semaine',
-                color: colors.secondary,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatChip extends StatelessWidget {
-  const _StatChip({
-    required this.icon,
-    required this.value,
-    required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String value;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.09),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(width: 6),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: color,
-                    ),
-              ),
-              Text(
-                label,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurfaceVariant,
-                    ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 6. Seat map card
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _SeatMapCard extends StatelessWidget {
-  const _SeatMapCard({
-    required this.trip,
-    required this.bookings,
-    required this.passengers,
-  });
-
-  final Trip trip;
-  final List<Booking> bookings;
-  final Map<String, DriverPassenger> passengers;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    // Build a map seatNumber -> passengerName
-    final seatMap = <int, String>{};
-    for (final b in bookings) {
-      if (b.tripId != trip.id ||
-          const {'cancelled', 'rejected'}.contains(b.status)) {
-        continue;
-      }
-      final passengerName =
-          passengers[b.userId]?.name ?? l10n.driverPassengerFallback;
-      for (final seat in b.numerosPlaces) {
-        seatMap[seat] = passengerName;
-      }
-    }
-
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            l10n.driverPassengersReserved,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          const SizedBox(height: 16),
-          _LouageSeatDiagram(
-            totalSeats: trip.totalSeats.clamp(0, 8),
-            seatMap: seatMap,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LouageSeatDiagram extends StatelessWidget {
-  const _LouageSeatDiagram({
-    required this.totalSeats,
-    required this.seatMap,
-  });
-
-  final int totalSeats;
-  final Map<int, String> seatMap;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget seatWidget(int n) => _SeatButton(
-          number: n,
-          passengerName: seatMap[n],
-          visible: n <= totalSeats,
-        );
-
-    Widget row(List<int> seats) => Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: seats
-              .map((n) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: seatWidget(n),
-                  ))
-              .toList(),
-        );
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Column(
-        children: [
-          // Front row: driver + seat 1
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _DriverSeat(),
-              seatWidget(1),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Divider(
-              color: Theme.of(context).colorScheme.outlineVariant, height: 1),
-          const SizedBox(height: 8),
-          row([2, 3]),
-          const SizedBox(height: 8),
-          row([4, 5]),
-          const SizedBox(height: 8),
-          row([6, 7, 8]),
-        ],
-      ),
-    );
-  }
-}
-
-class _DriverSeat extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Column(
-      children: [
-        Container(
-          width: 60,
-          height: 52,
-          decoration: BoxDecoration(
-            color: colors.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: colors.outlineVariant),
-          ),
-          child: Icon(Icons.directions_car_filled_outlined,
-              color: colors.onSurfaceVariant, size: 24),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          AppLocalizations.of(context)!.bookingDriverSeat,
-          style: Theme.of(context).textTheme.labelSmall,
-        ),
-      ],
-    );
-  }
-}
-
-class _SeatButton extends StatelessWidget {
-  const _SeatButton({
-    required this.number,
-    required this.passengerName,
-    required this.visible,
-  });
-
-  final int number;
-  final String? passengerName;
-  final bool visible;
-
-  @override
-  Widget build(BuildContext context) {
-    if (!visible) return const SizedBox(width: 60, height: 52);
-    final colors = Theme.of(context).colorScheme;
-    final occupied = passengerName != null;
-
-    return Tooltip(
-      message: occupied
-          ? passengerName!
-          : AppLocalizations.of(context)!.bookingFree,
-      child: Container(
-        width: 60,
-        height: 52,
-        decoration: BoxDecoration(
-          color: occupied
-              ? colors.primary.withValues(alpha: 0.15)
-              : colors.surface,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: occupied ? colors.primary : colors.outlineVariant,
-            width: occupied ? 1.5 : 1,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                occupied ? Icons.person : Icons.event_seat_outlined,
-                size: 16,
-                color: occupied ? colors.primary : colors.onSurfaceVariant,
-              ),
-              Text(
-                '$number',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: occupied ? colors.primary : colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -1250,9 +942,7 @@ class _QueueToggle extends ConsumerWidget {
       onPressed: louage == null
           ? null
           : () async {
-              await ref
-                  .read(driverRepositoryProvider)
-                  .toggleQueue(louage!.id);
+              await ref.read(driverRepositoryProvider).toggleQueue(louage!.id);
               if (!context.mounted) return;
               context.goNamed('driverQueue');
             },
@@ -1307,30 +997,32 @@ class _ValidationBanner extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final (label, icon, color) = switch (status) {
       _ValidationStatus.pending => (
-          l10n.driverStatusPending,
-          Icons.hourglass_top_rounded,
-          scheme.secondary,
-        ),
+        l10n.driverStatusPending,
+        Icons.hourglass_top_rounded,
+        scheme.secondary,
+      ),
       _ValidationStatus.submitted => (
-          l10n.docValidationStatusSubmitted,
-          Icons.pending_outlined,
-          scheme.secondary,
-        ),
+        l10n.docValidationStatusSubmitted,
+        Icons.pending_outlined,
+        scheme.secondary,
+      ),
       _ValidationStatus.validated => (
-          l10n.driverStatusApproved,
-          Icons.verified_outlined,
-          scheme.tertiary,
-        ),
+        l10n.driverStatusApproved,
+        Icons.verified_outlined,
+        scheme.tertiary,
+      ),
       _ValidationStatus.rejected => (
-          l10n.driverStatusRejected,
-          Icons.error_outline,
-          scheme.error,
-        ),
+        l10n.driverStatusRejected,
+        Icons.error_outline,
+        scheme.error,
+      ),
     };
     return Container(
       constraints: const BoxConstraints(minHeight: 52),
       padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 16, vertical: 12),
+        horizontal: 16,
+        vertical: 12,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
@@ -1344,9 +1036,9 @@ class _ValidationBanner extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

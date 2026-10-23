@@ -71,10 +71,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 20),
                 _SettingsSectionTitle(title: l10n.settingsSecuritySection),
-                DeleteAccountButton(
-                  user: user,
-                  hide: user?.role == 'driver',
-                ),
+                DeleteAccountButton(user: user, hide: user?.role == 'driver'),
                 const SizedBox(height: 20),
                 _SettingsSectionTitle(title: l10n.settingsSupportSection),
                 ProfileOptionRow(
@@ -162,7 +159,7 @@ class _SettingsSectionTitle extends StatelessWidget {
     child: Text(
       title,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.inversePrimary,
         fontWeight: FontWeight.w700,
       ),
     ),

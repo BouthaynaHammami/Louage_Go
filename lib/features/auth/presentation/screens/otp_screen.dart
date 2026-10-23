@@ -354,8 +354,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium
-                  ?.copyWith(color: Theme.of(context).colorScheme.primary),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
             ),
           ],
           const SizedBox(height: 20),

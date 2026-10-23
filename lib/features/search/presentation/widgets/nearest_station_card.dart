@@ -132,7 +132,7 @@ class _NearestStationCardState extends ConsumerState<NearestStationCard> {
         children: [
           Row(
             children: [
-              Icon(Icons.near_me_outlined, color: colorScheme.secondary),
+              Icon(Icons.near_me_outlined, color: colorScheme.primary),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -161,7 +161,7 @@ class _NearestStationCardState extends ConsumerState<NearestStationCard> {
                   children: [
                     Icon(
                       Icons.location_on_outlined,
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
