@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/favorite_button.dart';
 import '../../../../core/widgets/skeleton_box.dart';
@@ -15,7 +16,7 @@ class StationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         title: Text(l10n.stationsTitle),
         actions: [

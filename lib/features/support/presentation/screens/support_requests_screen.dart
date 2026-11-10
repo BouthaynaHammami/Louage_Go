@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../core/widgets/status_chip.dart';
@@ -19,7 +20,7 @@ class SupportRequestsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final userState = ref.watch(currentUserProvider);
     final user = userState.asData?.value;
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.supportRequestsTitle)),
       body: SafeArea(
         child: Center(

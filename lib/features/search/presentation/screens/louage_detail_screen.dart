@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/favorite_button.dart';
 import '../../../../core/widgets/seat_dots.dart';
@@ -50,7 +51,7 @@ class LouageDetailScreen extends ConsumerWidget {
           ),
           data: (detail) {
             if (detail == null) {
-              return Scaffold(
+              return AppScaffold(
                 appBar: AppBar(title: Text(l10n.louageDetailTitle)),
                 body: EmptyState(
                   icon: Icons.search_off,
@@ -59,7 +60,7 @@ class LouageDetailScreen extends ConsumerWidget {
               );
             }
             if (detail.route == null || detail.louage == null) {
-              return Scaffold(
+              return AppScaffold(
                 appBar: AppBar(title: Text(l10n.louageDetailTitle)),
                 body: EmptyState(
                   icon: Icons.error_outline,
@@ -90,7 +91,7 @@ class LouageDetailScreen extends ConsumerWidget {
         ? l10n.profileDriverFallback
         : detail.driverName;
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(
         backgroundColor: darkHeader,
         foregroundColor: colorScheme.onPrimary,

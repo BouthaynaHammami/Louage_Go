@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -51,7 +52,7 @@ class _SupportFaqScreenState extends ConsumerState<SupportFaqScreen> {
       'account': l10n.supportCategoryAccount,
       'drivers': l10n.supportCategoryDrivers,
     };
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.supportFaqTitle)),
       body: SafeArea(
         child: Center(

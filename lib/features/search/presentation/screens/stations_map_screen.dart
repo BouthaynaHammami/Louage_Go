@@ -8,6 +8,7 @@ import 'package:latlong2/latlong.dart';
 import '../../../../core/services/location_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/favorite_button.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/station.dart';
 import '../providers/trip_search_results_provider.dart';
@@ -173,7 +174,7 @@ class _StationsMapScreenState extends ConsumerState<StationsMapScreen> {
             .toList(growable: false) ??
         const <Station>[];
     final closestStationId = _closestStationId(stations);
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.stationsMapTitle)),
       body: Stack(
         children: [

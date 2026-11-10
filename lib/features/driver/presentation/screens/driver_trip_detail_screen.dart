@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/storage/hive_service.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/seat_dots.dart';
 import '../../../../features/auth/auth_providers.dart';
@@ -40,7 +41,7 @@ class DriverTripDetailScreen extends ConsumerWidget {
           ),
           data: (user) {
             if (user == null || user.role != 'driver') {
-              return Scaffold(
+              return AppScaffold(
                 appBar: driverAppBar(context, l10n.driverTripDetail),
                 body: EmptyState(
                   icon: Icons.person_off_outlined,
@@ -65,7 +66,7 @@ class DriverTripDetailScreen extends ConsumerWidget {
                   data: (trips) {
                     final matches = trips.where((trip) => trip.id == tripId);
                     if (matches.isEmpty) {
-                      return Scaffold(
+                      return AppScaffold(
                         appBar: driverAppBar(context, l10n.driverTripDetail),
                         body: EmptyState(
                           icon: Icons.route_outlined,
@@ -77,7 +78,7 @@ class DriverTripDetailScreen extends ConsumerWidget {
                     final louageAsync = ref.watch(
                       driverLouageProvider(user.id),
                     );
-                    return Scaffold(
+                    return AppScaffold(
                       appBar: driverAppBar(context, l10n.driverTripDetail),
                       body: Center(
                         child: ConstrainedBox(

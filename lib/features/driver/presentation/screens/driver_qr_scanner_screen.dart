@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -151,7 +152,7 @@ class _DriverQrScannerScreenState extends ConsumerState<DriverQrScannerScreen> {
           ),
           data: (user) {
             if (user == null || user.role != 'driver') {
-              return Scaffold(
+              return AppScaffold(
                 appBar: AppBar(title: Text(l10n.driverScanTitle)),
                 body: EmptyState(
                   icon: Icons.person_off_outlined,
@@ -220,7 +221,7 @@ class _DriverQrScannerScreenState extends ConsumerState<DriverQrScannerScreen> {
       _error,
     );
 
-    return Scaffold(
+    return AppScaffold(
       backgroundColor: overlayColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(

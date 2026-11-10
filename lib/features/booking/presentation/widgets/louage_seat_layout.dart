@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../l10n/generated/app_localizations.dart';
+
+// ─── Palette ────────────────────────────────────────────────────────────────
+const _kRed        = Color(0xFFD71935);
+const _kOccupied   = Color(0xFFFF3B3B);
+const _kSelected   = _kRed;
 
 class LouageSeatLayout extends StatelessWidget {
   const LouageSeatLayout({
@@ -19,101 +24,125 @@ class LouageSeatLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-    final seatCount = totalSeats.clamp(0, 8);
+    final l10n     = AppLocalizations.of(context)!;
+    final isDark   = Theme.of(context).brightness == Brightness.dark;
+    final count    = totalSeats.clamp(0, 8);
 
-    Widget seat(int number) => _LouageSeat(
-      number: number,
-      occupied: occupiedSeats.contains(number),
-      selected: selectedSeats.contains(number),
+    Widget seat(int n) => _Seat(
+      number:   n,
+      occupied: occupiedSeats.contains(n),
+      selected: selectedSeats.contains(n),
+      isDark:   isDark,
       onChanged: onSeatChanged,
     );
 
-    return AppCard(
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 14, offset: const Offset(0, 4)),
+        ],
+      ),
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Column(
           children: [
+
+            // ── Header ─────────────────────────────────────────────────
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: colors.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [_kRed, Color(0xFFAA0F28)],
+                  begin: Alignment.topLeft, end: Alignment.bottomRight),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              child: Text(
-                l10n.bookingDriverSeat,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: colors.onSurface,
-                  fontWeight: FontWeight.w700,
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 13),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                const Icon(Icons.directions_bus_rounded,
+                    color: Colors.white70, size: 16),
+                const SizedBox(width: 8),
+                Text(l10n.bookingDriverSeat,
+                  style: const TextStyle(
+                    color: Colors.white, fontSize: 13.5,
+                    fontWeight: FontWeight.w700, letterSpacing: 0.3)),
+              ]),
+            ),
+
+            // ── Cabin ──────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: _Cabin(
+                isDark: isDark,
+                child: Column(children: [
+
+                  // Row 1: driver + seat 1
+                  Row(children: [
+                    Expanded(child: _DriverBox(isDark: isDark, l10n: l10n)),
+                    const SizedBox(width: 8),
+                    if (count >= 1) Expanded(child: seat(1)),
+                  ]),
+
+                  if (count > 1) ...[
+                    const SizedBox(height: 6),
+                    _RowDivider(),
+                    const SizedBox(height: 6),
+                    _SeatRow(
+                      seats: [2, 3].where((n) => n <= count).toList(),
+                      seatBuilder: seat),
+                  ],
+
+                  if (count > 3) ...[
+                    const SizedBox(height: 8),
+                    _SeatRow(
+                      seats: [4, 5].where((n) => n <= count).toList(),
+                      seatBuilder: seat),
+                  ],
+
+                  if (count > 5) ...[
+                    const SizedBox(height: 8),
+                    _SeatRow(
+                      seats: [6, 7, 8].where((n) => n <= count).toList(),
+                      seatBuilder: seat),
+                  ],
+                ]),
               ),
             ),
-            const SizedBox(height: 14),
-            _CabinShell(
-              child: Column(
+
+            // ── Legend ─────────────────────────────────────────────────
+            Container(
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.04)
+                    : const Color(0xFFF7F8FA),
+                borderRadius:
+                    const BorderRadius.vertical(bottom: Radius.circular(20)),
+                border: Border(
+                  top: BorderSide(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.06)
+                        : Colors.grey.shade200)),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _DriverPosition(label: l10n.bookingDriverSeat),
-                      ),
-                      const SizedBox(width: 6),
-                      if (seatCount >= 1) Expanded(child: seat(1)),
-                    ],
-                  ),
-                  if (seatCount > 1) ...[
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Divider(height: 1),
-                    ),
-                    _SeatBench(
-                      numbers: [2, 3].where((number) => number <= seatCount),
-                      seatBuilder: seat,
-                    ),
-                  ],
-                  if (seatCount > 3) ...[
-                    const SizedBox(height: 10),
-                    _SeatBench(
-                      numbers: [4, 5].where((number) => number <= seatCount),
-                      seatBuilder: seat,
-                    ),
-                  ],
-                  if (seatCount > 5) ...[
-                    const SizedBox(height: 10),
-                    _SeatBench(
-                      numbers: [6, 7, 8].where((number) => number <= seatCount),
-                      seatBuilder: seat,
-                    ),
-                  ],
+                  _Legend(
+                    bg: _kOccupied, iconColor: Colors.white,
+                    icon: Icons.person_rounded, label: l10n.bookingTaken),
+                  _Dot(),
+                  _Legend(
+                    bg: _kSelected, iconColor: Colors.white,
+                    icon: Icons.check_rounded, label: l10n.bookingSelected),
+                  _Dot(),
+                  _Legend(
+                    bg: Colors.white, iconColor: Colors.grey.shade400,
+                    icon: Icons.event_seat_outlined, label: l10n.bookingFree,
+                    border: Colors.grey.shade300),
                 ],
               ),
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 14,
-              runSpacing: 8,
-              children: [
-                _SeatLegend(
-                  color: colors.error,
-                  icon: Icons.person,
-                  label: l10n.bookingTaken,
-                ),
-                _SeatLegend(
-                  color: colors.primary,
-                  icon: Icons.check,
-                  label: l10n.bookingSelected,
-                ),
-                _SeatLegend(
-                  color: colors.surface,
-                  icon: Icons.event_seat_outlined,
-                  borderColor: colors.outline,
-                  label: l10n.bookingFree,
-                ),
-              ],
             ),
           ],
         ),
@@ -122,167 +151,202 @@ class LouageSeatLayout extends StatelessWidget {
   }
 }
 
-class _CabinShell extends StatelessWidget {
-  const _CabinShell({required this.child});
-
+// ── Cabin container ───────────────────────────────────────────────────────
+class _Cabin extends StatelessWidget {
+  const _Cabin({required this.child, required this.isDark});
   final Widget child;
+  final bool   isDark;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        border: Border.all(color: colors.outline),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.04)
+            : const Color(0xFFF7F8FA),
         borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(42),
-          bottom: Radius.circular(24),
+          top:    Radius.circular(36),
+          bottom: Radius.circular(18),
         ),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.grey.shade200,
+          width: 1.5),
       ),
       child: child,
     );
   }
 }
 
-class _DriverPosition extends StatelessWidget {
-  const _DriverPosition({required this.label});
-
-  final String label;
+// ── Driver box ────────────────────────────────────────────────────────────
+class _DriverBox extends StatelessWidget {
+  const _DriverBox({required this.isDark, required this.l10n});
+  final bool             isDark;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Container(
-      height: 58,
+      height: 62,
       decoration: BoxDecoration(
-        color: colors.surface,
-        border: Border.all(color: colors.outlineVariant),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.white,
         borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.directions_car_filled_outlined,
-            color: colors.onSurfaceVariant,
-          ),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(
-              label,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: colors.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.12)
+              : Colors.grey.shade200,
+          width: 1.5)),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Icon(Icons.drive_eta_rounded,
+          color: isDark ? Colors.white54 : Colors.grey.shade400, size: 22),
+        const SizedBox(height: 3),
+        Text(l10n.bookingDriverSeat,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 10, fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white38 : Colors.grey.shade400)),
+      ]),
     );
   }
 }
 
-class _SeatBench extends StatelessWidget {
-  const _SeatBench({required this.numbers, required this.seatBuilder});
+// ── Row divider ───────────────────────────────────────────────────────────
+class _RowDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: List.generate(14, (i) => Expanded(
+      child: Container(
+        height: 1.5,
+        color: i.isEven ? Colors.grey.shade300 : Colors.transparent))));
+  }
+}
 
-  final Iterable<int> numbers;
-  final Widget Function(int number) seatBuilder;
+// ── Seat row ──────────────────────────────────────────────────────────────
+class _SeatRow extends StatelessWidget {
+  const _SeatRow({required this.seats, required this.seatBuilder});
+  final List<int>             seats;
+  final Widget Function(int) seatBuilder;
 
   @override
   Widget build(BuildContext context) {
-    final seats = numbers.toList();
     return Row(
       children: [
-        for (var index = 0; index < seats.length; index++) ...[
-          if (index > 0) const SizedBox(width: 6),
-          Expanded(child: seatBuilder(seats[index])),
+        for (var i = 0; i < seats.length; i++) ...[
+          if (i > 0) const SizedBox(width: 8),
+          Expanded(child: seatBuilder(seats[i])),
         ],
       ],
     );
   }
 }
 
-class _LouageSeat extends StatelessWidget {
-  const _LouageSeat({
+// ═══════════════════════════════════════════════════════════════════════════
+// SEAT WIDGET
+// ═══════════════════════════════════════════════════════════════════════════
+class _Seat extends StatefulWidget {
+  const _Seat({
     required this.number,
     required this.occupied,
     required this.selected,
+    required this.isDark,
     required this.onChanged,
   });
+  final int    number;
+  final bool   occupied, selected, isDark;
+  final void Function(int, bool) onChanged;
 
-  final int number;
-  final bool occupied;
-  final bool selected;
-  final void Function(int seat, bool selected) onChanged;
+  @override
+  State<_Seat> createState() => _SeatState();
+}
+
+class _SeatState extends State<_Seat>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double>   _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 80));
+    _scale = Tween<double>(begin: 1.0, end: 0.90)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  void _onTap() {
+    if (widget.occupied) return;
+    HapticFeedback.selectionClick();
+    _ctrl.forward().then((_) => _ctrl.reverse());
+    widget.onChanged(widget.number, !widget.selected);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
-    final stateLabel = occupied
-        ? l10n.bookingTaken
-        : selected
-        ? l10n.bookingSelected
-        : l10n.bookingFree;
-    final background = occupied
-        ? colors.error
-        : selected
-        ? colors.primary
-        : colors.surface;
-    final foreground = occupied
-        ? colors.onError
-        : selected
-        ? colors.onPrimary
-        : colors.onSurface;
 
-    return Semantics(
-      button: !occupied,
-      selected: selected,
-      label: '$number, $stateLabel',
-      child: Tooltip(
-        message: '$number · $stateLabel',
-        child: InkWell(
-          onTap: occupied ? null : () => onChanged(number, !selected),
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            height: 60,
-            padding: const EdgeInsets.all(4),
+    // State-dependent colors
+    final Color bg;
+    final Color fg;
+    final Color border;
+    final IconData icon;
+
+    if (widget.occupied) {
+      bg     = _kOccupied.withValues(alpha: 0.12);
+      fg     = _kOccupied;
+      border = _kOccupied.withValues(alpha: 0.35);
+      icon   = Icons.person_rounded;
+    } else if (widget.selected) {
+      bg     = _kSelected;
+      fg     = Colors.white;
+      border = _kSelected;
+      icon   = Icons.check_rounded;
+    } else {
+      bg     = widget.isDark
+          ? Colors.white.withValues(alpha: 0.07)
+          : Colors.white;
+      fg     = widget.isDark ? Colors.white60 : Colors.grey.shade500;
+      border = widget.isDark
+          ? Colors.white.withValues(alpha: 0.12)
+          : Colors.grey.shade200;
+      icon   = Icons.event_seat_outlined;
+    }
+
+    return ScaleTransition(
+      scale: _scale,
+      child: Semantics(
+        button: !widget.occupied,
+        selected: widget.selected,
+        label: '${widget.number}, ${widget.occupied ? l10n.bookingTaken : widget.selected ? l10n.bookingSelected : l10n.bookingFree}',
+        child: GestureDetector(
+          onTap: _onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            height: 62,
             decoration: BoxDecoration(
-              color: background,
-              border: Border.all(
-                color: occupied
-                    ? colors.error
-                    : selected
-                    ? colors.primary
-                    : colors.outline,
-                width: selected ? 2 : 1,
-              ),
-              borderRadius: BorderRadius.circular(12),
+              color: bg,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: border, width: widget.selected ? 2 : 1.5),
+              boxShadow: widget.selected ? [
+                BoxShadow(color: _kRed.withValues(alpha: 0.25),
+                    blurRadius: 8, offset: const Offset(0, 3)),
+              ] : [],
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  occupied
-                      ? Icons.person
-                      : selected
-                      ? Icons.check
-                      : Icons.event_seat_outlined,
-                  size: 19,
-                  color: foreground,
-                ),
-                Text(
-                  '$number',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: foreground,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Icon(icon, size: 20, color: fg),
+              const SizedBox(height: 3),
+              Text('${widget.number}',
+                style: TextStyle(
+                  fontSize: 13, fontWeight: FontWeight.w700, color: fg)),
+            ]),
           ),
         ),
       ),
@@ -290,45 +354,43 @@ class _LouageSeat extends StatelessWidget {
   }
 }
 
-class _SeatLegend extends StatelessWidget {
-  const _SeatLegend({
-    required this.color,
+// ── Legend item ───────────────────────────────────────────────────────────
+class _Legend extends StatelessWidget {
+  const _Legend({
+    required this.bg,
+    required this.iconColor,
     required this.icon,
     required this.label,
-    this.borderColor,
+    this.border,
   });
-
-  final Color color;
+  final Color    bg, iconColor;
   final IconData icon;
-  final String label;
-  final Color? borderColor;
+  final String   label;
+  final Color?   border;
 
   @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
+  Widget build(BuildContext context) {
+    return Row(mainAxisSize: MainAxisSize.min, children: [
       Container(
-        width: 20,
-        height: 20,
+        width: 22, height: 22,
         decoration: BoxDecoration(
-          color: color,
-          border: Border.all(color: borderColor ?? color),
+          color: bg,
           borderRadius: BorderRadius.circular(6),
-        ),
-        child: Icon(
-          icon,
-          size: 13,
-          color: borderColor == null
-              ? Theme.of(context).colorScheme.onPrimary
-              : Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-      ),
+          border: Border.all(
+            color: border ?? bg.withValues(alpha: 0.80), width: 1.5)),
+        child: Icon(icon, size: 13, color: iconColor)),
       const SizedBox(width: 5),
-      Text(
-        label,
-        style: Theme.of(context).textTheme.labelMedium
-            ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
-      ),
-    ],
-  );
+      Text(label, style: const TextStyle(fontSize: 11.5, color: Color(0xFF555555),
+          fontWeight: FontWeight.w500)),
+    ]);
+  }
+}
+
+// ── Dot separator ─────────────────────────────────────────────────────────
+class _Dot extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+      Container(width: 4, height: 4,
+          decoration: BoxDecoration(
+              color: Colors.grey.shade300, shape: BoxShape.circle));
 }

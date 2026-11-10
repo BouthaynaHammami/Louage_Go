@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/widgets/animated_background.dart';
+
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/empty_state.dart';
@@ -148,8 +150,11 @@ class _PendingDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+    return Stack(
+      children: [
+        const AnimatedBackground(intensity: BackgroundIntensity.subtle),
+        Scaffold(
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         top: false,
         bottom: false,
@@ -197,6 +202,8 @@ class _PendingDashboard extends StatelessWidget {
           ],
         ),
       ),
+        ),
+      ],
     );
   }
 }
@@ -219,8 +226,11 @@ class _ValidatedDashboard extends ConsumerWidget {
     final trips = dashboard.trips;
     final nextTrip = trips.isEmpty ? null : _selectNextTrip(trips);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+    return Stack(
+      children: [
+        const AnimatedBackground(intensity: BackgroundIntensity.subtle),
+        Scaffold(
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         top: false,
         bottom: false,
@@ -327,6 +337,8 @@ class _ValidatedDashboard extends ConsumerWidget {
           ],
         ),
       ),
+        ),
+      ],
     );
   }
 

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/storage/hive_service.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../features/profile/presentation/widgets/profile_widgets.dart';
 import '../../../../features/auth/auth_providers.dart';
@@ -68,7 +69,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
       ),
       data: (driver) {
         if (driver == null || driver.role != 'driver') {
-          return Scaffold(
+          return AppScaffold(
             appBar: driverAppBar(context, l10n.driverLouageProfileTitle),
             body: EmptyState(
               icon: Icons.person_off_outlined,
@@ -110,7 +111,7 @@ class _LouageProfileScreenState extends ConsumerState<LouageProfileScreen> {
         ? _stationId
         : null;
 
-    return Scaffold(
+    return AppScaffold(
       appBar: driverAppBar(context, l10n.driverLouageProfileTitle),
       body: SafeArea(
         child: Center(

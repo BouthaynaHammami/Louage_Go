@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/app_config.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 class SupportHomeScreen extends StatelessWidget {
@@ -41,7 +42,7 @@ class SupportHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.supportTitle)),
       body: SafeArea(
         child: Center(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../features/auth/auth_providers.dart';
@@ -32,7 +33,7 @@ class _DriverReviewsScreenState extends ConsumerState<DriverReviewsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(currentUserProvider).asData?.value;
     final driverId = widget.driverId ?? user?.id ?? '';
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.reviewsTitle)),
       body: driverId.isEmpty
           ? EmptyState(

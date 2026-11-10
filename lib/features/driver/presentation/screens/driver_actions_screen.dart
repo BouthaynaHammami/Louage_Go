@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../features/notifications/presentation/providers/notifications_provider.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -37,7 +38,7 @@ class DriverActionsScreen extends ConsumerWidget {
           ),
           data: (user) {
             if (user == null) {
-              return Scaffold(
+              return AppScaffold(
                 appBar: driverAppBar(context, l10n.driverHomeTitle),
                 body: Center(child: Text(l10n.sessionExpired)),
               );
@@ -65,7 +66,7 @@ class DriverActionsScreen extends ConsumerWidget {
                         ? null
                         : _selectNext(trips);
 
-                    return Scaffold(
+                    return AppScaffold(
                       appBar: driverAppBar(context, l10n.driverHomeTitle),
                       body: ListView(
                         padding: const EdgeInsetsDirectional.all(20),

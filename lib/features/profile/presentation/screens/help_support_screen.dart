@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 class HelpSupportScreen extends StatelessWidget {
@@ -58,7 +59,7 @@ class HelpSupportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.helpSupportTitle)),
       body: SafeArea(
         child: Center(

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/storage/hive_service.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../features/auth/domain/auth_exception.dart';
 import '../../../../features/auth/presentation/auth_error_message.dart';

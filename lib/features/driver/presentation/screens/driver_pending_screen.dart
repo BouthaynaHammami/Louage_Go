@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../features/notifications/presentation/providers/notifications_provider.dart';
@@ -39,7 +40,7 @@ class DriverPendingScreen extends ConsumerWidget {
           ),
           data: (user) {
             if (user == null) {
-              return Scaffold(
+              return AppScaffold(
                 appBar: driverAppBar(context, l10n.driverDocumentsTitle),
                 body: Center(child: Text(l10n.sessionExpired)),
               );
@@ -80,7 +81,7 @@ class _PendingBody extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final docs = ref.watch(driverDocumentsProvider(driverId));
 
-    return Scaffold(
+    return AppScaffold(
       appBar: driverAppBar(context, l10n.driverDocumentsTitle),
       body: docs.when(
         loading: () => const Center(child: CircularProgressIndicator()),

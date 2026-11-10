@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -30,7 +31,7 @@ class DriverRatingScreen extends ConsumerWidget {
           ),
           data: (user) {
             if (user == null || user.role != 'driver') {
-              return Scaffold(
+              return AppScaffold(
                 appBar: AppBar(title: Text(l10n.driverRatingTitle)),
                 body: EmptyState(
                   icon: Icons.person_off_outlined,
@@ -41,7 +42,7 @@ class DriverRatingScreen extends ConsumerWidget {
             final summary = ref.watch(driverReviewSummaryProvider(user.id));
             final reviews = ref.watch(driverReviewsProvider(user.id));
             final stats = ref.watch(driverLouageStatsProvider(user.id));
-            return Scaffold(
+            return AppScaffold(
               appBar: AppBar(title: Text(l10n.driverRatingTitle)),
               body: Center(
                 child: ConstrainedBox(

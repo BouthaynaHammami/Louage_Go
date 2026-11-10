@@ -5,7 +5,9 @@ class AppColors {
   static const transparent = Colors.transparent;
 
   static const primary = Color(0xFFDC2D2A);
+  static const red = Color(0xFFDC2D2A); // alias pour l'intro
   static const primaryOnDark = Color(0xFFFF6B68);
+  static const orange = Color(0xFFF97316);
   static const secondary = Color(0xFF222C38);
   static const darkSecondary = Color(0xFFB7B8BA);
   static const accent = primaryOnDark;

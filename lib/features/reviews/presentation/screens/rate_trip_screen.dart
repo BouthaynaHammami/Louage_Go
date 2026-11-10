@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../features/auth/auth_providers.dart';
@@ -22,7 +23,7 @@ class RateTripScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(currentUserProvider).asData?.value;
     if (user == null) {
-      return Scaffold(
+      return AppScaffold(
         appBar: AppBar(title: Text(l10n.reviewsWriteTitle)),
         body: EmptyState(
           icon: Icons.lock_outline,
@@ -46,7 +47,7 @@ class RateTripScreen extends ConsumerWidget {
           ),
           data: (tripContext) {
             if (tripContext == null) {
-              return Scaffold(
+              return AppScaffold(
                 appBar: AppBar(title: Text(l10n.reviewsWriteTitle)),
                 body: EmptyState(
                   icon: Icons.event_busy_outlined,
@@ -55,7 +56,7 @@ class RateTripScreen extends ConsumerWidget {
               );
             }
             if (!tripContext.eligible) {
-              return Scaffold(
+              return AppScaffold(
                 appBar: AppBar(title: Text(l10n.reviewsWriteTitle)),
                 body: EmptyState(
                   icon: Icons.rate_review_outlined,
@@ -65,7 +66,7 @@ class RateTripScreen extends ConsumerWidget {
             }
             if (tripContext.existingReview != null &&
                 !tripContext.canEditReview) {
-              return Scaffold(
+              return AppScaffold(
                 appBar: AppBar(title: Text(l10n.reviewsEditTitle)),
                 body: SafeArea(
                   child: Center(
@@ -102,7 +103,7 @@ class RateTripScreen extends ConsumerWidget {
                 ),
               );
             }
-            return Scaffold(
+            return AppScaffold(
               appBar: AppBar(
                 title: Text(
                   tripContext.existingReview == null

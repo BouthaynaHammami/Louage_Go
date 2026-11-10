@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
@@ -89,7 +90,7 @@ class _SupportContactScreenState extends ConsumerState<SupportContactScreen> {
       ('other', l10n.supportCategoryOther),
     ];
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.supportContactTitle)),
       body: SafeArea(
         child: Center(

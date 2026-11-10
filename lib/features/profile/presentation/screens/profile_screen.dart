@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_preferences.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../features/profile/presentation/widgets/profile_widgets.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -31,7 +32,7 @@ class ProfileScreen extends ConsumerWidget {
       _ => l10n.settingsThemeSystem,
     };
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.profileTitle)),
       body: SafeArea(
         child: Center(

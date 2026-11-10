@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_preferences.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../features/notifications/presentation/providers/notifications_provider.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../features/profile/presentation/widgets/profile_widgets.dart';
@@ -31,7 +32,7 @@ class SettingsScreen extends ConsumerWidget {
       _ => l10n.settingsThemeSystem,
     };
 
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: SafeArea(
         child: Center(

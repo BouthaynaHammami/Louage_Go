@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/storage/hive_service.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/seat_dots.dart';
 import '../../../../core/widgets/status_chip.dart';
@@ -38,7 +39,7 @@ class DriverTripsScreen extends ConsumerWidget {
           ),
           data: (user) {
             if (user == null || user.role != 'driver') {
-              return Scaffold(
+              return AppScaffold(
                 appBar: driverAppBar(context, l10n.driverTripsTitle),
                 body: EmptyState(
                   icon: Icons.person_off_outlined,

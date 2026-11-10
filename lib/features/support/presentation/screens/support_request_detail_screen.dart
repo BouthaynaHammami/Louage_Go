@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/status_chip.dart';
 import '../../../../features/auth/auth_providers.dart';
@@ -18,7 +19,7 @@ class SupportRequestDetailScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final authorId = ref.watch(currentUserProvider).asData?.value?.id;
     if (authorId == null) {
-      return Scaffold(
+      return AppScaffold(
         appBar: AppBar(title: Text(l10n.supportRequestDetailTitle)),
         body: EmptyState(
           icon: Icons.lock_outline_rounded,
@@ -27,7 +28,7 @@ class SupportRequestDetailScreen extends ConsumerWidget {
       );
     }
     final requests = ref.watch(supportRequestsProvider(authorId));
-    return Scaffold(
+    return AppScaffold(
       appBar: AppBar(title: Text(l10n.supportRequestDetailTitle)),
       body: requests.when(
         loading: () => const Center(child: CircularProgressIndicator()),

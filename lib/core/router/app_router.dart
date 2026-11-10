@@ -1,14 +1,19 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/auth_providers.dart';
+import '../../features/auth/presentation/screens/auth_gate_screen.dart';
+import '../../features/auth/presentation/screens/intro_screen.dart';
+import '../../features/auth/presentation/screens/intro_slides_screen.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
-import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/otp_screen.dart';
 import '../../features/auth/presentation/otp_arguments.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
+import '../widgets/premium_nav_bar.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/legal/domain/legal_document.dart';
@@ -32,7 +37,6 @@ import '../../features/search/presentation/screens/stations_map_screen.dart';
 import '../../features/favorites/presentation/screens/favorites_screen.dart';
 import '../../features/users/presentation/screens/passenger_profile_screen.dart';
 import '../../models/app_user.dart';
-import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/driver/presentation/screens/driver_home_screen.dart';
 import '../../features/driver/presentation/screens/driver_actions_screen.dart';
 import '../../features/driver/presentation/screens/driver_pending_screen.dart';
@@ -50,8 +54,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     refresh.refresh();
   });
 
+  // L'intro s'affiche à chaque lancement de l'application.
   final router = GoRouter(
-    initialLocation: '/splash',
+    initialLocation: '/intro',
     refreshListenable: refresh,
     redirect: (context, state) async {
       AppUser? user;
@@ -68,28 +73,52 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return routeRedirect(state.matchedLocation, user);
     },
     routes: [
+      // ── Intro cinématique ─────────────────────────────────────────────────
+      GoRoute(
+        path: '/intro',
+        name: 'intro',
+        pageBuilder: (context, state) => _fadeScaleTransitionPage(
+          state: state,
+          child: const IntroScreen(),
+        ),
+      ),
+      // ── Slides créatifs (après la vidéo, avant le splash) ─────────────────
+      GoRoute(
+        path: '/intro-slides',
+        name: 'introSlides',
+        pageBuilder: (context, state) => _slideTransitionPage(
+          state: state,
+          child: const IntroSlidesScreen(),
+        ),
+      ),
       // ── Auth / common ──────────────────────────────────────────────────────
       GoRoute(
         path: '/splash',
         name: 'splash',
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) =>
+            _slideTransitionPage(state: state, child: const SplashScreen()),
       ),
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',
-        builder: (context, state) => const OnboardingScreen(),
+        pageBuilder: (context, state) =>
+            _slideTransitionPage(state: state, child: const OnboardingScreen()),
       ),
       GoRoute(
         path: '/login',
         name: 'login',
-        pageBuilder: (context, state) =>
-            _authTransitionPage(state: state, child: const LoginScreen()),
+        pageBuilder: (context, state) => _slideUpTransitionPage(
+          state: state,
+          child: const AuthGateScreen(initialPage: 0),
+        ),
       ),
       GoRoute(
         path: '/register',
         name: 'register',
-        pageBuilder: (context, state) =>
-            _authTransitionPage(state: state, child: const RegisterScreen()),
+        pageBuilder: (context, state) => _slideUpTransitionPage(
+          state: state,
+          child: const AuthGateScreen(initialPage: 1),
+        ),
       ),
       GoRoute(
         path: '/settings',
@@ -338,6 +367,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 String? routeRedirect(String location, AppUser? user) {
   const alwaysAccessible = {'/legal/terms', '/legal/privacy'};
   const publicLocations = {
+    '/intro',
+    '/intro-slides',
     '/splash',
     '/onboarding',
     '/login',
@@ -355,6 +386,8 @@ String? routeRedirect(String location, AppUser? user) {
       publicHelpLocations.contains(location)) {
     return null;
   }
+  // Intro et intro-slides : toujours accessibles (jamais de redirect)
+  if (location == '/intro' || location == '/intro-slides') return null;
   if (location == '/splash') {
     return user == null ? null : _homeForRole(user.role);
   }
@@ -384,6 +417,34 @@ String _homeForRole(String role) =>
 // Auth transition
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Slide-up transition — pour Login/SignUp (panel qui monte depuis le bas)
+// ─────────────────────────────────────────────────────────────────────────────
+
+CustomTransitionPage<void> _slideUpTransitionPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 420),
+    reverseTransitionDuration: const Duration(milliseconds: 360),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final slideIn = Tween<Offset>(
+        begin: const Offset(0, 0.06),
+        end: Offset.zero,
+      ).animate(
+        CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+      );
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        child: SlideTransition(position: slideIn, child: child),
+      );
+    },
+  );
+}
+
 CustomTransitionPage<void> _authTransitionPage({
   required GoRouterState state,
   required Widget child,
@@ -403,6 +464,90 @@ CustomTransitionPage<void> _authTransitionPage({
       return FadeTransition(
         opacity: progress,
         child: SlideTransition(position: slide, child: child),
+      );
+    },
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Slide transition — navigation avant (gauche→droite style louage sur la route)
+// ─────────────────────────────────────────────────────────────────────────────
+
+CustomTransitionPage<void> _slideTransitionPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 320),
+    reverseTransitionDuration: const Duration(milliseconds: 280),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+      // Page entrante : glisse depuis la droite (avant)
+      final enterSlide = Tween<Offset>(
+        begin: Offset(isRtl ? -1.0 : 1.0, 0),
+        end: Offset.zero,
+      ).animate(
+        CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+      );
+
+      // Page sortante : légère parallaxe vers la gauche
+      final exitSlide = Tween<Offset>(
+        begin: Offset.zero,
+        end: Offset(isRtl ? 0.25 : -0.25, 0),
+      ).animate(
+        CurvedAnimation(
+          parent: secondaryAnimation,
+          curve: Curves.easeInCubic,
+        ),
+      );
+
+      return SlideTransition(
+        position: exitSlide,
+        child: SlideTransition(
+          position: enterSlide,
+          child: FadeTransition(
+            opacity: CurvedAnimation(
+              parent: animation,
+              curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
+            ),
+            child: child,
+          ),
+        ),
+      );
+    },
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Fade + scale — modals, overlays, écrans de détail
+// ─────────────────────────────────────────────────────────────────────────────
+
+CustomTransitionPage<void> _fadeScaleTransitionPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 280),
+    reverseTransitionDuration: const Duration(milliseconds: 240),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutBack,
+      );
+      return FadeTransition(
+        opacity: CurvedAnimation(
+          parent: animation,
+          curve: const Interval(0.0, 0.7),
+        ),
+        child: ScaleTransition(
+          scale: Tween<double>(begin: 0.94, end: 1.0).animate(curved),
+          child: child,
+        ),
       );
     },
   );
@@ -552,65 +697,34 @@ class _BottomNavigationShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final selectedIndex = destinations.indexWhere(
       (d) => d.path == state.uri.path,
     );
+    final current = selectedIndex < 0 ? 0 : selectedIndex;
+
+    // Find the centre FAB item index (driver scan = centre, passenger = none)
+    final fabIndex = passenger
+        ? -1
+        : destinations.indexWhere((d) => d.name.contains('Scan') || d.name.contains('scan'));
+
+    final items = destinations.asMap().entries.map((e) {
+      final d = e.value;
+      return PremiumNavItem(
+        icon:         d.icon,
+        selectedIcon: d.selectedIcon,
+        label:        d.label,
+        isFab:        e.key == fabIndex,
+      );
+    }).toList();
+
     return Scaffold(
+      extendBody: true,
       body: child,
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          backgroundColor: passenger ? colorScheme.surfaceContainerLow : null,
-          indicatorColor: passenger
-              ? colorScheme.primaryContainer
-              : colorScheme.secondaryContainer,
-          elevation: 0,
-          iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
-            (states) => IconThemeData(
-              color: passenger
-                  ? states.contains(WidgetState.selected)
-                        ? colorScheme.brightness == Brightness.dark
-                              ? colorScheme.inversePrimary
-                              : colorScheme.primary
-                        : colorScheme.outline
-                  : states.contains(WidgetState.selected)
-                  ? colorScheme.onSecondaryContainer
-                  : colorScheme.onSurfaceVariant,
-            ),
-          ),
-          labelTextStyle: WidgetStateProperty.resolveWith(
-            (states) => Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: passenger
-                  ? states.contains(WidgetState.selected)
-                        ? colorScheme.brightness == Brightness.dark
-                              ? colorScheme.inversePrimary
-                              : colorScheme.primary
-                        : colorScheme.outline
-                  : colorScheme.onSurface,
-              fontWeight: passenger && states.contains(WidgetState.selected)
-                  ? FontWeight.w600
-                  : FontWeight.w400,
-            ),
-          ),
-        ),
-        child: NavigationBar(
-          selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          backgroundColor: passenger ? colorScheme.surfaceContainerLow : null,
-          indicatorColor: passenger
-              ? colorScheme.primaryContainer
-              : colorScheme.secondaryContainer,
-          onDestinationSelected: (index) =>
-              context.goNamed(destinations[index].name),
-          destinations: [
-            for (final d in destinations)
-              NavigationDestination(
-                icon: Icon(d.icon),
-                selectedIcon: Icon(d.selectedIcon),
-                label: d.label,
-              ),
-          ],
-        ),
+      bottomNavigationBar: PremiumNavBar(
+        items:       items,
+        currentIndex: current,
+        isPassenger: passenger,
+        onTap: (i) => context.goNamed(destinations[i].name),
       ),
     );
   }
