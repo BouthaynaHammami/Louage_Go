@@ -51,6 +51,7 @@ void main() {
         routeId: 'route',
         louageId: 'louage',
         departureTime: DateTime(2026, 10, 2, 8).toIso8601String(),
+        pricePerSeat: 8,
       ).toMap(),
     );
     repository = HiveBookingRepository(
@@ -83,6 +84,7 @@ void main() {
       final booking = await create([4, 2]);
 
       expect(booking.numerosPlaces, [2, 4]);
+      expect(booking.totalPrice, 16);
       expect(booking.selectedSeats, [2, 4]);
       expect(bookingsBox.get(booking.id)?['numerosPlaces'], [2, 4]);
       expect(repository.occupiedSeatNumbers('trip'), {2, 4});

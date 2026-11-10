@@ -201,7 +201,7 @@ class HiveBookingRepository implements BookingRepository {
       userId: userId,
       tripId: tripId,
       seats: uniqueSeats.length,
-      totalPrice: route.pricePerSeat * uniqueSeats.length,
+      totalPrice: trip.effectivePrice(route) * uniqueSeats.length,
       status: 'confirmed',
       createdAt: now.toIso8601String(),
       numerosPlaces: uniqueSeats,

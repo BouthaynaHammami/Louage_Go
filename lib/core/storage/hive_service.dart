@@ -16,6 +16,8 @@ class BoxNames {
   static const favorites = 'favorites';
   static const session = 'session';
   static const documents = 'documents'; // driver validation documents
+  /// Stored under booking IDs so repeat scans cannot create duplicate income.
+  static const earnings = 'earnings';
 
   static const values = [
     users,
@@ -32,6 +34,7 @@ class BoxNames {
     favorites,
     session,
     documents,
+    earnings,
   ];
 }
 
@@ -53,6 +56,7 @@ class HiveService {
   static Box<Map> get favorites => _box(BoxNames.favorites);
   static Box<Map> get session => _box(BoxNames.session);
   static Box<Map> get documents => _box(BoxNames.documents);
+  static Box<Map> get earnings => _box(BoxNames.earnings);
 
   static bool get isReady => initializationError == null;
 

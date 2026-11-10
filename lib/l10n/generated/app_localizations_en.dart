@@ -168,6 +168,62 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingDownloadTicket => 'Save / share PDF ticket';
 
   @override
+  String get ticketEmailSend => 'Send by email';
+
+  @override
+  String get ticketEmailDialogTitle => 'Recipient email address';
+
+  @override
+  String get ticketEmailAddress => 'Email address';
+
+  @override
+  String get ticketEmailInvalidAddress => 'Enter a valid email address.';
+
+  @override
+  String ticketEmailSent(String email) {
+    return 'Ticket sent to $email.';
+  }
+
+  @override
+  String get ticketEmailNotConfigured => 'Email delivery is not configured.';
+
+  @override
+  String get ticketEmailNetworkError =>
+      'Network error. Check your connection and try again.';
+
+  @override
+  String get ticketEmailTimeoutError =>
+      'The email service took too long to respond.';
+
+  @override
+  String get ticketEmailInvalidKey =>
+      'The email service configuration is invalid.';
+
+  @override
+  String get ticketEmailInvalidRequest =>
+      'The email request or sender is invalid.';
+
+  @override
+  String get ticketEmailQuotaError =>
+      'The email sending limit has been reached. Try again later.';
+
+  @override
+  String get ticketEmailServerError =>
+      'The ticket could not be sent right now.';
+
+  @override
+  String get ticketEmailSubject => 'Your LouageGo ticket';
+
+  @override
+  String get ticketEmailFrom => 'From';
+
+  @override
+  String get ticketEmailTo => 'To';
+
+  @override
+  String get ticketEmailDeparture => 'Departure date and time';
+
+  @override
   String get bookingDetails => 'Booking details';
 
   @override
@@ -1308,6 +1364,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverRevenueWeek => 'This week';
 
   @override
+  String get driverDepartureTimeLabel => 'Departure time';
+
+  @override
+  String driverScanRevenueAdded(String amount) {
+    return '+$amount DT added to your earnings';
+  }
+
+  @override
+  String get driverEarningsTotal => 'Total earnings';
+
+  @override
+  String get driverRevenueMonth => 'This month';
+
+  @override
+  String get driverEarningsScannedCount => 'Tickets scanned';
+
+  @override
+  String get driverEarningsChart => 'Earnings by day';
+
+  @override
+  String get driverEarningsLast7Days => '7 days';
+
+  @override
+  String get driverEarningsLast30Days => '30 days';
+
+  @override
+  String get driverEarningsRecent => 'Recent earnings';
+
+  @override
+  String get driverEarningsEmpty =>
+      'No earnings recorded yet. Scan a valid ticket to get started.';
+
+  @override
+  String get driverEarningsExport => 'Export CSV';
+
+  @override
+  String get driverEarningsExportFailed => 'Couldn\'t share the CSV file.';
+
+  @override
+  String get driverEarningsUnknown => 'Unknown';
+
+  @override
+  String driverEarningsRoute(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get driverEarningsCsvPassenger => 'Passenger';
+
+  @override
+  String get driverEarningsCsvRoute => 'Route';
+
+  @override
+  String get driverEarningsCsvAmount => 'Amount';
+
+  @override
+  String get driverEarningsCsvDate => 'Date and time';
+
+  @override
+  String get driverEarningsCsvMethod => 'Payment method';
+
+  @override
   String get driverSaveLouage => 'Save louage';
 
   @override
@@ -1360,6 +1478,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverTripPrice => 'Price per seat';
+
+  @override
+  String get driverCurrencyDt => 'DT';
+
+  @override
+  String get driverTripPriceRequired => 'Enter a price per seat.';
+
+  @override
+  String get driverTripPriceInvalid => 'Price must be greater than 0 DT.';
+
+  @override
+  String get driverTripPriceTooHigh => 'Price cannot exceed 100 DT.';
+
+  @override
+  String get driverTripPriceDecimals =>
+      'Price can have no more than two decimal places.';
+
+  @override
+  String get driverAccountNotValidated =>
+      'Validate your driver account before adding a trip.';
+
+  @override
+  String get driverAddTrip => 'Add a trip';
 
   @override
   String get driverTripDuration => 'Duration';

@@ -41,7 +41,7 @@ import '../../models/app_user.dart';
 import '../../features/driver/presentation/screens/driver_home_screen.dart';
 import '../../features/driver/presentation/screens/driver_actions_screen.dart';
 import '../../features/driver/presentation/screens/driver_pending_screen.dart';
-import '../../features/driver/presentation/screens/driver_placeholder_screen.dart';
+import '../../features/driver/presentation/screens/driver_earnings_screen.dart';
 import '../../features/driver/presentation/screens/driver_profile_screen.dart';
 import '../../features/driver/presentation/screens/driver_qr_scanner_screen.dart';
 import '../../features/driver/presentation/screens/driver_rating_screen.dart';
@@ -317,10 +317,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/driver/earnings',
             name: 'driverEarnings',
-            builder: (context, state) => DriverPlaceholderScreen(
-              title: AppLocalizations.of(context)!.driverEarningsTitle,
-              icon: Icons.payments_outlined,
-            ),
+            builder: (context, state) => const DriverEarningsScreen(),
           ),
           GoRoute(
             path: '/driver/profile',

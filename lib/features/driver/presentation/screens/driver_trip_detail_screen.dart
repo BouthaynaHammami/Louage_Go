@@ -352,7 +352,7 @@ class _TripSummary extends StatelessWidget {
                 ),
               ),
               Text(
-                '${route?.pricePerSeat ?? 0} DT',
+                '${trip.effectivePrice(route).toStringAsFixed(2)} ${l10n.driverCurrencyDt}',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: colors.inversePrimary,
                   fontWeight: FontWeight.w700,

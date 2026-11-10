@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,7 @@ import '../../../../models/route_line.dart';
 import '../../../../models/station.dart';
 import '../../domain/louage_repository.dart';
 import '../providers/louage_provider.dart';
+import '../providers/driver_home_provider.dart';
 
 class DriverCreateTripScreen extends ConsumerStatefulWidget {
   const DriverCreateTripScreen({super.key});
@@ -22,11 +24,21 @@ class DriverCreateTripScreen extends ConsumerStatefulWidget {
 
 class _DriverCreateTripScreenState
     extends ConsumerState<DriverCreateTripScreen> {
+  final _priceController = TextEditingController();
   String? _fromStationId;
   String? _toStationId;
   DateTime _departureTime = DateTime.now().add(const Duration(hours: 1));
   bool _isSubmitting = false;
+  bool _priceWasEdited = false;
+  bool _priceSuggestionInitialized = false;
   String? _errorMessage;
+  String? _priceError;
+
+  @override
+  void dispose() {
+    _priceController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +60,7 @@ class _DriverCreateTripScreenState
           );
         }
 
+        ref.watch(driverDashboardProvider(user.id));
         final louageAsync = ref.watch(driverLouageProvider(user.id));
         return louageAsync.when(
           loading: () =>
@@ -90,6 +103,11 @@ class _DriverCreateTripScreenState
             }
 
             final route = _routeFor(_fromStationId, _toStationId);
+            if (!_priceSuggestionInitialized) {
+              _updatePriceSuggestion(_fromStationId, _toStationId);
+              _priceSuggestionInitialized = true;
+            }
+            _priceError ??= _validatePrice(_priceController.text, l10n);
 
             return Scaffold(
               appBar: AppBar(title: Text(l10n.driverCreateTripTitle)),
@@ -123,6 +141,14 @@ class _DriverCreateTripScreenState
                                         ? value
                                         : next.first.id;
                                   }
+                                  _updatePriceSuggestion(
+                                    _fromStationId,
+                                    _toStationId,
+                                  );
+                                  _priceError = _validatePrice(
+                                    _priceController.text,
+                                    l10n,
+                                  );
                                   _errorMessage = null;
                                 }),
                               ),
@@ -137,7 +163,37 @@ class _DriverCreateTripScreenState
                                     .toList(),
                                 onChanged: (value) => setState(() {
                                   _toStationId = value;
+                                  _updatePriceSuggestion(
+                                    _fromStationId,
+                                    _toStationId,
+                                  );
+                                  _priceError = _validatePrice(
+                                    _priceController.text,
+                                    l10n,
+                                  );
                                   _errorMessage = null;
+                                }),
+                              ),
+                              const SizedBox(height: 14),
+                              TextField(
+                                controller: _priceController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*([,.]\d{0,2})?$'),
+                                  ),
+                                ],
+                                decoration: InputDecoration(
+                                  labelText: l10n.driverTripPrice,
+                                  suffixText: l10n.driverCurrencyDt,
+                                  errorText: _priceError,
+                                ),
+                                onChanged: (value) => setState(() {
+                                  _priceWasEdited = true;
+                                  _priceError = _validatePrice(value, l10n);
                                 }),
                               ),
                               const SizedBox(height: 18),
@@ -147,6 +203,7 @@ class _DriverCreateTripScreenState
                                     child: _DateTimeTile(
                                       label: l10n.driverDepartureDate,
                                       value: _departureTime,
+                                      showTimeOnly: false,
                                       icon: Icons.calendar_today_rounded,
                                       onTap: () async {
                                         final picked = await showDatePicker(
@@ -173,15 +230,9 @@ class _DriverCreateTripScreenState
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: _DateTimeTile(
-                                      label: l10n.driverDepartureTime(
-                                        MaterialLocalizations.of(context)
-                                            .formatTimeOfDay(
-                                              TimeOfDay.fromDateTime(
-                                                _departureTime,
-                                              ),
-                                            ),
-                                      ),
+                                      label: l10n.driverDepartureTimeLabel,
                                       value: _departureTime,
+                                      showTimeOnly: true,
                                       icon: Icons.access_time_rounded,
                                       onTap: () async {
                                         final picked = await showTimePicker(
@@ -206,49 +257,45 @@ class _DriverCreateTripScreenState
                                 ],
                               ),
                               const SizedBox(height: 18),
-                              if (route != null) ...[
-                                Container(
-                                  padding: const EdgeInsetsDirectional.all(14),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainerHighest
-                                        .withValues(alpha: 0.24),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              l10n.driverTripPreview,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelLarge,
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              '${l10n.driverTripPrice}: ${route.pricePerSeat.toStringAsFixed(0)} DT',
-                                            ),
+                              Container(
+                                padding: const EdgeInsetsDirectional.all(14),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest
+                                      .withValues(alpha: 0.24),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            l10n.driverTripPreview,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          if (route != null)
                                             Text(
                                               '${l10n.driverTripDuration}: ${route.durationMin} min',
                                             ),
-                                          ],
-                                        ),
+                                        ],
                                       ),
-                                      Icon(
-                                        Icons.route_rounded,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                    Icon(
+                                      Icons.route_rounded,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                               const SizedBox(height: 14),
                               if (_errorMessage != null)
                                 Padding(
@@ -268,7 +315,9 @@ class _DriverCreateTripScreenState
                                 label: l10n.driverPublishTrip,
                                 icon: Icons.publish_rounded,
                                 isLoading: _isSubmitting,
-                                onPressed: _isSubmitting ? null : _submit,
+                                onPressed: _isSubmitting || _priceError != null
+                                    ? null
+                                    : _submit,
                               ),
                             ],
                           ),
@@ -287,6 +336,11 @@ class _DriverCreateTripScreenState
 
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context)!;
+    final priceError = _validatePrice(_priceController.text, l10n);
+    if (priceError != null) {
+      setState(() => _priceError = priceError);
+      return;
+    }
     if (_fromStationId == null || _toStationId == null) {
       setState(() => _errorMessage = l10n.driverStationRequired);
       return;
@@ -311,6 +365,21 @@ class _DriverCreateTripScreenState
     });
 
     try {
+      final dashboard = ref
+          .read(driverDashboardProvider(user.id))
+          .asData
+          ?.value;
+      if (dashboard == null) {
+        setState(() => _errorMessage = l10n.driverOperationFailed);
+        return;
+      }
+      if (!const {
+        'approved',
+        'validated',
+      }.contains(dashboard.profile.validationStatus.toLowerCase())) {
+        setState(() => _errorMessage = l10n.driverAccountNotValidated);
+        return;
+      }
       await ref
           .read(createDriverTripControllerProvider.notifier)
           .createTrip(
@@ -318,6 +387,9 @@ class _DriverCreateTripScreenState
             fromStationId: _fromStationId!,
             toStationId: _toStationId!,
             departureTime: _departureTime,
+            pricePerSeat: double.parse(
+              _priceController.text.trim().replaceAll(',', '.'),
+            ),
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context)
@@ -333,6 +405,7 @@ class _DriverCreateTripScreenState
           DriverTripFailure.sameStation => l10n.driverTripSameStation,
           DriverTripFailure.departureInPast => l10n.driverDepartureInPast,
           DriverTripFailure.duplicateDeparture => l10n.driverDuplicateDeparture,
+          DriverTripFailure.invalidPrice => l10n.driverTripPriceInvalid,
           DriverTripFailure.tripMissing => l10n.driverTripMissing,
           DriverTripFailure.tripNotWaiting => l10n.driverTripNotWaiting,
         },
@@ -345,6 +418,26 @@ class _DriverCreateTripScreenState
         setState(() => _isSubmitting = false);
       }
     }
+  }
+
+  String? _validatePrice(String value, AppLocalizations l10n) {
+    final normalized = value.trim().replaceAll(',', '.');
+    if (normalized.isEmpty) return l10n.driverTripPriceRequired;
+    final price = double.tryParse(normalized);
+    if (price == null || !price.isFinite || price <= 0) {
+      return l10n.driverTripPriceInvalid;
+    }
+    if (price > 100) return l10n.driverTripPriceTooHigh;
+    if ((price * 100 - (price * 100).round()).abs() > 1e-8) {
+      return l10n.driverTripPriceDecimals;
+    }
+    return null;
+  }
+
+  void _updatePriceSuggestion(String? fromStationId, String? toStationId) {
+    if (_priceWasEdited) return;
+    final route = _routeFor(fromStationId, toStationId);
+    _priceController.text = route?.pricePerSeat.toStringAsFixed(2) ?? '';
   }
 
   RouteLine? _routeFor(String? fromStationId, String? toStationId) {
@@ -410,25 +503,29 @@ class _DateTimeTile extends StatelessWidget {
   const _DateTimeTile({
     required this.label,
     required this.value,
+    required this.showTimeOnly,
     required this.icon,
     required this.onTap,
   });
 
   final String label;
   final DateTime value;
+  final bool showTimeOnly;
   final IconData icon;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final formatted = MaterialLocalizations.of(context).formatFullDate(value);
-    final time = MaterialLocalizations.of(context)
-        .formatTimeOfDay(TimeOfDay.fromDateTime(value));
+    final displayValue = showTimeOnly
+        ? '${value.hour.toString().padLeft(2, '0')}:'
+              '${value.minute.toString().padLeft(2, '0')}'
+        : MaterialLocalizations.of(context).formatMediumDate(value);
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
+        constraints: const BoxConstraints(minHeight: 88),
         padding: const EdgeInsetsDirectional.all(14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
@@ -444,9 +541,18 @@ class _DateTimeTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: Theme.of(context).textTheme.labelMedium),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
                   const SizedBox(height: 4),
-                  Text('$formatted · $time'),
+                  Text(
+                    displayValue,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),

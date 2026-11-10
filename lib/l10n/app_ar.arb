@@ -50,6 +50,29 @@
   "bookingTotal": "المجموع",
   "bookingPayment": "الدفع",
   "bookingDownloadTicket": "حفظ / مشاركة تذكرة PDF",
+  "ticketEmailSend": "إرسال عبر البريد الإلكتروني",
+  "ticketEmailDialogTitle": "عنوان البريد الإلكتروني للمستلم",
+  "ticketEmailAddress": "عنوان البريد الإلكتروني",
+  "ticketEmailInvalidAddress": "أدخل عنوان بريد إلكتروني صالحًا.",
+  "ticketEmailSent": "تم إرسال التذكرة إلى {email}.",
+  "@ticketEmailSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketEmailNotConfigured": "إرسال البريد الإلكتروني غير مُعد.",
+  "ticketEmailNetworkError": "خطأ في الشبكة. تحقق من الاتصال ثم أعد المحاولة.",
+  "ticketEmailTimeoutError": "استغرق خادم البريد وقتًا طويلًا للرد.",
+  "ticketEmailInvalidKey": "إعداد خدمة البريد الإلكتروني غير صالح.",
+  "ticketEmailInvalidRequest": "طلب البريد الإلكتروني أو المرسل غير صالح.",
+  "ticketEmailQuotaError": "تم بلوغ حد الإرسال. حاول لاحقًا.",
+  "ticketEmailServerError": "تعذر إرسال التذكرة الآن.",
+  "ticketEmailSubject": "تذكرتك من LouageGo",
+  "ticketEmailFrom": "من",
+  "ticketEmailTo": "إلى",
+  "ticketEmailDeparture": "تاريخ ووقت المغادرة",
   "bookingDetails": "تفاصيل الحجز",
   "bookingCancel": "إلغاء",
   "bookingCancelTitle": "إلغاء الحجز؟",
@@ -495,6 +518,42 @@
   "driverDashboardRevenueTitle": "الإيرادات",
   "driverRevenueToday": "اليوم",
   "driverRevenueWeek": "هذا الأسبوع",
+  "driverDepartureTimeLabel": "وقت المغادرة",
+  "driverScanRevenueAdded": "+{amount} د.ت أضيفت إلى إيراداتك",
+  "@driverScanRevenueAdded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsTotal": "إجمالي الإيرادات",
+  "driverRevenueMonth": "هذا الشهر",
+  "driverEarningsScannedCount": "التذاكر الممسوحة",
+  "driverEarningsChart": "الإيرادات حسب اليوم",
+  "driverEarningsLast7Days": "7 أيام",
+  "driverEarningsLast30Days": "30 يومًا",
+  "driverEarningsRecent": "الإيرادات الأخيرة",
+  "driverEarningsEmpty": "لا توجد إيرادات مسجلة. امسح تذكرة صالحة للبدء.",
+  "driverEarningsExport": "تصدير CSV",
+  "driverEarningsExportFailed": "تعذرت مشاركة ملف CSV.",
+  "driverEarningsUnknown": "غير معروف",
+  "driverEarningsRoute": "{from} ← {to}",
+  "@driverEarningsRoute": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsCsvPassenger": "المسافر",
+  "driverEarningsCsvRoute": "المسار",
+  "driverEarningsCsvAmount": "المبلغ",
+  "driverEarningsCsvDate": "التاريخ والوقت",
+  "driverEarningsCsvMethod": "طريقة الدفع",
   "driverSaveLouage": "حفظ بيانات اللواج",
   "driverLouageSaved": "تم حفظ بيانات اللواج.",
   "driverLouageSaveFailed": "تعذر حفظ بيانات اللواج. تحقق من المعلومات وحاول مرة أخرى.",
@@ -512,6 +571,13 @@
   "driverTripDetail": "تفاصيل الرحلة",
   "driverTripDateTime": "التاريخ والوقت",
   "driverTripPrice": "السعر لكل مقعد",
+  "driverCurrencyDt": "د.ت",
+  "driverTripPriceRequired": "أدخل سعرًا للمقعد.",
+  "driverTripPriceInvalid": "يجب أن يكون السعر أكبر من 0 د.ت.",
+  "driverTripPriceTooHigh": "لا يمكن أن يتجاوز السعر 100 د.ت.",
+  "driverTripPriceDecimals": "يمكن أن يحتوي السعر على منزلتين عشريتين كحد أقصى.",
+  "driverAccountNotValidated": "تحقق من حساب السائق قبل إضافة رحلة.",
+  "driverAddTrip": "إضافة رحلة",
   "driverTripDuration": "المدة",
   "driverTripPreview": "معاينة الرحلة",
   "driverTripSeatsAvailable": "المقاعد المتاحة: {available} من {total}",

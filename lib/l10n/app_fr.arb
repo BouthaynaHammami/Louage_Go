@@ -50,6 +50,29 @@
   "bookingTotal": "Total",
   "bookingPayment": "Paiement",
   "bookingDownloadTicket": "Enregistrer / partager le billet PDF",
+  "ticketEmailSend": "Envoyer par e-mail",
+  "ticketEmailDialogTitle": "Adresse e-mail du destinataire",
+  "ticketEmailAddress": "Adresse e-mail",
+  "ticketEmailInvalidAddress": "Saisissez une adresse e-mail valide.",
+  "ticketEmailSent": "Billet envoyé à {email}.",
+  "@ticketEmailSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketEmailNotConfigured": "Envoi par e-mail non configuré.",
+  "ticketEmailNetworkError": "Erreur réseau. Vérifiez votre connexion puis réessayez.",
+  "ticketEmailTimeoutError": "Le service e-mail met trop de temps à répondre.",
+  "ticketEmailInvalidKey": "La configuration du service e-mail est invalide.",
+  "ticketEmailInvalidRequest": "La demande e-mail ou l’expéditeur est invalide.",
+  "ticketEmailQuotaError": "La limite d’envoi e-mail est atteinte. Réessayez plus tard.",
+  "ticketEmailServerError": "Impossible d’envoyer le billet pour le moment.",
+  "ticketEmailSubject": "Votre billet LouageGo",
+  "ticketEmailFrom": "Départ",
+  "ticketEmailTo": "Arrivée",
+  "ticketEmailDeparture": "Date et heure de départ",
   "bookingDetails": "Détails de la réservation",
   "bookingCancel": "Annuler",
   "bookingCancelTitle": "Annuler la réservation ?",
@@ -495,6 +518,42 @@
   "driverDashboardRevenueTitle": "Revenus",
   "driverRevenueToday": "Aujourd’hui",
   "driverRevenueWeek": "Cette semaine",
+  "driverDepartureTimeLabel": "Heure de départ",
+  "driverScanRevenueAdded": "+{amount} DT ajoutés à vos revenus",
+  "@driverScanRevenueAdded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsTotal": "Total des revenus",
+  "driverRevenueMonth": "Ce mois-ci",
+  "driverEarningsScannedCount": "Billets scannés",
+  "driverEarningsChart": "Revenus par jour",
+  "driverEarningsLast7Days": "7 jours",
+  "driverEarningsLast30Days": "30 jours",
+  "driverEarningsRecent": "Revenus récents",
+  "driverEarningsEmpty": "Aucun revenu enregistré. Scannez un billet valide pour commencer.",
+  "driverEarningsExport": "Exporter en CSV",
+  "driverEarningsExportFailed": "Impossible de partager le fichier CSV.",
+  "driverEarningsUnknown": "Inconnu",
+  "driverEarningsRoute": "{from} → {to}",
+  "@driverEarningsRoute": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsCsvPassenger": "Passager",
+  "driverEarningsCsvRoute": "Trajet",
+  "driverEarningsCsvAmount": "Montant",
+  "driverEarningsCsvDate": "Date et heure",
+  "driverEarningsCsvMethod": "Mode de paiement",
   "driverSaveLouage": "Enregistrer le louage",
   "driverLouageSaved": "Profil du louage enregistré.",
   "driverLouageSaveFailed": "Impossible d’enregistrer le louage. Vérifiez les informations et réessayez.",
@@ -512,6 +571,13 @@
   "driverTripDetail": "Détail du trajet",
   "driverTripDateTime": "Date et heure",
   "driverTripPrice": "Prix par place",
+  "driverCurrencyDt": "DT",
+  "driverTripPriceRequired": "Saisissez un prix par place.",
+  "driverTripPriceInvalid": "Le prix doit être supérieur à 0 DT.",
+  "driverTripPriceTooHigh": "Le prix ne peut pas dépasser 100 DT.",
+  "driverTripPriceDecimals": "Le prix peut avoir au maximum deux décimales.",
+  "driverAccountNotValidated": "Validez votre compte chauffeur avant d’ajouter un trajet.",
+  "driverAddTrip": "Ajouter un trajet",
   "driverTripDuration": "Durée",
   "driverTripPreview": "Aperçu du trajet",
   "driverTripSeatsAvailable": "Places libres : {available} / {total}",

@@ -12,6 +12,7 @@ import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/trip.dart';
 import '../../domain/entities/ticket_validation_result.dart';
+import '../providers/driver_home_provider.dart';
 import '../providers/louage_provider.dart';
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -108,6 +109,12 @@ class _DriverQrScannerScreenState extends ConsumerState<DriverQrScannerScreen> {
             qrPayload: qrPayload,
           );
       if (!mounted) return;
+      if (result.status == TicketValidationStatus.valid) {
+        ref.invalidate(driverEarningsProvider(driverId));
+        ref.invalidate(driverDashboardProvider(driverId));
+        ref.invalidate(driverBookingsProvider(driverId));
+        ref.invalidate(driverTripBookingsProvider(_selectedTripId!));
+      }
 
       // Haptic feedback based on result
       switch (result.status) {
@@ -322,7 +329,7 @@ class _DriverQrScannerScreenState extends ConsumerState<DriverQrScannerScreen> {
       TicketValidationStatus.valid => (
         Theme.of(context).colorScheme.tertiary,
         Icons.check_circle_outline_rounded,
-        l10n.driverScanValid,
+        l10n.driverScanRevenueAdded(result!.amount.toStringAsFixed(2)),
       ),
       TicketValidationStatus.alreadyUsed => (
         Theme.of(context).colorScheme.error,

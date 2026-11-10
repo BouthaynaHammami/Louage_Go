@@ -6,6 +6,7 @@ import '../../../core/storage/hive_service.dart';
 import '../../../models/app_user.dart';
 import '../../../models/booking.dart';
 import '../../../models/driver_profile.dart';
+import '../../../models/driver_earning.dart';
 import '../../../models/louage.dart';
 import '../../../models/station.dart';
 import '../../../models/trip.dart';
@@ -22,13 +23,15 @@ class HiveDriverRepository implements DriverRepository {
     Box<Map>? bookingsBox,
     Box<Map>? usersBox,
     Box<Map>? sessionBox,
+    Box<Map>? earningsBox,
   }) : _driversBox = driversBox ?? HiveService.drivers,
        _louagesBox = louagesBox ?? HiveService.louages,
        _stationsBox = stationsBox ?? HiveService.stations,
        _tripsBox = tripsBox ?? HiveService.trips,
        _bookingsBox = bookingsBox ?? HiveService.bookings,
        _usersBox = usersBox ?? HiveService.users,
-       _sessionBox = sessionBox ?? HiveService.session;
+       _sessionBox = sessionBox ?? HiveService.session,
+       _earningsBox = earningsBox ?? HiveService.earnings;
 
   final Box<Map> _driversBox;
   final Box<Map> _louagesBox;
@@ -37,6 +40,55 @@ class HiveDriverRepository implements DriverRepository {
   final Box<Map> _bookingsBox;
   final Box<Map> _usersBox;
   final Box<Map> _sessionBox;
+  final Box<Map> _earningsBox;
+
+  @override
+  Stream<List<DriverEarning>> watchEarnings(String driverId) =>
+      Stream<List<DriverEarning>>.multi((controller) {
+        void reload() {
+          try {
+            final louageIds = _louagesBox.values
+                .map(Louage.fromMap)
+                .where(
+                  (louage) =>
+                      louage.driverId == driverId ||
+                      (louage.chauffeurId == driverId),
+                )
+                .map((louage) => louage.id)
+                .toSet();
+            final tripIds = _tripsBox.values
+                .map(Trip.fromMap)
+                .where((trip) => louageIds.contains(trip.louageId))
+                .map((trip) => trip.id)
+                .toSet();
+            final earnings =
+                _earningsBox.values
+                    .map(DriverEarning.fromMap)
+                    .where(
+                      (earning) =>
+                          earning.driverId == driverId &&
+                          tripIds.contains(earning.tripId),
+                    )
+                    .toList()
+                  ..sort((a, b) => b.earnedAt.compareTo(a.earnedAt));
+            controller.add(earnings);
+          } catch (error, stackTrace) {
+            controller.addError(error, stackTrace);
+          }
+        }
+
+        final subscriptions = [
+          _earningsBox.watch().listen((_) => reload()),
+          _louagesBox.watch().listen((_) => reload()),
+          _tripsBox.watch().listen((_) => reload()),
+        ];
+        controller.onCancel = () async {
+          await Future.wait(
+            subscriptions.map((subscription) => subscription.cancel()),
+          );
+        };
+        reload();
+      });
 
   @override
   Stream<DriverDashboardData> watchDashboard(String driverId) =>

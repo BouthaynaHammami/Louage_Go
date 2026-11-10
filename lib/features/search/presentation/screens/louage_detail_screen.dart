@@ -212,7 +212,7 @@ class LouageDetailScreen extends ConsumerWidget {
                             ),
                           ),
                           Text(
-                            '${_formatPrice(route.pricePerSeat)} DT',
+                            '${_formatPrice(trip.effectivePrice(route))} ${l10n.driverCurrencyDt}',
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
                                   color: colorScheme.inversePrimary,

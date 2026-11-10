@@ -15,6 +15,14 @@ class AppConfig {
     'LEGAL_VERSION',
     defaultValue: '1.0',
   );
+  static const brevoApiKey = String.fromEnvironment('BREVO_API_KEY');
+  static const brevoSenderEmail = String.fromEnvironment('BREVO_SENDER_EMAIL');
+  static const brevoSenderName = String.fromEnvironment(
+    'BREVO_SENDER_NAME',
+    defaultValue: 'LouageGo',
+  );
+  static const emailConfigured = brevoApiKey != '' && brevoSenderEmail != '';
+
   static const legalUpdatedAt = '2026-10-03';
   static const legalContactEmail = String.fromEnvironment(
     'LEGAL_CONTACT_EMAIL',

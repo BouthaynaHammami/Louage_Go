@@ -170,6 +170,63 @@ class AppLocalizationsFr extends AppLocalizations {
   String get bookingDownloadTicket => 'Enregistrer / partager le billet PDF';
 
   @override
+  String get ticketEmailSend => 'Envoyer par e-mail';
+
+  @override
+  String get ticketEmailDialogTitle => 'Adresse e-mail du destinataire';
+
+  @override
+  String get ticketEmailAddress => 'Adresse e-mail';
+
+  @override
+  String get ticketEmailInvalidAddress =>
+      'Saisissez une adresse e-mail valide.';
+
+  @override
+  String ticketEmailSent(String email) {
+    return 'Billet envoyé à $email.';
+  }
+
+  @override
+  String get ticketEmailNotConfigured => 'Envoi par e-mail non configuré.';
+
+  @override
+  String get ticketEmailNetworkError =>
+      'Erreur réseau. Vérifiez votre connexion puis réessayez.';
+
+  @override
+  String get ticketEmailTimeoutError =>
+      'Le service e-mail met trop de temps à répondre.';
+
+  @override
+  String get ticketEmailInvalidKey =>
+      'La configuration du service e-mail est invalide.';
+
+  @override
+  String get ticketEmailInvalidRequest =>
+      'La demande e-mail ou l’expéditeur est invalide.';
+
+  @override
+  String get ticketEmailQuotaError =>
+      'La limite d’envoi e-mail est atteinte. Réessayez plus tard.';
+
+  @override
+  String get ticketEmailServerError =>
+      'Impossible d’envoyer le billet pour le moment.';
+
+  @override
+  String get ticketEmailSubject => 'Votre billet LouageGo';
+
+  @override
+  String get ticketEmailFrom => 'Départ';
+
+  @override
+  String get ticketEmailTo => 'Arrivée';
+
+  @override
+  String get ticketEmailDeparture => 'Date et heure de départ';
+
+  @override
   String get bookingDetails => 'Détails de la réservation';
 
   @override
@@ -1318,6 +1375,69 @@ class AppLocalizationsFr extends AppLocalizations {
   String get driverRevenueWeek => 'Cette semaine';
 
   @override
+  String get driverDepartureTimeLabel => 'Heure de départ';
+
+  @override
+  String driverScanRevenueAdded(String amount) {
+    return '+$amount DT ajoutés à vos revenus';
+  }
+
+  @override
+  String get driverEarningsTotal => 'Total des revenus';
+
+  @override
+  String get driverRevenueMonth => 'Ce mois-ci';
+
+  @override
+  String get driverEarningsScannedCount => 'Billets scannés';
+
+  @override
+  String get driverEarningsChart => 'Revenus par jour';
+
+  @override
+  String get driverEarningsLast7Days => '7 jours';
+
+  @override
+  String get driverEarningsLast30Days => '30 jours';
+
+  @override
+  String get driverEarningsRecent => 'Revenus récents';
+
+  @override
+  String get driverEarningsEmpty =>
+      'Aucun revenu enregistré. Scannez un billet valide pour commencer.';
+
+  @override
+  String get driverEarningsExport => 'Exporter en CSV';
+
+  @override
+  String get driverEarningsExportFailed =>
+      'Impossible de partager le fichier CSV.';
+
+  @override
+  String get driverEarningsUnknown => 'Inconnu';
+
+  @override
+  String driverEarningsRoute(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get driverEarningsCsvPassenger => 'Passager';
+
+  @override
+  String get driverEarningsCsvRoute => 'Trajet';
+
+  @override
+  String get driverEarningsCsvAmount => 'Montant';
+
+  @override
+  String get driverEarningsCsvDate => 'Date et heure';
+
+  @override
+  String get driverEarningsCsvMethod => 'Mode de paiement';
+
+  @override
   String get driverSaveLouage => 'Enregistrer le louage';
 
   @override
@@ -1370,6 +1490,29 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get driverTripPrice => 'Prix par place';
+
+  @override
+  String get driverCurrencyDt => 'DT';
+
+  @override
+  String get driverTripPriceRequired => 'Saisissez un prix par place.';
+
+  @override
+  String get driverTripPriceInvalid => 'Le prix doit être supérieur à 0 DT.';
+
+  @override
+  String get driverTripPriceTooHigh => 'Le prix ne peut pas dépasser 100 DT.';
+
+  @override
+  String get driverTripPriceDecimals =>
+      'Le prix peut avoir au maximum deux décimales.';
+
+  @override
+  String get driverAccountNotValidated =>
+      'Validez votre compte chauffeur avant d’ajouter un trajet.';
+
+  @override
+  String get driverAddTrip => 'Ajouter un trajet';
 
   @override
   String get driverTripDuration => 'Durée';

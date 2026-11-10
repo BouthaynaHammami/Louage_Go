@@ -13,6 +13,7 @@ import 'package:louage_go/features/driver/presentation/screens/driver_home_scree
 import 'package:louage_go/l10n/generated/app_localizations.dart';
 import 'package:louage_go/models/app_user.dart';
 import 'package:louage_go/models/driver_profile.dart';
+import 'package:louage_go/models/driver_earning.dart';
 import 'package:louage_go/models/louage.dart';
 import 'package:louage_go/models/station.dart';
 import 'package:louage_go/models/trip.dart';
@@ -174,6 +175,10 @@ class _FakeDriverRepository implements DriverRepository {
   @override
   Stream<DriverDashboardData> watchDashboard(String driverId) =>
       Stream.value(dashboard);
+
+  @override
+  Stream<List<DriverEarning>> watchEarnings(String driverId) =>
+      Stream.value(const []);
 
   @override
   Future<void> toggleQueue(String louageId) async {

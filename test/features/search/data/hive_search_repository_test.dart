@@ -112,6 +112,7 @@ void main() {
           routeId: 'matching',
           louageId: 'vehicle',
           departureTime: DateTime(2026, 10, 3, 8).toIso8601String(),
+          pricePerSeat: 12.5,
         ).toMap(),
       );
       await tripsBox.put(
@@ -144,7 +145,7 @@ void main() {
 
       expect(results, hasLength(1));
       expect(results.single.trip.id, 'matching-trip');
-      expect(results.single.price, 18);
+      expect(results.single.price, 12.5);
       expect(results.single.driverRatingAverage, 4.5);
       expect(results.single.driverReviewCount, 2);
     },
@@ -167,14 +168,13 @@ void main() {
         toStationId: 'to',
       ).toMap(),
     );
-    await louagesBox.put(
-      'available',
-      const Louage(id: 'available').toMap(),
-    );
+    await louagesBox.put('available', const Louage(id: 'available').toMap());
     await louagesBox.put(
       'out-of-service',
-      const Louage(id: 'out-of-service', statut: LouageStatus.horsService)
-          .toMap(),
+      const Louage(
+        id: 'out-of-service',
+        statut: LouageStatus.horsService,
+      ).toMap(),
     );
     await louagesBox.put(
       'moving',
@@ -416,7 +416,9 @@ void main() {
         hasLength(24),
       );
 
-      final demoBooking = Booking.fromMap(bookingsBox.get('demo_review_booking_1')!);
+      final demoBooking = Booking.fromMap(
+        bookingsBox.get('demo_review_booking_1')!,
+      );
       final demoTrip = Trip.fromMap(tripsBox.get(demoBooking.tripId)!);
       await bookingsBox.put(
         demoBooking.id,

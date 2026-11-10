@@ -165,6 +165,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingDownloadTicket => 'حفظ / مشاركة تذكرة PDF';
 
   @override
+  String get ticketEmailSend => 'إرسال عبر البريد الإلكتروني';
+
+  @override
+  String get ticketEmailDialogTitle => 'عنوان البريد الإلكتروني للمستلم';
+
+  @override
+  String get ticketEmailAddress => 'عنوان البريد الإلكتروني';
+
+  @override
+  String get ticketEmailInvalidAddress => 'أدخل عنوان بريد إلكتروني صالحًا.';
+
+  @override
+  String ticketEmailSent(String email) {
+    return 'تم إرسال التذكرة إلى $email.';
+  }
+
+  @override
+  String get ticketEmailNotConfigured => 'إرسال البريد الإلكتروني غير مُعد.';
+
+  @override
+  String get ticketEmailNetworkError =>
+      'خطأ في الشبكة. تحقق من الاتصال ثم أعد المحاولة.';
+
+  @override
+  String get ticketEmailTimeoutError => 'استغرق خادم البريد وقتًا طويلًا للرد.';
+
+  @override
+  String get ticketEmailInvalidKey => 'إعداد خدمة البريد الإلكتروني غير صالح.';
+
+  @override
+  String get ticketEmailInvalidRequest =>
+      'طلب البريد الإلكتروني أو المرسل غير صالح.';
+
+  @override
+  String get ticketEmailQuotaError => 'تم بلوغ حد الإرسال. حاول لاحقًا.';
+
+  @override
+  String get ticketEmailServerError => 'تعذر إرسال التذكرة الآن.';
+
+  @override
+  String get ticketEmailSubject => 'تذكرتك من LouageGo';
+
+  @override
+  String get ticketEmailFrom => 'من';
+
+  @override
+  String get ticketEmailTo => 'إلى';
+
+  @override
+  String get ticketEmailDeparture => 'تاريخ ووقت المغادرة';
+
+  @override
   String get bookingDetails => 'تفاصيل الحجز';
 
   @override
@@ -1289,6 +1341,68 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverRevenueWeek => 'هذا الأسبوع';
 
   @override
+  String get driverDepartureTimeLabel => 'وقت المغادرة';
+
+  @override
+  String driverScanRevenueAdded(String amount) {
+    return '+$amount د.ت أضيفت إلى إيراداتك';
+  }
+
+  @override
+  String get driverEarningsTotal => 'إجمالي الإيرادات';
+
+  @override
+  String get driverRevenueMonth => 'هذا الشهر';
+
+  @override
+  String get driverEarningsScannedCount => 'التذاكر الممسوحة';
+
+  @override
+  String get driverEarningsChart => 'الإيرادات حسب اليوم';
+
+  @override
+  String get driverEarningsLast7Days => '7 أيام';
+
+  @override
+  String get driverEarningsLast30Days => '30 يومًا';
+
+  @override
+  String get driverEarningsRecent => 'الإيرادات الأخيرة';
+
+  @override
+  String get driverEarningsEmpty =>
+      'لا توجد إيرادات مسجلة. امسح تذكرة صالحة للبدء.';
+
+  @override
+  String get driverEarningsExport => 'تصدير CSV';
+
+  @override
+  String get driverEarningsExportFailed => 'تعذرت مشاركة ملف CSV.';
+
+  @override
+  String get driverEarningsUnknown => 'غير معروف';
+
+  @override
+  String driverEarningsRoute(String from, String to) {
+    return '$from ← $to';
+  }
+
+  @override
+  String get driverEarningsCsvPassenger => 'المسافر';
+
+  @override
+  String get driverEarningsCsvRoute => 'المسار';
+
+  @override
+  String get driverEarningsCsvAmount => 'المبلغ';
+
+  @override
+  String get driverEarningsCsvDate => 'التاريخ والوقت';
+
+  @override
+  String get driverEarningsCsvMethod => 'طريقة الدفع';
+
+  @override
   String get driverSaveLouage => 'حفظ بيانات اللواج';
 
   @override
@@ -1339,6 +1453,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get driverTripPrice => 'السعر لكل مقعد';
+
+  @override
+  String get driverCurrencyDt => 'د.ت';
+
+  @override
+  String get driverTripPriceRequired => 'أدخل سعرًا للمقعد.';
+
+  @override
+  String get driverTripPriceInvalid => 'يجب أن يكون السعر أكبر من 0 د.ت.';
+
+  @override
+  String get driverTripPriceTooHigh => 'لا يمكن أن يتجاوز السعر 100 د.ت.';
+
+  @override
+  String get driverTripPriceDecimals =>
+      'يمكن أن يحتوي السعر على منزلتين عشريتين كحد أقصى.';
+
+  @override
+  String get driverAccountNotValidated => 'تحقق من حساب السائق قبل إضافة رحلة.';
+
+  @override
+  String get driverAddTrip => 'إضافة رحلة';
 
   @override
   String get driverTripDuration => 'المدة';

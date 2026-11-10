@@ -8,6 +8,7 @@ import '../../../core/storage/hive_service.dart';
 import '../../../models/app_user.dart';
 import '../../../models/booking.dart';
 import '../../../models/louage.dart';
+import '../../../models/driver_earning.dart';
 import '../../../models/review.dart';
 import '../../../models/route_line.dart';
 import '../../../models/station.dart';
@@ -25,13 +26,15 @@ class HiveLouageRepository implements LouageRepository {
     Box<Map>? bookingsBox,
     Box<Map>? usersBox,
     Box<Map>? reviewsBox,
+    Box<Map>? earningsBox,
   }) : _stations = stationsBox ?? HiveService.stations,
        _routes = routesBox ?? HiveService.routes,
        _louages = louagesBox ?? HiveService.louages,
        _trips = tripsBox ?? HiveService.trips,
        _bookings = bookingsBox ?? HiveService.bookings,
        _users = usersBox ?? HiveService.users,
-       _reviews = reviewsBox ?? HiveService.reviews;
+       _reviews = reviewsBox ?? HiveService.reviews,
+       _earnings = earningsBox ?? HiveService.earnings;
 
   static const _uuid = Uuid();
   final Box<Map> _stations;
@@ -41,6 +44,8 @@ class HiveLouageRepository implements LouageRepository {
   final Box<Map> _bookings;
   final Box<Map> _users;
   final Box<Map> _reviews;
+  final Box<Map> _earnings;
+  static final Set<String> _validatingBookings = {};
 
   @override
   Stream<Louage?> watchLouage(String driverId) =>
@@ -117,7 +122,15 @@ class HiveLouageRepository implements LouageRepository {
     required String fromStationId,
     required String toStationId,
     required DateTime departureTime,
+    required double pricePerSeat,
   }) async {
+    final cents = (pricePerSeat * 100).round();
+    if (!pricePerSeat.isFinite ||
+        pricePerSeat <= 0 ||
+        pricePerSeat > 100 ||
+        (pricePerSeat - cents / 100).abs() > 1e-8) {
+      throw const DriverTripException(DriverTripFailure.invalidPrice);
+    }
     final louage = _louageFor(driverId);
     if (louage == null) {
       throw const DriverTripException(DriverTripFailure.louageMissing);
@@ -136,19 +149,22 @@ class HiveLouageRepository implements LouageRepository {
       throw const DriverTripException(DriverTripFailure.departureInPast);
     }
 
-    final route = await _ensureRoute(fromStationId: fromStationId, toStationId: toStationId);
-    final duplicate = _trips.values
-        .map(Trip.fromMap)
-        .any((trip) {
-          if (trip.louageId != louage.id || trip.status != 'waiting') return false;
-          final tripTime = DateTime.tryParse(trip.departureTime);
-          return tripTime != null && tripTime.isAtSameMomentAs(departureTime);
-        });
+    final route = await _ensureRoute(
+      fromStationId: fromStationId,
+      toStationId: toStationId,
+    );
+    final duplicate = _trips.values.map(Trip.fromMap).any((trip) {
+      if (trip.louageId != louage.id || trip.status != 'waiting') return false;
+      final tripTime = DateTime.tryParse(trip.departureTime);
+      return tripTime != null && tripTime.isAtSameMomentAs(departureTime);
+    });
     if (duplicate) {
       throw const DriverTripException(DriverTripFailure.duplicateDeparture);
     }
 
-    final updatedLouage = louage.copyWith(stationActuelle: fromStationId.trim());
+    final updatedLouage = louage.copyWith(
+      stationActuelle: fromStationId.trim(),
+    );
     await _louages.put(updatedLouage.id, updatedLouage.toMap());
 
     final trip = Trip(
@@ -162,6 +178,7 @@ class HiveLouageRepository implements LouageRepository {
       arrivalTime: departureTime
           .add(Duration(minutes: route.durationMin))
           .toIso8601String(),
+      pricePerSeat: pricePerSeat,
     );
     await _trips.put(trip.id, trip.toMap());
     return trip;
@@ -190,11 +207,12 @@ class HiveLouageRepository implements LouageRepository {
                 .where((louage) => louage.chauffeurId == driverId)
                 .map((louage) => louage.id)
                 .toSet();
-            final trips = _trips.values
-                .map(Trip.fromMap)
-                .where((trip) => louageIds.contains(trip.louageId))
-                .toList()
-              ..sort((a, b) => a.departureTime.compareTo(b.departureTime));
+            final trips =
+                _trips.values
+                    .map(Trip.fromMap)
+                    .where((trip) => louageIds.contains(trip.louageId))
+                    .toList()
+                  ..sort((a, b) => a.departureTime.compareTo(b.departureTime));
             controller.add(trips);
           } catch (error, stackTrace) {
             controller.addError(error, stackTrace);
@@ -216,19 +234,21 @@ class HiveLouageRepository implements LouageRepository {
       Stream<List<DriverBooking>>.multi((controller) {
         void reload() {
           try {
-            final bookings = _bookings.values
-                .map(Booking.fromMap)
-                .where((booking) => booking.tripId == tripId)
-                .map(
-                  (booking) => DriverBooking(
-                    booking: booking,
-                    passenger: _passengerFor(booking.userId),
-                  ),
-                )
-                .toList()
-              ..sort(
-                (a, b) => a.booking.createdAt.compareTo(b.booking.createdAt),
-              );
+            final bookings =
+                _bookings.values
+                    .map(Booking.fromMap)
+                    .where((booking) => booking.tripId == tripId)
+                    .map(
+                      (booking) => DriverBooking(
+                        booking: booking,
+                        passenger: _passengerFor(booking.userId),
+                      ),
+                    )
+                    .toList()
+                  ..sort(
+                    (a, b) =>
+                        a.booking.createdAt.compareTo(b.booking.createdAt),
+                  );
             controller.add(bookings);
           } catch (error, stackTrace) {
             controller.addError(error, stackTrace);
@@ -265,8 +285,12 @@ class HiveLouageRepository implements LouageRepository {
     }
     final bookingStatus = booking.status.toLowerCase();
     if (booking.tripId != tripId ||
-        const {'cancelled', 'canceled', 'annulled', 'rejected'}
-                .contains(bookingStatus) ||
+        const {
+          'cancelled',
+          'canceled',
+          'annulled',
+          'rejected',
+        }.contains(bookingStatus) ||
         !const {
           'confirmed',
           'validated',
@@ -286,20 +310,87 @@ class HiveLouageRepository implements LouageRepository {
         Louage.fromMap(louageMap).chauffeurId != driverId) {
       return const TicketValidationResult(TicketValidationStatus.invalid);
     }
-    if (const {'validated', 'used', 'completed', 'checkedin'}
-        .contains(bookingStatus)) {
+    if (const {
+      'validated',
+      'used',
+      'completed',
+      'checkedin',
+    }.contains(bookingStatus)) {
       return TicketValidationResult(
         TicketValidationStatus.alreadyUsed,
         bookingId: booking.id,
       );
     }
-    await _bookings.put(
-      booking.id,
-      booking.copyWith(status: 'validated').toMap(),
-    );
+    if (!_validatingBookings.add(booking.id)) {
+      return TicketValidationResult(
+        TicketValidationStatus.alreadyUsed,
+        bookingId: booking.id,
+      );
+    }
+    try {
+      final existingEarning = _earnings.get(booking.id);
+      if (existingEarning != null) {
+        if (booking.status != 'validated' ||
+            (booking.paymentMethod == 'cash' &&
+                booking.paymentStatus == 'cashOnBoard')) {
+          await _bookings.put(
+            booking.id,
+            booking
+                .copyWith(
+                  status: 'validated',
+                  paymentStatus:
+                      booking.paymentMethod == 'cash' &&
+                          booking.paymentStatus == 'cashOnBoard'
+                      ? 'paid'
+                      : null,
+                )
+                .toMap(),
+          );
+        }
+        return TicketValidationResult(
+          TicketValidationStatus.alreadyUsed,
+          bookingId: booking.id,
+        );
+      }
+
+      final earning = DriverEarning(
+        id: booking.id,
+        driverId: driverId,
+        bookingId: booking.id,
+        tripId: trip.id,
+        amount: booking.totalPrice,
+        earnedAt: DateTime.now().toIso8601String(),
+        method: booking.paymentMethod,
+        passengerName: _passengerFor(booking.userId)?.name ?? '',
+        fromCity: booking.fromCity,
+        toCity: booking.toCity,
+      );
+      await _earnings.put(earning.id, earning.toMap());
+      try {
+        await _bookings.put(
+          booking.id,
+          booking
+              .copyWith(
+                status: 'validated',
+                paymentStatus:
+                    booking.paymentMethod == 'cash' &&
+                        booking.paymentStatus == 'cashOnBoard'
+                    ? 'paid'
+                    : null,
+              )
+              .toMap(),
+        );
+      } catch (_) {
+        await _earnings.delete(earning.id);
+        rethrow;
+      }
+    } finally {
+      _validatingBookings.remove(booking.id);
+    }
     return TicketValidationResult(
       TicketValidationStatus.valid,
       bookingId: booking.id,
+      amount: booking.totalPrice,
     );
   }
 
@@ -382,7 +473,12 @@ class HiveLouageRepository implements LouageRepository {
     final toStation = toMap == null ? null : Station.fromMap(toMap);
 
     final distanceKm = fromStation != null && toStation != null
-        ? _haversineKm(fromStation.lat, fromStation.lng, toStation.lat, toStation.lng)
+        ? _haversineKm(
+            fromStation.lat,
+            fromStation.lng,
+            toStation.lat,
+            toStation.lng,
+          )
         : 42.0;
     final durationMin = ((distanceKm / 55) * 60).round().clamp(20, 240);
     final pricePerSeat = (distanceKm * 0.7 + 9.0).roundToDouble();
@@ -399,16 +495,12 @@ class HiveLouageRepository implements LouageRepository {
     return route;
   }
 
-  double _haversineKm(
-    double lat1,
-    double lon1,
-    double lat2,
-    double lon2,
-  ) {
+  double _haversineKm(double lat1, double lon1, double lat2, double lon2) {
     const earthRadiusKm = 6371.0;
     final dLat = (lat2 - lat1) * (math.pi / 180);
     final dLon = (lon2 - lon1) * (math.pi / 180);
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(lat1 * (math.pi / 180)) *
             math.cos(lat2 * (math.pi / 180)) *
             math.sin(dLon / 2) *

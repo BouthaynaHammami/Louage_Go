@@ -105,6 +105,18 @@ Les données sont stockées localement avec Hive. Les boxes sont initialisées a
 
 La console Firebase convient aux essais manuels. L'envoi ciblé à un utilisateur ou à un rôle doit passer par un backend de confiance, par exemple Cloud Functions ; l'application ne doit pas contenir de clés serveur Firebase.
 
+## ✉️ Envoi du billet par e-mail (Brevo)
+
+L'application peut envoyer le billet PDF avec l'API transactionnelle Brevo v3. Configurez la clé API et l'adresse d'expéditeur vérifiée uniquement au lancement :
+
+```bash
+flutter run --dart-define=BREVO_API_KEY=xxx --dart-define=BREVO_SENDER_EMAIL=expediteur@verifie.com
+```
+
+Le nom d'expéditeur peut être remplacé avec `--dart-define=BREVO_SENDER_NAME=LouageGo`. L'adresse d'expéditeur doit être validée dans le compte Brevo. Les clés API Brevo peuvent expirer après 90 jours d'inactivité ; renouvelez-les selon les règles de votre compte. Ne commitez jamais de clé API ni de fichier `.env`.
+
+Cette intégration directe sert uniquement au développement et à la démonstration : une application mobile distribuée peut être inspectée, donc toute clé `--dart-define` intégrée au binaire peut être extraite. En production, l'application doit transmettre la demande à un backend de confiance (par exemple une Cloud Function), qui garde la clé Brevo côté serveur et applique les contrôles d'accès et de quota.
+
 ## 🗂️ Structure du projet
 
 ```text

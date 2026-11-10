@@ -6,6 +6,8 @@ import '../../../../core/widgets/app_card.dart';
 import '../../../../features/driver/presentation/providers/louage_provider.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/booking.dart';
+import '../../domain/entities/driver_earning_summary.dart';
+import '../providers/driver_home_provider.dart';
 
 class DriverDashboardStats extends ConsumerWidget {
   const DriverDashboardStats({
@@ -30,20 +32,19 @@ class DriverDashboardStats extends ConsumerWidget {
     final rating = stats.asData?.value.$1 ?? 0.0;
     final completedTrips = stats.asData?.value.$2 ?? 0;
     final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
-    final weekStart = todayStart.subtract(Duration(days: now.weekday - 1));
-
-    double revenueDay = 0;
-    double revenueWeek = 0;
     var passengersTotal = 0;
     for (final booking in bookings) {
       if (!const {'confirmed', 'validated'}.contains(booking.status)) continue;
       passengersTotal += booking.seats;
-      final created = DateTime.tryParse(booking.createdAt);
-      if (created == null) continue;
-      if (created.isAfter(todayStart)) revenueDay += booking.totalPrice;
-      if (created.isAfter(weekStart)) revenueWeek += booking.totalPrice;
     }
+    final earnings = ref.watch(driverEarningsProvider(driverId)).asData?.value;
+    final summary = DriverEarningSummary.withLegacyBookings(
+      earnings ?? const [],
+      bookings,
+      driverId: driverId,
+    );
+    final revenueDay = summary.forDay(now);
+    final revenueWeek = summary.forWeek(now);
 
     final kpis = [
       _KpiData(

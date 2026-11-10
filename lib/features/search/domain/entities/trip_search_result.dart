@@ -24,7 +24,7 @@ class TripSearchResult {
     this.driverReviewCount = 0,
   });
 
-  double get price => route.pricePerSeat;
+  double get price => trip.effectivePrice(route);
   int get freeSeats => trip.freeSeats;
   int get totalSeats => trip.totalSeats;
   bool get isFull => freeSeats == 0 || trip.status == 'full';

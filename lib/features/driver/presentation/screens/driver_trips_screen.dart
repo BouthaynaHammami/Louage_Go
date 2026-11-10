@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/storage/hive_service.dart';
+import '../../../../core/widgets/premium_nav_bar.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/empty_state.dart';
@@ -11,11 +12,14 @@ import '../../../../core/widgets/seat_dots.dart';
 import '../../../../core/widgets/status_chip.dart';
 import '../../../../features/auth/auth_providers.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../models/louage.dart';
 import '../../../../models/route_line.dart';
 import '../../../../models/station.dart';
 import '../../../../models/trip.dart';
 import '../../domain/louage_repository.dart';
+import '../../domain/entities/driver_dashboard_data.dart';
 import '../providers/louage_provider.dart';
+import '../providers/driver_home_provider.dart';
 import '../widgets/driver_app_bar.dart';
 
 class DriverTripsScreen extends ConsumerWidget {
@@ -24,34 +28,15 @@ class DriverTripsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    return ref.watch(currentUserProvider).when(
-      loading: () => Scaffold(
-        appBar: driverAppBar(context, l10n.driverTripsTitle),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
-      error: (error, stackTrace) => Scaffold(
-        appBar: driverAppBar(context, l10n.driverTripsTitle),
-        body: EmptyState(
-          icon: Icons.error_outline,
-          title: l10n.driverOperationFailed,
-        ),
-      ),
-      data: (user) {
-        if (user == null || user.role != 'driver') {
-          return AppScaffold(
-            appBar: driverAppBar(context, l10n.driverTripsTitle),
-            body: EmptyState(
-              icon: Icons.person_off_outlined,
-              title: l10n.sessionExpired,
-            ),
-          );
-        }
-
-        final louageAsync = ref.watch(driverLouageProvider(user.id));
-        return louageAsync.when(
+    return ref
+        .watch(currentUserProvider)
+        .when(
           loading: () => Scaffold(
             appBar: driverAppBar(context, l10n.driverTripsTitle),
             body: const Center(child: CircularProgressIndicator()),
+            floatingActionButton: _addTripButton(context, l10n, () {
+              context.pushNamed('driverCreateTrip');
+            }),
           ),
           error: (error, stackTrace) => Scaffold(
             appBar: driverAppBar(context, l10n.driverTripsTitle),
@@ -59,13 +44,31 @@ class DriverTripsScreen extends ConsumerWidget {
               icon: Icons.error_outline,
               title: l10n.driverOperationFailed,
             ),
+            floatingActionButton: _addTripButton(context, l10n, () {
+              context.pushNamed('driverCreateTrip');
+            }),
           ),
-          data: (louage) {
-            final stationLabel = _stationLabel(context, louage?.stationActuelle);
-            return ref.watch(driverTripsProvider(user.id)).when(
+          data: (user) {
+            if (user == null || user.role != 'driver') {
+              return AppScaffold(
+                appBar: driverAppBar(context, l10n.driverTripsTitle),
+                body: EmptyState(
+                  icon: Icons.person_off_outlined,
+                  title: l10n.sessionExpired,
+                ),
+              );
+            }
+
+            final dashboardAsync = ref.watch(driverDashboardProvider(user.id));
+            final dashboard = dashboardAsync.asData?.value;
+            final louageAsync = ref.watch(driverLouageProvider(user.id));
+            return louageAsync.when(
               loading: () => Scaffold(
                 appBar: driverAppBar(context, l10n.driverTripsTitle),
                 body: const Center(child: CircularProgressIndicator()),
+                floatingActionButton: _addTripButton(context, l10n, () {
+                  context.pushNamed('driverCreateTrip');
+                }),
               ),
               error: (error, stackTrace) => Scaffold(
                 appBar: driverAppBar(context, l10n.driverTripsTitle),
@@ -73,84 +76,171 @@ class DriverTripsScreen extends ConsumerWidget {
                   icon: Icons.error_outline,
                   title: l10n.driverOperationFailed,
                 ),
+                floatingActionButton: _addTripButton(context, l10n, () {
+                  context.pushNamed('driverCreateTrip');
+                }),
               ),
-              data: (trips) => Scaffold(
-                appBar: driverAppBar(context, l10n.driverTripsTitle),
-                floatingActionButton: FloatingActionButton.extended(
-                  onPressed: () => context.pushNamed('driverCreateTrip'),
-                  icon: const Icon(Icons.add_rounded),
-                  label: Text(l10n.driverCreateTripTitle),
-                ),
-                body: trips.isEmpty
-                    ? Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 480),
-                          child: EmptyState(
-                            icon: Icons.route_outlined,
-                            title: l10n.driverTripsEmpty,
-                            description: stationLabel.isEmpty
-                                ? null
-                                : '${l10n.driverCurrentStation} : $stationLabel',
-                            actionLabel: l10n.driverCreateFirstTrip,
-                            onAction: () => context.pushNamed('driverCreateTrip'),
-                          ),
+              data: (louage) {
+                final stationLabel = _stationLabel(
+                  context,
+                  louage?.stationActuelle,
+                );
+                return ref
+                    .watch(driverTripsProvider(user.id))
+                    .when(
+                      loading: () => Scaffold(
+                        appBar: driverAppBar(context, l10n.driverTripsTitle),
+                        body: const Center(child: CircularProgressIndicator()),
+                        floatingActionButton: _addTripButton(context, l10n, () {
+                          _openCreateTrip(context, l10n, louage, dashboard);
+                        }),
+                      ),
+                      error: (error, stackTrace) => Scaffold(
+                        appBar: driverAppBar(context, l10n.driverTripsTitle),
+                        body: EmptyState(
+                          icon: Icons.error_outline,
+                          title: l10n.driverOperationFailed,
                         ),
-                      )
-                    : Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 760),
-                          child: ListView(
-                            padding: const EdgeInsetsDirectional.all(16),
-                            children: [
-                              if (stationLabel.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                    bottom: 8,
+                        floatingActionButton: _addTripButton(context, l10n, () {
+                          _openCreateTrip(context, l10n, louage, dashboard);
+                        }),
+                      ),
+                      data: (trips) => Scaffold(
+                        appBar: driverAppBar(context, l10n.driverTripsTitle),
+                        floatingActionButton: _addTripButton(
+                          context,
+                          l10n,
+                          () =>
+                              _openCreateTrip(context, l10n, louage, dashboard),
+                        ),
+                        body: trips.isEmpty
+                            ? Center(
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 480,
                                   ),
-                                  child: AppCard(
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.location_on_outlined,
-                                          size: 18,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            '${l10n.driverCurrentStation} : $stationLabel',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall,
+                                  child: EmptyState(
+                                    icon: Icons.route_outlined,
+                                    title: l10n.driverTripsEmpty,
+                                    description: stationLabel.isEmpty
+                                        ? null
+                                        : '${l10n.driverCurrentStation} : $stationLabel',
+                                    actionLabel: l10n.driverCreateFirstTrip,
+                                    onAction: () =>
+                                        context.pushNamed('driverCreateTrip'),
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 760,
+                                  ),
+                                  child: ListView(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                      16,
+                                      16,
+                                      16,
+                                      kPremiumNavBarHeight +
+                                          MediaQuery.viewPaddingOf(context)
+                                              .bottom +
+                                          16,
+                                    ),
+                                    children: [
+                                      if (stationLabel.isNotEmpty)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsetsDirectional.only(
+                                                bottom: 8,
+                                              ),
+                                          child: AppCard(
+                                            child: Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.location_on_outlined,
+                                                  size: 18,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${l10n.driverCurrentStation} : $stationLabel',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleSmall,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ...trips.map(
+                                        (trip) => Padding(
+                                          padding:
+                                              const EdgeInsetsDirectional.only(
+                                                bottom: 8,
+                                              ),
+                                          child: _TripCard(
+                                            trip: trip,
+                                            onCancel: () => _cancelTrip(
+                                              context,
+                                              ref,
+                                              user.id,
+                                              trip.id,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ...trips.map((trip) => Padding(
-                                padding: const EdgeInsetsDirectional.only(
-                                  bottom: 8,
-                                ),
-                                child: _TripCard(
-                                  trip: trip,
-                                  onCancel: () => _cancelTrip(
-                                    context,
-                                    ref,
-                                    user.id,
-                                    trip.id,
-                                  ),
-                                ),
-                              )),
-                            ],
-                          ),
-                        ),
+                              ),
                       ),
-              ),
+                    );
+              },
             );
           },
         );
-      },
-    );
+  }
+
+  Widget _addTripButton(
+    BuildContext context,
+    AppLocalizations l10n,
+    VoidCallback onPressed,
+  ) => FloatingActionButton.extended(
+    onPressed: onPressed,
+    icon: const Icon(Icons.add_rounded),
+    label: Text(l10n.driverAddTrip),
+  );
+
+  void _openCreateTrip(
+    BuildContext context,
+    AppLocalizations l10n,
+    Louage? louage,
+    DriverDashboardData? dashboard,
+  ) {
+    if (louage == null) {
+      _showMessage(context, l10n.driverLouageMissing);
+      return;
+    }
+    if (louage.statut == LouageStatus.horsService) {
+      _showMessage(context, l10n.driverLouageOutOfService);
+      return;
+    }
+    if (dashboard == null ||
+        !const {
+          'approved',
+          'validated',
+        }.contains(dashboard.profile.validationStatus.toLowerCase())) {
+      _showMessage(context, l10n.driverAccountNotValidated);
+      return;
+    }
+    context.pushNamed('driverCreateTrip');
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   String _stationLabel(BuildContext context, String? stationId) {
@@ -193,7 +283,9 @@ class DriverTripsScreen extends ConsumerWidget {
       ref.invalidate(driverTripsProvider(userId));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.driverTripCancelled)),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.driverTripCancelled),
+          ),
         );
       }
     } on DriverTripException catch (error) {
@@ -201,14 +293,33 @@ class DriverTripsScreen extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(switch (error.failure) {
-              DriverTripFailure.louageMissing => AppLocalizations.of(context)!.driverLouageMissing,
-              DriverTripFailure.louageOutOfService => AppLocalizations.of(context)!.driverLouageOutOfService,
-              DriverTripFailure.stationRequired => AppLocalizations.of(context)!.driverStationRequired,
-              DriverTripFailure.sameStation => AppLocalizations.of(context)!.driverTripSameStation,
-              DriverTripFailure.departureInPast => AppLocalizations.of(context)!.driverDepartureInPast,
-              DriverTripFailure.duplicateDeparture => AppLocalizations.of(context)!.driverDuplicateDeparture,
-              DriverTripFailure.tripMissing => AppLocalizations.of(context)!.driverTripMissing,
-              DriverTripFailure.tripNotWaiting => AppLocalizations.of(context)!.driverTripNotWaiting,
+              DriverTripFailure.louageMissing => AppLocalizations.of(
+                context,
+              )!.driverLouageMissing,
+              DriverTripFailure.louageOutOfService => AppLocalizations.of(
+                context,
+              )!.driverLouageOutOfService,
+              DriverTripFailure.stationRequired => AppLocalizations.of(
+                context,
+              )!.driverStationRequired,
+              DriverTripFailure.sameStation => AppLocalizations.of(
+                context,
+              )!.driverTripSameStation,
+              DriverTripFailure.departureInPast => AppLocalizations.of(
+                context,
+              )!.driverDepartureInPast,
+              DriverTripFailure.duplicateDeparture => AppLocalizations.of(
+                context,
+              )!.driverDuplicateDeparture,
+              DriverTripFailure.invalidPrice => AppLocalizations.of(
+                context,
+              )!.driverTripPriceInvalid,
+              DriverTripFailure.tripMissing => AppLocalizations.of(
+                context,
+              )!.driverTripMissing,
+              DriverTripFailure.tripNotWaiting => AppLocalizations.of(
+                context,
+              )!.driverTripNotWaiting,
             }),
           ),
         );
@@ -291,7 +402,7 @@ class _TripCard extends StatelessWidget {
                         ?.copyWith(color: colors.onSurfaceVariant),
                   ),
                   Text(
-                    '${route?.pricePerSeat ?? 0} DT',
+                    '${trip.effectivePrice(route).toStringAsFixed(2)} ${AppLocalizations.of(context)!.driverCurrencyDt}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: colors.inversePrimary,
                       fontWeight: FontWeight.w700,

@@ -50,6 +50,29 @@
   "bookingTotal": "Total",
   "bookingPayment": "Payment",
   "bookingDownloadTicket": "Save / share PDF ticket",
+  "ticketEmailSend": "Send by email",
+  "ticketEmailDialogTitle": "Recipient email address",
+  "ticketEmailAddress": "Email address",
+  "ticketEmailInvalidAddress": "Enter a valid email address.",
+  "ticketEmailSent": "Ticket sent to {email}.",
+  "@ticketEmailSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketEmailNotConfigured": "Email delivery is not configured.",
+  "ticketEmailNetworkError": "Network error. Check your connection and try again.",
+  "ticketEmailTimeoutError": "The email service took too long to respond.",
+  "ticketEmailInvalidKey": "The email service configuration is invalid.",
+  "ticketEmailInvalidRequest": "The email request or sender is invalid.",
+  "ticketEmailQuotaError": "The email sending limit has been reached. Try again later.",
+  "ticketEmailServerError": "The ticket could not be sent right now.",
+  "ticketEmailSubject": "Your LouageGo ticket",
+  "ticketEmailFrom": "From",
+  "ticketEmailTo": "To",
+  "ticketEmailDeparture": "Departure date and time",
   "bookingDetails": "Booking details",
   "bookingCancel": "Cancel",
   "bookingCancelTitle": "Cancel booking?",
@@ -495,6 +518,42 @@
   "driverDashboardRevenueTitle": "Revenue",
   "driverRevenueToday": "Today",
   "driverRevenueWeek": "This week",
+  "driverDepartureTimeLabel": "Departure time",
+  "driverScanRevenueAdded": "+{amount} DT added to your earnings",
+  "@driverScanRevenueAdded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsTotal": "Total earnings",
+  "driverRevenueMonth": "This month",
+  "driverEarningsScannedCount": "Tickets scanned",
+  "driverEarningsChart": "Earnings by day",
+  "driverEarningsLast7Days": "7 days",
+  "driverEarningsLast30Days": "30 days",
+  "driverEarningsRecent": "Recent earnings",
+  "driverEarningsEmpty": "No earnings recorded yet. Scan a valid ticket to get started.",
+  "driverEarningsExport": "Export CSV",
+  "driverEarningsExportFailed": "Couldn't share the CSV file.",
+  "driverEarningsUnknown": "Unknown",
+  "driverEarningsRoute": "{from} → {to}",
+  "@driverEarningsRoute": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "driverEarningsCsvPassenger": "Passenger",
+  "driverEarningsCsvRoute": "Route",
+  "driverEarningsCsvAmount": "Amount",
+  "driverEarningsCsvDate": "Date and time",
+  "driverEarningsCsvMethod": "Payment method",
   "driverSaveLouage": "Save louage",
   "driverLouageSaved": "Louage profile saved.",
   "driverLouageSaveFailed": "Couldn't save the louage. Check the details and try again.",
@@ -512,6 +571,13 @@
   "driverTripDetail": "Trip details",
   "driverTripDateTime": "Date and time",
   "driverTripPrice": "Price per seat",
+  "driverCurrencyDt": "DT",
+  "driverTripPriceRequired": "Enter a price per seat.",
+  "driverTripPriceInvalid": "Price must be greater than 0 DT.",
+  "driverTripPriceTooHigh": "Price cannot exceed 100 DT.",
+  "driverTripPriceDecimals": "Price can have no more than two decimal places.",
+  "driverAccountNotValidated": "Validate your driver account before adding a trip.",
+  "driverAddTrip": "Add a trip",
   "driverTripDuration": "Duration",
   "driverTripPreview": "Trip preview",
   "driverTripSeatsAvailable": "{available} / {total} seats available",

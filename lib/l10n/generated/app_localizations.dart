@@ -400,6 +400,102 @@ abstract class AppLocalizations {
   /// **'Enregistrer / partager le billet PDF'**
   String get bookingDownloadTicket;
 
+  /// No description provided for @ticketEmailSend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer par e-mail'**
+  String get ticketEmailSend;
+
+  /// No description provided for @ticketEmailDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail du destinataire'**
+  String get ticketEmailDialogTitle;
+
+  /// No description provided for @ticketEmailAddress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail'**
+  String get ticketEmailAddress;
+
+  /// No description provided for @ticketEmailInvalidAddress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez une adresse e-mail valide.'**
+  String get ticketEmailInvalidAddress;
+
+  /// No description provided for @ticketEmailSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Billet envoyé à {email}.'**
+  String ticketEmailSent(String email);
+
+  /// No description provided for @ticketEmailNotConfigured.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoi par e-mail non configuré.'**
+  String get ticketEmailNotConfigured;
+
+  /// No description provided for @ticketEmailNetworkError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur réseau. Vérifiez votre connexion puis réessayez.'**
+  String get ticketEmailNetworkError;
+
+  /// No description provided for @ticketEmailTimeoutError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le service e-mail met trop de temps à répondre.'**
+  String get ticketEmailTimeoutError;
+
+  /// No description provided for @ticketEmailInvalidKey.
+  ///
+  /// In fr, this message translates to:
+  /// **'La configuration du service e-mail est invalide.'**
+  String get ticketEmailInvalidKey;
+
+  /// No description provided for @ticketEmailInvalidRequest.
+  ///
+  /// In fr, this message translates to:
+  /// **'La demande e-mail ou l’expéditeur est invalide.'**
+  String get ticketEmailInvalidRequest;
+
+  /// No description provided for @ticketEmailQuotaError.
+  ///
+  /// In fr, this message translates to:
+  /// **'La limite d’envoi e-mail est atteinte. Réessayez plus tard.'**
+  String get ticketEmailQuotaError;
+
+  /// No description provided for @ticketEmailServerError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d’envoyer le billet pour le moment.'**
+  String get ticketEmailServerError;
+
+  /// No description provided for @ticketEmailSubject.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre billet LouageGo'**
+  String get ticketEmailSubject;
+
+  /// No description provided for @ticketEmailFrom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Départ'**
+  String get ticketEmailFrom;
+
+  /// No description provided for @ticketEmailTo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrivée'**
+  String get ticketEmailTo;
+
+  /// No description provided for @ticketEmailDeparture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date et heure de départ'**
+  String get ticketEmailDeparture;
+
   /// No description provided for @bookingDetails.
   ///
   /// In fr, this message translates to:
@@ -2494,6 +2590,120 @@ abstract class AppLocalizations {
   /// **'Cette semaine'**
   String get driverRevenueWeek;
 
+  /// No description provided for @driverDepartureTimeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Heure de départ'**
+  String get driverDepartureTimeLabel;
+
+  /// No description provided for @driverScanRevenueAdded.
+  ///
+  /// In fr, this message translates to:
+  /// **'+{amount} DT ajoutés à vos revenus'**
+  String driverScanRevenueAdded(String amount);
+
+  /// No description provided for @driverEarningsTotal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total des revenus'**
+  String get driverEarningsTotal;
+
+  /// No description provided for @driverRevenueMonth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce mois-ci'**
+  String get driverRevenueMonth;
+
+  /// No description provided for @driverEarningsScannedCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Billets scannés'**
+  String get driverEarningsScannedCount;
+
+  /// No description provided for @driverEarningsChart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenus par jour'**
+  String get driverEarningsChart;
+
+  /// No description provided for @driverEarningsLast7Days.
+  ///
+  /// In fr, this message translates to:
+  /// **'7 jours'**
+  String get driverEarningsLast7Days;
+
+  /// No description provided for @driverEarningsLast30Days.
+  ///
+  /// In fr, this message translates to:
+  /// **'30 jours'**
+  String get driverEarningsLast30Days;
+
+  /// No description provided for @driverEarningsRecent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenus récents'**
+  String get driverEarningsRecent;
+
+  /// No description provided for @driverEarningsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun revenu enregistré. Scannez un billet valide pour commencer.'**
+  String get driverEarningsEmpty;
+
+  /// No description provided for @driverEarningsExport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter en CSV'**
+  String get driverEarningsExport;
+
+  /// No description provided for @driverEarningsExportFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de partager le fichier CSV.'**
+  String get driverEarningsExportFailed;
+
+  /// No description provided for @driverEarningsUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inconnu'**
+  String get driverEarningsUnknown;
+
+  /// No description provided for @driverEarningsRoute.
+  ///
+  /// In fr, this message translates to:
+  /// **'{from} → {to}'**
+  String driverEarningsRoute(String from, String to);
+
+  /// No description provided for @driverEarningsCsvPassenger.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passager'**
+  String get driverEarningsCsvPassenger;
+
+  /// No description provided for @driverEarningsCsvRoute.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trajet'**
+  String get driverEarningsCsvRoute;
+
+  /// No description provided for @driverEarningsCsvAmount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montant'**
+  String get driverEarningsCsvAmount;
+
+  /// No description provided for @driverEarningsCsvDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date et heure'**
+  String get driverEarningsCsvDate;
+
+  /// No description provided for @driverEarningsCsvMethod.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode de paiement'**
+  String get driverEarningsCsvMethod;
+
   /// No description provided for @driverSaveLouage.
   ///
   /// In fr, this message translates to:
@@ -2595,6 +2805,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Prix par place'**
   String get driverTripPrice;
+
+  /// No description provided for @driverCurrencyDt.
+  ///
+  /// In fr, this message translates to:
+  /// **'DT'**
+  String get driverCurrencyDt;
+
+  /// No description provided for @driverTripPriceRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez un prix par place.'**
+  String get driverTripPriceRequired;
+
+  /// No description provided for @driverTripPriceInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le prix doit être supérieur à 0 DT.'**
+  String get driverTripPriceInvalid;
+
+  /// No description provided for @driverTripPriceTooHigh.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le prix ne peut pas dépasser 100 DT.'**
+  String get driverTripPriceTooHigh;
+
+  /// No description provided for @driverTripPriceDecimals.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le prix peut avoir au maximum deux décimales.'**
+  String get driverTripPriceDecimals;
+
+  /// No description provided for @driverAccountNotValidated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validez votre compte chauffeur avant d’ajouter un trajet.'**
+  String get driverAccountNotValidated;
+
+  /// No description provided for @driverAddTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un trajet'**
+  String get driverAddTrip;
 
   /// No description provided for @driverTripDuration.
   ///

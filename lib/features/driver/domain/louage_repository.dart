@@ -11,6 +11,7 @@ enum DriverTripFailure {
   sameStation,
   departureInPast,
   duplicateDeparture,
+  invalidPrice,
   tripMissing,
   tripNotWaiting,
 }
@@ -37,6 +38,7 @@ abstract interface class LouageRepository {
     required String fromStationId,
     required String toStationId,
     required DateTime departureTime,
+    required double pricePerSeat,
   });
 
   Future<void> cancelTrip(String tripId);

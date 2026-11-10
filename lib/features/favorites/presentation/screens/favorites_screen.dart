@@ -318,7 +318,11 @@ class FavoritesScreen extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  l10n.searchPricePerSeat(_formatPrice(route.pricePerSeat)),
+                  l10n.searchPricePerSeat(
+                    _formatPrice(
+                      trip?.effectivePrice(route) ?? route.pricePerSeat,
+                    ),
+                  ),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
