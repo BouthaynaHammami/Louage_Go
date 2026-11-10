@@ -1969,4 +1969,61 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get driverNavigateNoCoords =>
       'Coordonnées de la station indisponibles.';
+
+  @override
+  String get routeToStationTitle => 'Distance jusqu’à la station de départ';
+
+  @override
+  String routeDistanceFromStation(String distance) {
+    return 'Vous êtes à $distance de la station de départ';
+  }
+
+  @override
+  String routeDurationByCar(String duration) {
+    return '≈ $duration en voiture';
+  }
+
+  @override
+  String routeDistanceMeters(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String routeDistanceKilometers(String kilometers) {
+    return '$kilometers km';
+  }
+
+  @override
+  String routeDurationMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String routeDurationHours(String hours, String minutes) {
+    return '$hours h $minutes';
+  }
+
+  @override
+  String get routeArrivedAtStation => 'Vous êtes arrivé à la station';
+
+  @override
+  String get routeErrorNetwork =>
+      'Impossible de se connecter au service d’itinéraire.';
+
+  @override
+  String get routeErrorTimeout =>
+      'Le calcul de l’itinéraire a pris trop de temps.';
+
+  @override
+  String get routeErrorNoRoute => 'Aucun itinéraire en voiture n’a été trouvé.';
+
+  @override
+  String get routeErrorInvalidResponse =>
+      'Le service d’itinéraire a renvoyé une réponse invalide.';
+
+  @override
+  String get routeRetry => 'Réessayer';
+
+  @override
+  String get routeRefresh => 'Actualiser';
 }

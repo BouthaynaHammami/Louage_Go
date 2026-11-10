@@ -721,5 +721,64 @@
   "driverReportSuccess": "تم إرسال البلاغ إلى الركاب.",
   "driverNavigateTitle": "الاتجاه إلى المحطة",
   "driverNavigateOpen": "فتح في الخرائط",
-  "driverNavigateNoCoords": "إحداثيات المحطة غير متوفرة."
+  "driverNavigateNoCoords": "إحداثيات المحطة غير متوفرة.",
+  "routeToStationTitle": "المسافة إلى محطة الانطلاق",
+  "routeDistanceFromStation": "تبعد {distance} عن محطة الانطلاق",
+  "@routeDistanceFromStation": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationByCar": "≈ {duration} بالسيارة",
+  "@routeDurationByCar": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDistanceMeters": "{meters} م",
+  "@routeDistanceMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDistanceKilometers": "{kilometers} كم",
+  "@routeDistanceKilometers": {
+    "placeholders": {
+      "kilometers": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationMinutes": "{minutes} دقيقة",
+  "@routeDurationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationHours": "{hours} س {minutes}",
+  "@routeDurationHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "routeArrivedAtStation": "لقد وصلت إلى المحطة",
+  "routeErrorNetwork": "تعذر الاتصال بخدمة تحديد المسار.",
+  "routeErrorTimeout": "استغرق حساب المسار وقتًا طويلاً.",
+  "routeErrorNoRoute": "لم يتم العثور على مسار بالسيارة.",
+  "routeErrorInvalidResponse": "أعادت خدمة تحديد المسار استجابة غير صالحة.",
+  "routeRetry": "إعادة المحاولة",
+  "routeRefresh": "تحديث"
 }

@@ -12,6 +12,7 @@ import '../../../../core/widgets/status_chip.dart';
 import '../../../../features/reviews/presentation/providers/reviews_provider.dart';
 import '../../../../features/reviews/presentation/widgets/review_stars.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../widgets/route_to_station_card.dart';
 import '../providers/trip_search_results_provider.dart';
 
 class LouageDetailScreen extends ConsumerWidget {
@@ -224,6 +225,10 @@ class LouageDetailScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
+                if (from != null) ...[
+                  RouteToStationCard(station: from),
+                  const SizedBox(height: 14),
+                ],
                 AppCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

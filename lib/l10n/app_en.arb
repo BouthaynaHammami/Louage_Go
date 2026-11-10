@@ -721,5 +721,64 @@
   "driverReportSuccess": "Report sent to passengers.",
   "driverNavigateTitle": "Route to station",
   "driverNavigateOpen": "Open in Maps",
-  "driverNavigateNoCoords": "Station coordinates unavailable."
+  "driverNavigateNoCoords": "Station coordinates unavailable.",
+  "routeToStationTitle": "Distance to departure station",
+  "routeDistanceFromStation": "You are {distance} from the departure station",
+  "@routeDistanceFromStation": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationByCar": "≈ {duration} by car",
+  "@routeDurationByCar": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDistanceMeters": "{meters} m",
+  "@routeDistanceMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDistanceKilometers": "{kilometers} km",
+  "@routeDistanceKilometers": {
+    "placeholders": {
+      "kilometers": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationMinutes": "{minutes} min",
+  "@routeDurationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationHours": "{hours} h {minutes}",
+  "@routeDurationHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "routeArrivedAtStation": "You have arrived at the station",
+  "routeErrorNetwork": "Could not connect to the routing service.",
+  "routeErrorTimeout": "The route calculation took too long.",
+  "routeErrorNoRoute": "No driving route was found.",
+  "routeErrorInvalidResponse": "The routing service returned an invalid response.",
+  "routeRetry": "Retry",
+  "routeRefresh": "Refresh"
 }

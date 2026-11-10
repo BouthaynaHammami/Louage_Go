@@ -3729,6 +3729,90 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Coordonnées de la station indisponibles.'**
   String get driverNavigateNoCoords;
+
+  /// No description provided for @routeToStationTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Distance jusqu’à la station de départ'**
+  String get routeToStationTitle;
+
+  /// No description provided for @routeDistanceFromStation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous êtes à {distance} de la station de départ'**
+  String routeDistanceFromStation(String distance);
+
+  /// No description provided for @routeDurationByCar.
+  ///
+  /// In fr, this message translates to:
+  /// **'≈ {duration} en voiture'**
+  String routeDurationByCar(String duration);
+
+  /// No description provided for @routeDistanceMeters.
+  ///
+  /// In fr, this message translates to:
+  /// **'{meters} m'**
+  String routeDistanceMeters(String meters);
+
+  /// No description provided for @routeDistanceKilometers.
+  ///
+  /// In fr, this message translates to:
+  /// **'{kilometers} km'**
+  String routeDistanceKilometers(String kilometers);
+
+  /// No description provided for @routeDurationMinutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'{minutes} min'**
+  String routeDurationMinutes(String minutes);
+
+  /// No description provided for @routeDurationHours.
+  ///
+  /// In fr, this message translates to:
+  /// **'{hours} h {minutes}'**
+  String routeDurationHours(String hours, String minutes);
+
+  /// No description provided for @routeArrivedAtStation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous êtes arrivé à la station'**
+  String get routeArrivedAtStation;
+
+  /// No description provided for @routeErrorNetwork.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de se connecter au service d’itinéraire.'**
+  String get routeErrorNetwork;
+
+  /// No description provided for @routeErrorTimeout.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le calcul de l’itinéraire a pris trop de temps.'**
+  String get routeErrorTimeout;
+
+  /// No description provided for @routeErrorNoRoute.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun itinéraire en voiture n’a été trouvé.'**
+  String get routeErrorNoRoute;
+
+  /// No description provided for @routeErrorInvalidResponse.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le service d’itinéraire a renvoyé une réponse invalide.'**
+  String get routeErrorInvalidResponse;
+
+  /// No description provided for @routeRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get routeRetry;
+
+  /// No description provided for @routeRefresh.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actualiser'**
+  String get routeRefresh;
 }
 
 class _AppLocalizationsDelegate

@@ -166,7 +166,7 @@ class _IntroScreenState extends State<IntroScreen>
                   color: Colors.black,
                   child: SizedBox.expand(),
                 ),
-X
+
               // ── Logo + bouton ──────────────────────────────────────
               if (_uiFade.value > 0)
                 Positioned(

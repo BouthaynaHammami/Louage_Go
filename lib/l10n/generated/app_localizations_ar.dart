@@ -1928,4 +1928,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get driverNavigateNoCoords => 'إحداثيات المحطة غير متوفرة.';
+
+  @override
+  String get routeToStationTitle => 'المسافة إلى محطة الانطلاق';
+
+  @override
+  String routeDistanceFromStation(String distance) {
+    return 'تبعد $distance عن محطة الانطلاق';
+  }
+
+  @override
+  String routeDurationByCar(String duration) {
+    return '≈ $duration بالسيارة';
+  }
+
+  @override
+  String routeDistanceMeters(String meters) {
+    return '$meters م';
+  }
+
+  @override
+  String routeDistanceKilometers(String kilometers) {
+    return '$kilometers كم';
+  }
+
+  @override
+  String routeDurationMinutes(String minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String routeDurationHours(String hours, String minutes) {
+    return '$hours س $minutes';
+  }
+
+  @override
+  String get routeArrivedAtStation => 'لقد وصلت إلى المحطة';
+
+  @override
+  String get routeErrorNetwork => 'تعذر الاتصال بخدمة تحديد المسار.';
+
+  @override
+  String get routeErrorTimeout => 'استغرق حساب المسار وقتًا طويلاً.';
+
+  @override
+  String get routeErrorNoRoute => 'لم يتم العثور على مسار بالسيارة.';
+
+  @override
+  String get routeErrorInvalidResponse =>
+      'أعادت خدمة تحديد المسار استجابة غير صالحة.';
+
+  @override
+  String get routeRetry => 'إعادة المحاولة';
+
+  @override
+  String get routeRefresh => 'تحديث';
 }

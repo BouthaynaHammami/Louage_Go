@@ -728,5 +728,64 @@
   "driverReportSuccess": "Signalement envoyé aux passagers.",
   "driverNavigateTitle": "Itinéraire vers la station",
   "driverNavigateOpen": "Ouvrir dans Maps",
-  "driverNavigateNoCoords": "Coordonnées de la station indisponibles."
+  "driverNavigateNoCoords": "Coordonnées de la station indisponibles.",
+  "routeToStationTitle": "Distance jusqu’à la station de départ",
+  "routeDistanceFromStation": "Vous êtes à {distance} de la station de départ",
+  "@routeDistanceFromStation": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationByCar": "≈ {duration} en voiture",
+  "@routeDurationByCar": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDistanceMeters": "{meters} m",
+  "@routeDistanceMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDistanceKilometers": "{kilometers} km",
+  "@routeDistanceKilometers": {
+    "placeholders": {
+      "kilometers": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationMinutes": "{minutes} min",
+  "@routeDurationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "routeDurationHours": "{hours} h {minutes}",
+  "@routeDurationHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "routeArrivedAtStation": "Vous êtes arrivé à la station",
+  "routeErrorNetwork": "Impossible de se connecter au service d’itinéraire.",
+  "routeErrorTimeout": "Le calcul de l’itinéraire a pris trop de temps.",
+  "routeErrorNoRoute": "Aucun itinéraire en voiture n’a été trouvé.",
+  "routeErrorInvalidResponse": "Le service d’itinéraire a renvoyé une réponse invalide.",
+  "routeRetry": "Réessayer",
+  "routeRefresh": "Actualiser"
 }

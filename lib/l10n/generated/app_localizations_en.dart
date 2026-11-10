@@ -1955,4 +1955,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverNavigateNoCoords => 'Station coordinates unavailable.';
+
+  @override
+  String get routeToStationTitle => 'Distance to departure station';
+
+  @override
+  String routeDistanceFromStation(String distance) {
+    return 'You are $distance from the departure station';
+  }
+
+  @override
+  String routeDurationByCar(String duration) {
+    return '≈ $duration by car';
+  }
+
+  @override
+  String routeDistanceMeters(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String routeDistanceKilometers(String kilometers) {
+    return '$kilometers km';
+  }
+
+  @override
+  String routeDurationMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String routeDurationHours(String hours, String minutes) {
+    return '$hours h $minutes';
+  }
+
+  @override
+  String get routeArrivedAtStation => 'You have arrived at the station';
+
+  @override
+  String get routeErrorNetwork => 'Could not connect to the routing service.';
+
+  @override
+  String get routeErrorTimeout => 'The route calculation took too long.';
+
+  @override
+  String get routeErrorNoRoute => 'No driving route was found.';
+
+  @override
+  String get routeErrorInvalidResponse =>
+      'The routing service returned an invalid response.';
+
+  @override
+  String get routeRetry => 'Retry';
+
+  @override
+  String get routeRefresh => 'Refresh';
 }
