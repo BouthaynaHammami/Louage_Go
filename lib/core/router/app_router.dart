@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,10 +79,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/intro',
         name: 'intro',
-        pageBuilder: (context, state) => _fadeScaleTransitionPage(
-          state: state,
-          child: const IntroScreen(),
-        ),
+        pageBuilder: (context, state) =>
+            _fadeScaleTransitionPage(state: state, child: const IntroScreen()),
       ),
       // ── Slides créatifs (après la vidéo, avant le splash) ─────────────────
       GoRoute(
@@ -440,9 +439,7 @@ CustomTransitionPage<void> _slideUpTransitionPage({
       final slideIn = Tween<Offset>(
         begin: const Offset(0, 0.06),
         end: Offset.zero,
-      ).animate(
-        CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-      );
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
       return FadeTransition(
         opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
         child: SlideTransition(position: slideIn, child: child),
@@ -495,20 +492,19 @@ CustomTransitionPage<void> _slideTransitionPage({
       final enterSlide = Tween<Offset>(
         begin: Offset(isRtl ? -1.0 : 1.0, 0),
         end: Offset.zero,
-      ).animate(
-        CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-      );
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
 
       // Page sortante : légère parallaxe vers la gauche
-      final exitSlide = Tween<Offset>(
-        begin: Offset.zero,
-        end: Offset(isRtl ? 0.25 : -0.25, 0),
-      ).animate(
-        CurvedAnimation(
-          parent: secondaryAnimation,
-          curve: Curves.easeInCubic,
-        ),
-      );
+      final exitSlide =
+          Tween<Offset>(
+            begin: Offset.zero,
+            end: Offset(isRtl ? 0.25 : -0.25, 0),
+          ).animate(
+            CurvedAnimation(
+              parent: secondaryAnimation,
+              curve: Curves.easeInCubic,
+            ),
+          );
 
       return SlideTransition(
         position: exitSlide,
@@ -711,27 +707,26 @@ class _BottomNavigationShell extends StatelessWidget {
     // Find the centre FAB item index (driver scan = centre, passenger = none)
     final fabIndex = passenger
         ? -1
-        : destinations.indexWhere((d) => d.name.contains('Scan') || d.name.contains('scan'));
+        : destinations.indexWhere(
+            (d) => d.name.contains('Scan') || d.name.contains('scan'),
+          );
 
     final items = destinations.asMap().entries.map((e) {
       final d = e.value;
       return PremiumNavItem(
-        icon:         d.icon,
+        icon: d.icon,
         selectedIcon: d.selectedIcon,
-        label:        d.label,
-        isFab:        e.key == fabIndex,
+        label: d.label,
+        isFab: e.key == fabIndex,
       );
     }).toList();
 
-    return Scaffold(
-      extendBody: true,
-      body: child,
-      bottomNavigationBar: PremiumNavBar(
-        items:       items,
-        currentIndex: current,
-        isPassenger: passenger,
-        onTap: (i) => context.goNamed(destinations[i].name),
-      ),
+    return PremiumNavScaffold(
+      items: items,
+      currentIndex: current,
+      isPassenger: passenger,
+      onTap: (i) => context.goNamed(destinations[i].name),
+      child: child,
     );
   }
 }
