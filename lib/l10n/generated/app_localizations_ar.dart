@@ -1918,32 +1918,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get docHelpContact => 'تواصل مع الدعم';
 
   @override
-  String get docDebugTitle => 'محاكاة المشرف (تجريبي)';
-
-  @override
-  String get docDebugApprove => 'الموافقة على جميع الوثائق';
-
-  @override
-  String get docDebugReject => 'رفض وثيقة';
-
-  @override
-  String get docDebugRejectReason => 'السبب (مثال: صورة غير واضحة)';
-
-  @override
-  String get docDebugNotifApproved => 'تم التحقق من الحساب';
-
-  @override
-  String get docDebugNotifApprovedBody =>
-      'تهانينا! تم التحقق من حساب السائق الخاص بك.';
-
-  @override
-  String get docDebugNotifRejected => 'تم رفض وثيقة';
-
-  @override
-  String get docDebugNotifRejectedBody =>
-      'تم رفض إحدى وثائقك. تحقق من السبب وأعد الإرسال.';
-
-  @override
   String get docValidationStatusPending => 'الحساب قيد الانتظار';
 
   @override

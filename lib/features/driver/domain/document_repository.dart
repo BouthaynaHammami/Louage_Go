@@ -15,17 +15,4 @@ abstract interface class DocumentRepository {
   /// Upload all documents and automatically approve the driver account.
   /// No admin action is required — validation is immediate.
   Future<void> submitAll(String driverId);
-
-  // ── Admin / debug helpers (used only in kDebugMode) ───────────────────────
-
-  /// Simulate admin decision: approve all docs and set validationStatus to
-  /// 'approved'.
-  Future<void> debugApproveAll(String driverId);
-
-  /// Simulate admin refusing [documentId] with [reason].
-  Future<void> debugRejectDocument({
-    required String driverId,
-    required String documentId,
-    required String reason,
-  });
 }

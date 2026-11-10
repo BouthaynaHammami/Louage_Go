@@ -1962,32 +1962,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get docHelpContact => 'Contacter le support';
 
   @override
-  String get docDebugTitle => 'Simulation admin (debug)';
-
-  @override
-  String get docDebugApprove => 'Approuver tous les documents';
-
-  @override
-  String get docDebugReject => 'Refuser un document';
-
-  @override
-  String get docDebugRejectReason => 'Motif (ex : photo floue)';
-
-  @override
-  String get docDebugNotifApproved => 'Compte validé';
-
-  @override
-  String get docDebugNotifApprovedBody =>
-      'Félicitations ! Votre compte chauffeur a été validé.';
-
-  @override
-  String get docDebugNotifRejected => 'Document refusé';
-
-  @override
-  String get docDebugNotifRejectedBody =>
-      'Un de vos documents a été refusé. Vérifiez le motif et renvoyez-le.';
-
-  @override
   String get docValidationStatusPending => 'Compte en attente';
 
   @override

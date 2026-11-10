@@ -716,15 +716,6 @@
   "docHelpFaq": "Frequently asked questions",
   "docHelpContact": "Contact support",
 
-  "docDebugTitle": "Admin simulation (debug)",
-  "docDebugApprove": "Approve all documents",
-  "docDebugReject": "Reject a document",
-  "docDebugRejectReason": "Reason (e.g. blurry photo)",
-  "docDebugNotifApproved": "Account validated",
-  "docDebugNotifApprovedBody": "Congratulations! Your driver account has been validated.",
-  "docDebugNotifRejected": "Document rejected",
-  "docDebugNotifRejectedBody": "One of your documents was rejected. Check the reason and resend it.",
-
   "docValidationStatusPending": "Account pending",
   "docValidationStatusSubmitted": "Documents sent — awaiting validation",
   "docValidationStatusApproved": "Account validated",

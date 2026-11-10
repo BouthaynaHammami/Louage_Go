@@ -3700,54 +3700,6 @@ abstract class AppLocalizations {
   /// **'Contacter le support'**
   String get docHelpContact;
 
-  /// No description provided for @docDebugTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Simulation admin (debug)'**
-  String get docDebugTitle;
-
-  /// No description provided for @docDebugApprove.
-  ///
-  /// In fr, this message translates to:
-  /// **'Approuver tous les documents'**
-  String get docDebugApprove;
-
-  /// No description provided for @docDebugReject.
-  ///
-  /// In fr, this message translates to:
-  /// **'Refuser un document'**
-  String get docDebugReject;
-
-  /// No description provided for @docDebugRejectReason.
-  ///
-  /// In fr, this message translates to:
-  /// **'Motif (ex : photo floue)'**
-  String get docDebugRejectReason;
-
-  /// No description provided for @docDebugNotifApproved.
-  ///
-  /// In fr, this message translates to:
-  /// **'Compte validé'**
-  String get docDebugNotifApproved;
-
-  /// No description provided for @docDebugNotifApprovedBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'Félicitations ! Votre compte chauffeur a été validé.'**
-  String get docDebugNotifApprovedBody;
-
-  /// No description provided for @docDebugNotifRejected.
-  ///
-  /// In fr, this message translates to:
-  /// **'Document refusé'**
-  String get docDebugNotifRejected;
-
-  /// No description provided for @docDebugNotifRejectedBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'Un de vos documents a été refusé. Vérifiez le motif et renvoyez-le.'**
-  String get docDebugNotifRejectedBody;
-
   /// No description provided for @docValidationStatusPending.
   ///
   /// In fr, this message translates to:

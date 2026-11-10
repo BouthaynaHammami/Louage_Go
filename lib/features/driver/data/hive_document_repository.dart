@@ -10,11 +10,9 @@ import '../../../models/driver_profile.dart';
 import '../domain/document_repository.dart';
 
 class HiveDocumentRepository implements DocumentRepository {
-  HiveDocumentRepository({
-    Box<Map>? documentsBox,
-    Box<Map>? driversBox,
-  })  : _documents = documentsBox ?? HiveService.documents,
-        _drivers = driversBox ?? HiveService.drivers;
+  HiveDocumentRepository({Box<Map>? documentsBox, Box<Map>? driversBox})
+    : _documents = documentsBox ?? HiveService.documents,
+      _drivers = driversBox ?? HiveService.drivers;
 
   final Box<Map> _documents;
   final Box<Map> _drivers;
@@ -109,41 +107,6 @@ class HiveDocumentRepository implements DocumentRepository {
     await _setValidationStatus(driverId, 'approved');
   }
 
-  // ── Debug helpers ──────────────────────────────────────────────────────────
-
-  @override
-  Future<void> debugApproveAll(String driverId) async {
-    for (final doc in _docsFor(driverId)) {
-      await _documents.put(
-        doc.id,
-        doc.copyWith(status: DocumentStatus.validated.name).toMap(),
-      );
-    }
-    await _setValidationStatus(driverId, 'approved');
-  }
-
-  @override
-  Future<void> debugRejectDocument({
-    required String driverId,
-    required String documentId,
-    required String reason,
-  }) async {
-    final map = _documents.get(documentId);
-    if (map == null) return;
-    final doc = DriverDocument.fromMap(map);
-    await _documents.put(
-      documentId,
-      doc
-          .copyWith(
-            status: DocumentStatus.rejected.name,
-            rejectionReason: reason,
-          )
-          .toMap(),
-    );
-    // Revert driver status so the pending screen is shown again
-    await _setValidationStatus(driverId, 'pending');
-  }
-
   // ── Private helpers ────────────────────────────────────────────────────────
 
   List<DriverDocument> _docsFor(String driverId) => _documents.values
@@ -170,8 +133,7 @@ class HiveDocumentRepository implements DocumentRepository {
     String typeName,
   ) async {
     final appDir = await getApplicationDocumentsDirectory();
-    final destDir =
-        Directory('${appDir.path}/driver_docs/$driverId');
+    final destDir = Directory('${appDir.path}/driver_docs/$driverId');
     await destDir.create(recursive: true);
     final ext = source.contains('.') ? source.split('.').last : 'jpg';
     final destPath = '${destDir.path}/${typeName}_${_uuid.v4()}.$ext';

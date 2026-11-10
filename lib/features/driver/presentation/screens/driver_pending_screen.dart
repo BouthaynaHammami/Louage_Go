@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +9,6 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../features/auth/auth_providers.dart';
-import '../../../../features/notifications/presentation/providers/notifications_provider.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/driver_document.dart';
 import '../../../../models/driver_profile.dart';
@@ -153,12 +151,6 @@ class _PendingBody extends ConsumerWidget {
 
             // ── Help section ────────────────────────────────────────────
             _HelpSection(),
-
-            // ── Debug panel ─────────────────────────────────────────────
-            if (kDebugMode) ...[
-              const SizedBox(height: 32),
-              _DebugPanel(driverId: driverId, documents: documents),
-            ],
           ],
         ),
       ),
@@ -781,150 +773,5 @@ class _HelpSection extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Debug panel (visible only in kDebugMode)
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _DebugPanel extends ConsumerStatefulWidget {
-  const _DebugPanel({required this.driverId, required this.documents});
-
-  final String driverId;
-  final List<DriverDocument> documents;
-
-  @override
-  ConsumerState<_DebugPanel> createState() => _DebugPanelState();
-}
-
-class _DebugPanelState extends ConsumerState<_DebugPanel> {
-  DriverDocument? _docToReject;
-  final _reasonController = TextEditingController();
-
-  @override
-  void dispose() {
-    _reasonController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = Theme.of(context).colorScheme;
-    final sentDocs = widget.documents
-        .where((d) => d.status == DocumentStatus.sent.name)
-        .toList();
-
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.bug_report_outlined, color: colors.secondary),
-              const SizedBox(width: 8),
-              Text(
-                l10n.docDebugTitle,
-                style: Theme.of(context).textTheme.titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Approve all
-          AppButton(
-            label: l10n.docDebugApprove,
-            icon: Icons.verified_rounded,
-            onPressed: () => _approveAll(context),
-          ),
-          const SizedBox(height: 10),
-          // Reject a document
-          if (sentDocs.isNotEmpty) ...[
-            Text(
-              l10n.docDebugReject,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: 6),
-            DropdownButtonFormField<DriverDocument>(
-              decoration: InputDecoration(labelText: l10n.docSectionTitle),
-              items: [
-                for (final d in sentDocs)
-                  DropdownMenuItem(value: d, child: Text(d.type)),
-              ],
-              onChanged: (v) => setState(() => _docToReject = v),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _reasonController,
-              decoration: InputDecoration(
-                labelText: l10n.docDebugRejectReason,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 8),
-            AppButton(
-              label: l10n.docDebugReject,
-              icon: Icons.cancel_outlined,
-              variant: AppButtonVariant.secondary,
-              onPressed: _docToReject == null
-                  ? null
-                  : () => _rejectDoc(context),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Future<void> _approveAll(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
-    await ref.read(documentRepositoryProvider).debugApproveAll(widget.driverId);
-    // Fire a local notification
-    try {
-      await ref
-          .read(notificationRepositoryProvider)
-          .create(
-            userId: widget.driverId,
-            title: l10n.docDebugNotifApproved,
-            message: l10n.docDebugNotifApprovedBody,
-            type: 'driver_validation',
-            route: '/driver/home',
-          );
-    } catch (_) {}
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(l10n.docDebugNotifApproved)));
-  }
-
-  Future<void> _rejectDoc(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
-    final doc = _docToReject;
-    if (doc == null) return;
-    await ref
-        .read(documentRepositoryProvider)
-        .debugRejectDocument(
-          driverId: widget.driverId,
-          documentId: doc.id,
-          reason: _reasonController.text.trim().isEmpty
-              ? 'Document illisible'
-              : _reasonController.text.trim(),
-        );
-    try {
-      await ref
-          .read(notificationRepositoryProvider)
-          .create(
-            userId: widget.driverId,
-            title: l10n.docDebugNotifRejected,
-            message: l10n.docDebugNotifRejectedBody,
-            type: 'driver_validation',
-            route: '/driver/documents',
-          );
-    } catch (_) {}
-    if (!context.mounted) return;
-    setState(() => _docToReject = null);
-    _reasonController.clear();
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(l10n.docDebugNotifRejected)));
   }
 }

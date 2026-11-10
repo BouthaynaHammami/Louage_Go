@@ -1946,32 +1946,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get docHelpContact => 'Contact support';
 
   @override
-  String get docDebugTitle => 'Admin simulation (debug)';
-
-  @override
-  String get docDebugApprove => 'Approve all documents';
-
-  @override
-  String get docDebugReject => 'Reject a document';
-
-  @override
-  String get docDebugRejectReason => 'Reason (e.g. blurry photo)';
-
-  @override
-  String get docDebugNotifApproved => 'Account validated';
-
-  @override
-  String get docDebugNotifApprovedBody =>
-      'Congratulations! Your driver account has been validated.';
-
-  @override
-  String get docDebugNotifRejected => 'Document rejected';
-
-  @override
-  String get docDebugNotifRejectedBody =>
-      'One of your documents was rejected. Check the reason and resend it.';
-
-  @override
   String get docValidationStatusPending => 'Account pending';
 
   @override

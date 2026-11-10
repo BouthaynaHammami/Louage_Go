@@ -716,15 +716,6 @@
   "docHelpFaq": "الأسئلة الشائعة",
   "docHelpContact": "تواصل مع الدعم",
 
-  "docDebugTitle": "محاكاة المشرف (تجريبي)",
-  "docDebugApprove": "الموافقة على جميع الوثائق",
-  "docDebugReject": "رفض وثيقة",
-  "docDebugRejectReason": "السبب (مثال: صورة غير واضحة)",
-  "docDebugNotifApproved": "تم التحقق من الحساب",
-  "docDebugNotifApprovedBody": "تهانينا! تم التحقق من حساب السائق الخاص بك.",
-  "docDebugNotifRejected": "تم رفض وثيقة",
-  "docDebugNotifRejectedBody": "تم رفض إحدى وثائقك. تحقق من السبب وأعد الإرسال.",
-
   "docValidationStatusPending": "الحساب قيد الانتظار",
   "docValidationStatusSubmitted": "تم إرسال الوثائق — في انتظار التحقق",
   "docValidationStatusApproved": "تم التحقق من الحساب",

@@ -723,15 +723,6 @@
   "docHelpFaq": "Questions fréquentes",
   "docHelpContact": "Contacter le support",
 
-  "docDebugTitle": "Simulation admin (debug)",
-  "docDebugApprove": "Approuver tous les documents",
-  "docDebugReject": "Refuser un document",
-  "docDebugRejectReason": "Motif (ex : photo floue)",
-  "docDebugNotifApproved": "Compte validé",
-  "docDebugNotifApprovedBody": "Félicitations ! Votre compte chauffeur a été validé.",
-  "docDebugNotifRejected": "Document refusé",
-  "docDebugNotifRejectedBody": "Un de vos documents a été refusé. Vérifiez le motif et renvoyez-le.",
-
   "docValidationStatusPending": "Compte en attente",
   "docValidationStatusSubmitted": "Documents envoyés — en attente de validation",
   "docValidationStatusApproved": "Compte validé",
