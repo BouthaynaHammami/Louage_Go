@@ -19,6 +19,7 @@ import '../../../../features/driver/presentation/providers/driver_home_provider.
 import '../../../../features/driver/presentation/providers/louage_provider.dart';
 import '../widgets/driver_dashboard_stats.dart';
 import '../widgets/driver_seat_map_card.dart';
+import '../widgets/driver_trip_weather_card.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/app_user.dart';
 import '../../../../models/booking.dart';
@@ -267,6 +268,17 @@ class _ValidatedDashboard extends ConsumerWidget {
                           louage: louage,
                           bookings: dashboard.bookings,
                         ),
+                        if (nextTrip != null) ...[
+                          const SizedBox(height: 12),
+                          DriverTripWeather(
+                            trip: nextTrip,
+                            title: l10n.driverWeatherNextTrip,
+                            onTap: () => context.pushNamed(
+                              'driverTripDetail',
+                              pathParameters: {'tripId': nextTrip.id},
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 20),
 
                         // ── 4. Quick actions ────────────────────────────

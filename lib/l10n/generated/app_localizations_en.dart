@@ -2192,6 +2192,46 @@ class AppLocalizationsEn extends AppLocalizations {
       'The routing service returned an invalid response.';
 
   @override
+  String get driverWeatherTitle => 'Trip weather';
+
+  @override
+  String get driverWeatherNextTrip => 'Next trip weather';
+
+  @override
+  String get driverWeatherDeparture => 'Departure';
+
+  @override
+  String get driverWeatherArrival => 'Arrival';
+
+  @override
+  String get driverWeatherUnavailable => 'Weather unavailable right now.';
+
+  @override
+  String get driverWeatherClear => 'Clear';
+
+  @override
+  String get driverWeatherCloudy => 'Cloudy';
+
+  @override
+  String get driverWeatherFog => 'Fog';
+
+  @override
+  String get driverWeatherRain => 'Rain';
+
+  @override
+  String get driverWeatherStorm => 'Thunderstorm';
+
+  @override
+  String get driverWeatherSnow => 'Snow';
+
+  @override
+  String get driverWeatherAlert =>
+      'Difficult conditions expected: drive carefully.';
+
+  @override
+  String get driverWeatherCredit => 'Weather data: Open-Meteo.com';
+
+  @override
   String get routeRetry => 'Retry';
 
   @override

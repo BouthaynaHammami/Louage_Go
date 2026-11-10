@@ -15,6 +15,7 @@ import '../../../../models/route_line.dart';
 import '../../../../models/station.dart';
 import '../../../../models/trip.dart';
 import '../widgets/driver_app_bar.dart';
+import '../widgets/driver_trip_weather_card.dart';
 import '../providers/louage_provider.dart';
 
 class DriverTripDetailScreen extends ConsumerWidget {
@@ -87,6 +88,8 @@ class DriverTripDetailScreen extends ConsumerWidget {
                             padding: const EdgeInsetsDirectional.all(16),
                             children: [
                               _TripSummary(trip: trip),
+                              const SizedBox(height: 12),
+                              DriverTripWeather(trip: trip),
                               const SizedBox(height: 12),
                               louageAsync.when(
                                 loading: () => const LinearProgressIndicator(),

@@ -9,7 +9,9 @@ import 'package:louage_go/features/driver/domain/driver_repository.dart';
 import 'package:louage_go/features/driver/domain/entities/driver_dashboard_data.dart';
 import 'package:louage_go/features/driver/domain/entities/driver_passenger.dart';
 import 'package:louage_go/features/driver/presentation/providers/driver_home_provider.dart';
+import 'package:louage_go/features/driver/presentation/providers/trip_weather_provider.dart';
 import 'package:louage_go/features/driver/presentation/screens/driver_home_screen.dart';
+import 'package:louage_go/core/services/weather_service.dart';
 import 'package:louage_go/l10n/generated/app_localizations.dart';
 import 'package:louage_go/models/app_user.dart';
 import 'package:louage_go/models/driver_profile.dart';
@@ -127,6 +129,7 @@ Widget _driverApp({
     currentUserProvider.overrideWith((ref) => Stream.value(driver)),
     driverDashboardProvider.overrideWith((ref, id) => Stream.value(dashboard)),
     driverRepositoryProvider.overrideWithValue(repository),
+    weatherServiceProvider.overrideWithValue(_FakeWeatherService()),
   ],
   child: MaterialApp.router(
     locale: const Locale('fr'),
@@ -134,8 +137,25 @@ Widget _driverApp({
     supportedLocales: AppLocalizations.supportedLocales,
     theme: AppTheme.light,
     routerConfig: router ?? _driverRouter(),
+    builder: (context, child) => MediaQuery(
+      data: MediaQuery.of(context).copyWith(disableAnimations: true),
+      child: child!,
+    ),
   ),
 );
+
+class _FakeWeatherService implements WeatherService {
+  @override
+  Future<WeatherInfo> getWeather({
+    required double lat,
+    required double lng,
+    DateTime? at,
+  }) async => const WeatherInfo(
+    temperatureC: 20,
+    windKmh: 10,
+    weatherCode: 0,
+  );
+}
 
 GoRouter _driverRouter() => GoRouter(
   initialLocation: '/driver/home',

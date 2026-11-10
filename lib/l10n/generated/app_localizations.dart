@@ -4132,6 +4132,84 @@ abstract class AppLocalizations {
   /// **'Le service d’itinéraire a renvoyé une réponse invalide.'**
   String get routeErrorInvalidResponse;
 
+  /// No description provided for @driverWeatherTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Météo du trajet'**
+  String get driverWeatherTitle;
+
+  /// No description provided for @driverWeatherNextTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Météo du prochain trajet'**
+  String get driverWeatherNextTrip;
+
+  /// No description provided for @driverWeatherDeparture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Départ'**
+  String get driverWeatherDeparture;
+
+  /// No description provided for @driverWeatherArrival.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrivée'**
+  String get driverWeatherArrival;
+
+  /// No description provided for @driverWeatherUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Météo indisponible pour le moment.'**
+  String get driverWeatherUnavailable;
+
+  /// No description provided for @driverWeatherClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dégagé'**
+  String get driverWeatherClear;
+
+  /// No description provided for @driverWeatherCloudy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nuageux'**
+  String get driverWeatherCloudy;
+
+  /// No description provided for @driverWeatherFog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Brouillard'**
+  String get driverWeatherFog;
+
+  /// No description provided for @driverWeatherRain.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pluie'**
+  String get driverWeatherRain;
+
+  /// No description provided for @driverWeatherStorm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Orage'**
+  String get driverWeatherStorm;
+
+  /// No description provided for @driverWeatherSnow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Neige'**
+  String get driverWeatherSnow;
+
+  /// No description provided for @driverWeatherAlert.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions difficiles prévues : roulez avec prudence.'**
+  String get driverWeatherAlert;
+
+  /// No description provided for @driverWeatherCredit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données météo : Open-Meteo.com'**
+  String get driverWeatherCredit;
+
   /// No description provided for @routeRetry.
   ///
   /// In fr, this message translates to:

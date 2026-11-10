@@ -2212,6 +2212,46 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le service d’itinéraire a renvoyé une réponse invalide.';
 
   @override
+  String get driverWeatherTitle => 'Météo du trajet';
+
+  @override
+  String get driverWeatherNextTrip => 'Météo du prochain trajet';
+
+  @override
+  String get driverWeatherDeparture => 'Départ';
+
+  @override
+  String get driverWeatherArrival => 'Arrivée';
+
+  @override
+  String get driverWeatherUnavailable => 'Météo indisponible pour le moment.';
+
+  @override
+  String get driverWeatherClear => 'Dégagé';
+
+  @override
+  String get driverWeatherCloudy => 'Nuageux';
+
+  @override
+  String get driverWeatherFog => 'Brouillard';
+
+  @override
+  String get driverWeatherRain => 'Pluie';
+
+  @override
+  String get driverWeatherStorm => 'Orage';
+
+  @override
+  String get driverWeatherSnow => 'Neige';
+
+  @override
+  String get driverWeatherAlert =>
+      'Conditions difficiles prévues : roulez avec prudence.';
+
+  @override
+  String get driverWeatherCredit => 'Données météo : Open-Meteo.com';
+
+  @override
   String get routeRetry => 'Réessayer';
 
   @override

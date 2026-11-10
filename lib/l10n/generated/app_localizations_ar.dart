@@ -2158,6 +2158,45 @@ class AppLocalizationsAr extends AppLocalizations {
       'أعادت خدمة تحديد المسار استجابة غير صالحة.';
 
   @override
+  String get driverWeatherTitle => 'طقس الرحلة';
+
+  @override
+  String get driverWeatherNextTrip => 'طقس الرحلة القادمة';
+
+  @override
+  String get driverWeatherDeparture => 'المغادرة';
+
+  @override
+  String get driverWeatherArrival => 'الوصول';
+
+  @override
+  String get driverWeatherUnavailable => 'الطقس غير متاح حاليًا.';
+
+  @override
+  String get driverWeatherClear => 'صافٍ';
+
+  @override
+  String get driverWeatherCloudy => 'غائم';
+
+  @override
+  String get driverWeatherFog => 'ضباب';
+
+  @override
+  String get driverWeatherRain => 'مطر';
+
+  @override
+  String get driverWeatherStorm => 'عاصفة رعدية';
+
+  @override
+  String get driverWeatherSnow => 'ثلج';
+
+  @override
+  String get driverWeatherAlert => 'ظروف صعبة متوقعة: قُد بحذر.';
+
+  @override
+  String get driverWeatherCredit => 'بيانات الطقس: Open-Meteo.com';
+
+  @override
   String get routeRetry => 'إعادة المحاولة';
 
   @override
