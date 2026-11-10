@@ -37,3 +37,37 @@ final driverLouageStatsProvider =
           .watch(louageRepositoryProvider)
           .ratingAndCompletedTrips(driverId),
     );
+
+final createDriverTripControllerProvider =
+    AsyncNotifierProvider<CreateDriverTripController, Trip?>(
+      CreateDriverTripController.new,
+    );
+
+class CreateDriverTripController extends AsyncNotifier<Trip?> {
+  @override
+  Future<Trip?> build() async => null;
+
+  Future<Trip> createTrip({
+    required String driverId,
+    required String fromStationId,
+    required String toStationId,
+    required DateTime departureTime,
+  }) async {
+    state = const AsyncLoading();
+    try {
+      final trip = await ref.read(louageRepositoryProvider).createTrip(
+        driverId: driverId,
+        fromStationId: fromStationId,
+        toStationId: toStationId,
+        departureTime: departureTime,
+      );
+      state = AsyncData(trip);
+      ref.invalidate(driverTripsProvider(driverId));
+      ref.invalidate(driverLouageProvider(driverId));
+      return trip;
+    } catch (error, stackTrace) {
+      state = AsyncError(error, stackTrace);
+      rethrow;
+    }
+  }
+}

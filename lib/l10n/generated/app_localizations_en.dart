@@ -886,7 +886,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String driverDepartureTime(String time) {
-    return 'Departure at $time';
+    return 'Departure time';
   }
 
   @override
@@ -1362,9 +1362,80 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverTripPrice => 'Price per seat';
 
   @override
+  String get driverTripDuration => 'Duration';
+
+  @override
+  String get driverTripPreview => 'Trip preview';
+
+  @override
   String driverTripSeatsAvailable(String available, String total) {
     return '$available / $total seats available';
   }
+
+  @override
+  String get driverCreateTripTitle => 'New trip';
+
+  @override
+  String get driverCreateTripSubtitle =>
+      'Set your current station and destination.';
+
+  @override
+  String get driverDestination => 'Destination';
+
+  @override
+  String get driverDepartureDate => 'Departure date';
+
+  @override
+  String get driverPublishTrip => 'Publish trip';
+
+  @override
+  String get driverTripPublished =>
+      'The trip was published and is now visible to passengers.';
+
+  @override
+  String get driverTripCreationError =>
+      'Couldn\'t publish this trip. Check the details and try again.';
+
+  @override
+  String get driverTripSameStation =>
+      'Current station and destination must be different.';
+
+  @override
+  String get driverLouageMissing =>
+      'No louage is associated with this driver account.';
+
+  @override
+  String get driverLouageOutOfService =>
+      'This louage is out of service and cannot publish trips.';
+
+  @override
+  String get driverDepartureInPast => 'Departure time must be in the future.';
+
+  @override
+  String get driverDuplicateDeparture =>
+      'A trip is already scheduled at this time.';
+
+  @override
+  String get driverTripMissing => 'This trip could not be found.';
+
+  @override
+  String get driverTripNotWaiting => 'Only waiting trips can be cancelled.';
+
+  @override
+  String get driverCreateFirstTrip => 'Create my first trip';
+
+  @override
+  String get driverTripCancel => 'Cancel';
+
+  @override
+  String get driverTripCancelTitle => 'Cancel this trip?';
+
+  @override
+  String get driverTripCancelMessage =>
+      'This will remove the waiting trip from the passenger list.';
+
+  @override
+  String get driverTripCancelled => 'The trip was cancelled.';
 
   @override
   String get driverBookingsTitle => 'Bookings and passengers';

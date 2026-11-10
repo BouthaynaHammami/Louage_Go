@@ -871,7 +871,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String driverDepartureTime(String time) {
-    return 'موعد الانطلاق $time';
+    return 'وقت المغادرة';
   }
 
   @override
@@ -1341,9 +1341,78 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverTripPrice => 'السعر لكل مقعد';
 
   @override
+  String get driverTripDuration => 'المدة';
+
+  @override
+  String get driverTripPreview => 'معاينة الرحلة';
+
+  @override
   String driverTripSeatsAvailable(String available, String total) {
     return 'المقاعد المتاحة: $available من $total';
   }
+
+  @override
+  String get driverCreateTripTitle => 'رحلة جديدة';
+
+  @override
+  String get driverCreateTripSubtitle => 'حدد محطتك الحالية وجهتك.';
+
+  @override
+  String get driverDestination => 'الوجهة';
+
+  @override
+  String get driverDepartureDate => 'تاريخ المغادرة';
+
+  @override
+  String get driverPublishTrip => 'نشر الرحلة';
+
+  @override
+  String get driverTripPublished => 'تم نشر الرحلة وهي الآن مرئية للمسافرين.';
+
+  @override
+  String get driverTripCreationError =>
+      'تعذر نشر هذه الرحلة. تحقق من المعلومات وحاول مرة أخرى.';
+
+  @override
+  String get driverTripSameStation =>
+      'يجب أن تكون المحطة الحالية والوجهة مختلفتين.';
+
+  @override
+  String get driverLouageMissing => 'لا يوجد لواج مرتبط بحساب السائق هذا.';
+
+  @override
+  String get driverLouageOutOfService =>
+      'اللواج خارج الخدمة ولا يمكنه نشر الرحلات.';
+
+  @override
+  String get driverDepartureInPast => 'يجب أن يكون موعد المغادرة في المستقبل.';
+
+  @override
+  String get driverDuplicateDeparture =>
+      'توجد رحلة مقررة بالفعل في هذا الموعد.';
+
+  @override
+  String get driverTripMissing => 'تعذر العثور على هذه الرحلة.';
+
+  @override
+  String get driverTripNotWaiting =>
+      'يمكن إلغاء الرحلات التي ما زالت قيد الانتظار فقط.';
+
+  @override
+  String get driverCreateFirstTrip => 'إنشاء رحلتي الأولى';
+
+  @override
+  String get driverTripCancel => 'إلغاء';
+
+  @override
+  String get driverTripCancelTitle => 'إلغاء هذه الرحلة؟';
+
+  @override
+  String get driverTripCancelMessage =>
+      'سيؤدي هذا إلى حذف الرحلة في الانتظار من قائمة المسافرين.';
+
+  @override
+  String get driverTripCancelled => 'تم إلغاء الرحلة.';
 
   @override
   String get driverBookingsTitle => 'الحجوزات والركاب';

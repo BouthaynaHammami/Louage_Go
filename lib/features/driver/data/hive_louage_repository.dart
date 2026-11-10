@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:hive_ce/hive.dart';
 import 'package:uuid/uuid.dart';
@@ -8,6 +9,8 @@ import '../../../models/app_user.dart';
 import '../../../models/booking.dart';
 import '../../../models/louage.dart';
 import '../../../models/review.dart';
+import '../../../models/route_line.dart';
+import '../../../models/station.dart';
 import '../../../models/trip.dart';
 import '../domain/entities/driver_booking.dart';
 import '../domain/entities/ticket_validation_result.dart';
@@ -15,18 +18,24 @@ import '../domain/louage_repository.dart';
 
 class HiveLouageRepository implements LouageRepository {
   HiveLouageRepository({
+    Box<Map>? stationsBox,
+    Box<Map>? routesBox,
     Box<Map>? louagesBox,
     Box<Map>? tripsBox,
     Box<Map>? bookingsBox,
     Box<Map>? usersBox,
     Box<Map>? reviewsBox,
-  }) : _louages = louagesBox ?? HiveService.louages,
+  }) : _stations = stationsBox ?? HiveService.stations,
+       _routes = routesBox ?? HiveService.routes,
+       _louages = louagesBox ?? HiveService.louages,
        _trips = tripsBox ?? HiveService.trips,
        _bookings = bookingsBox ?? HiveService.bookings,
        _users = usersBox ?? HiveService.users,
        _reviews = reviewsBox ?? HiveService.reviews;
 
   static const _uuid = Uuid();
+  final Box<Map> _stations;
+  final Box<Map> _routes;
   final Box<Map> _louages;
   final Box<Map> _trips;
   final Box<Map> _bookings;
@@ -88,6 +97,87 @@ class HiveLouageRepository implements LouageRepository {
       louageId,
       louage.copyWith(placesDisponibles: availableSeats).toMap(),
     );
+  }
+
+  @override
+  Future<void> updateCurrentStation(String louageId, String stationId) async {
+    final louage = _louageById(louageId);
+    if (stationId.trim().isEmpty) {
+      throw const DriverTripException(DriverTripFailure.stationRequired);
+    }
+    await _louages.put(
+      louageId,
+      louage.copyWith(stationActuelle: stationId.trim()).toMap(),
+    );
+  }
+
+  @override
+  Future<Trip> createTrip({
+    required String driverId,
+    required String fromStationId,
+    required String toStationId,
+    required DateTime departureTime,
+  }) async {
+    final louage = _louageFor(driverId);
+    if (louage == null) {
+      throw const DriverTripException(DriverTripFailure.louageMissing);
+    }
+    if (louage.statut == LouageStatus.horsService) {
+      throw const DriverTripException(DriverTripFailure.louageOutOfService);
+    }
+    if (fromStationId.trim().isEmpty || toStationId.trim().isEmpty) {
+      throw const DriverTripException(DriverTripFailure.stationRequired);
+    }
+    if (fromStationId == toStationId) {
+      throw const DriverTripException(DriverTripFailure.sameStation);
+    }
+    final now = DateTime.now();
+    if (departureTime.isBefore(now)) {
+      throw const DriverTripException(DriverTripFailure.departureInPast);
+    }
+
+    final route = await _ensureRoute(fromStationId: fromStationId, toStationId: toStationId);
+    final duplicate = _trips.values
+        .map(Trip.fromMap)
+        .any((trip) {
+          if (trip.louageId != louage.id || trip.status != 'waiting') return false;
+          final tripTime = DateTime.tryParse(trip.departureTime);
+          return tripTime != null && tripTime.isAtSameMomentAs(departureTime);
+        });
+    if (duplicate) {
+      throw const DriverTripException(DriverTripFailure.duplicateDeparture);
+    }
+
+    final updatedLouage = louage.copyWith(stationActuelle: fromStationId.trim());
+    await _louages.put(updatedLouage.id, updatedLouage.toMap());
+
+    final trip = Trip(
+      id: _uuid.v4(),
+      louageId: updatedLouage.id,
+      routeId: route.id,
+      totalSeats: updatedLouage.placesTotal,
+      reservedSeats: 0,
+      status: 'waiting',
+      departureTime: departureTime.toIso8601String(),
+      arrivalTime: departureTime
+          .add(Duration(minutes: route.durationMin))
+          .toIso8601String(),
+    );
+    await _trips.put(trip.id, trip.toMap());
+    return trip;
+  }
+
+  @override
+  Future<void> cancelTrip(String tripId) async {
+    final map = _trips.get(tripId);
+    if (map == null) {
+      throw const DriverTripException(DriverTripFailure.tripMissing);
+    }
+    final trip = Trip.fromMap(map);
+    if (trip.status != 'waiting') {
+      throw const DriverTripException(DriverTripFailure.tripNotWaiting);
+    }
+    await _trips.put(tripId, trip.copyWith(status: 'cancelled').toMap());
   }
 
   @override
@@ -272,6 +362,59 @@ class HiveLouageRepository implements LouageRepository {
         : reviews.fold<double>(0, (sum, review) => sum + review.rating) /
               reviews.length;
     return (average, trips.length);
+  }
+
+  Future<RouteLine> _ensureRoute({
+    required String fromStationId,
+    required String toStationId,
+  }) async {
+    for (final map in _routes.values) {
+      final route = RouteLine.fromMap(map);
+      if (route.fromStationId == fromStationId &&
+          route.toStationId == toStationId) {
+        return route;
+      }
+    }
+
+    final fromMap = _stations.get(fromStationId);
+    final toMap = _stations.get(toStationId);
+    final fromStation = fromMap == null ? null : Station.fromMap(fromMap);
+    final toStation = toMap == null ? null : Station.fromMap(toMap);
+
+    final distanceKm = fromStation != null && toStation != null
+        ? _haversineKm(fromStation.lat, fromStation.lng, toStation.lat, toStation.lng)
+        : 42.0;
+    final durationMin = ((distanceKm / 55) * 60).round().clamp(20, 240);
+    final pricePerSeat = (distanceKm * 0.7 + 9.0).roundToDouble();
+
+    final route = RouteLine(
+      id: _uuid.v4(),
+      fromStationId: fromStationId,
+      toStationId: toStationId,
+      pricePerSeat: pricePerSeat,
+      distanceKm: distanceKm,
+      durationMin: durationMin,
+    );
+    await _routes.put(route.id, route.toMap());
+    return route;
+  }
+
+  double _haversineKm(
+    double lat1,
+    double lon1,
+    double lat2,
+    double lon2,
+  ) {
+    const earthRadiusKm = 6371.0;
+    final dLat = (lat2 - lat1) * (math.pi / 180);
+    final dLon = (lon2 - lon1) * (math.pi / 180);
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(lat1 * (math.pi / 180)) *
+            math.cos(lat2 * (math.pi / 180)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    return earthRadiusKm * c;
   }
 
   Louage? _louageFor(String driverId) {

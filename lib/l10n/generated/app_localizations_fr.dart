@@ -893,7 +893,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String driverDepartureTime(String time) {
-    return 'Départ à $time';
+    return 'Heure de départ';
   }
 
   @override
@@ -1372,9 +1372,82 @@ class AppLocalizationsFr extends AppLocalizations {
   String get driverTripPrice => 'Prix par place';
 
   @override
+  String get driverTripDuration => 'Durée';
+
+  @override
+  String get driverTripPreview => 'Aperçu du trajet';
+
+  @override
   String driverTripSeatsAvailable(String available, String total) {
     return 'Places libres : $available / $total';
   }
+
+  @override
+  String get driverCreateTripTitle => 'Nouveau trajet';
+
+  @override
+  String get driverCreateTripSubtitle =>
+      'Définissez votre station actuelle et votre destination.';
+
+  @override
+  String get driverDestination => 'Destination';
+
+  @override
+  String get driverDepartureDate => 'Date de départ';
+
+  @override
+  String get driverPublishTrip => 'Publier le trajet';
+
+  @override
+  String get driverTripPublished =>
+      'Le trajet a été publié et est visible par les passagers.';
+
+  @override
+  String get driverTripCreationError =>
+      'Impossible de publier ce trajet. Vérifiez les informations.';
+
+  @override
+  String get driverTripSameStation =>
+      'La station actuelle et la destination doivent être différentes.';
+
+  @override
+  String get driverLouageMissing =>
+      'Aucun louage n’est associé à ce compte chauffeur.';
+
+  @override
+  String get driverLouageOutOfService =>
+      'Le louage est hors service et ne peut pas publier de trajet.';
+
+  @override
+  String get driverDepartureInPast =>
+      'L’heure de départ doit être dans le futur.';
+
+  @override
+  String get driverDuplicateDeparture =>
+      'Un trajet est déjà prévu à cette heure.';
+
+  @override
+  String get driverTripMissing => 'Ce trajet est introuvable.';
+
+  @override
+  String get driverTripNotWaiting =>
+      'Seuls les trajets en attente peuvent être annulés.';
+
+  @override
+  String get driverCreateFirstTrip => 'Créer mon premier trajet';
+
+  @override
+  String get driverTripCancel => 'Annuler';
+
+  @override
+  String get driverTripCancelTitle => 'Annuler ce trajet ?';
+
+  @override
+  String get driverTripCancelMessage =>
+      'Cette action supprimera le trajet en attente pour les passagers.';
+
+  @override
+  String get driverTripCancelled => 'Le trajet a été annulé.';
 
   @override
   String get driverBookingsTitle => 'Réservations et passagers';

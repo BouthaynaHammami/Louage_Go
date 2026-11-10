@@ -81,6 +81,13 @@ class HiveService {
     }
   }
 
+  static Future<void> initWithBoxes(Map<String, Box<Map>> boxes) async {
+    _boxes
+      ..clear()
+      ..addAll(boxes);
+    initializationError = null;
+  }
+
   static Future<void> clearAll() async {
     for (final box in _boxes.values) {
       await box.clear();

@@ -44,6 +44,7 @@ import '../../features/driver/presentation/screens/driver_placeholder_screen.dar
 import '../../features/driver/presentation/screens/driver_profile_screen.dart';
 import '../../features/driver/presentation/screens/driver_qr_scanner_screen.dart';
 import '../../features/driver/presentation/screens/driver_rating_screen.dart';
+import '../../features/driver/presentation/screens/driver_create_trip_screen.dart';
 import '../../features/driver/presentation/screens/driver_trip_detail_screen.dart';
 import '../../features/driver/presentation/screens/driver_trips_screen.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -290,6 +291,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/driver/queue',
             name: 'driverQueue',
             builder: (context, state) => const DriverTripsScreen(),
+          ),
+          GoRoute(
+            path: '/driver/trips/new',
+            name: 'driverCreateTrip',
+            builder: (context, state) => const DriverCreateTripScreen(),
           ),
           GoRoute(
             path: '/driver/trips/:tripId',

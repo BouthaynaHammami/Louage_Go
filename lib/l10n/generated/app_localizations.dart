@@ -1741,7 +1741,7 @@ abstract class AppLocalizations {
   /// No description provided for @driverDepartureTime.
   ///
   /// In fr, this message translates to:
-  /// **'Départ à {time}'**
+  /// **'Heure de départ'**
   String driverDepartureTime(String time);
 
   /// No description provided for @driverFillUpdatesNextTrip.
@@ -2596,11 +2596,137 @@ abstract class AppLocalizations {
   /// **'Prix par place'**
   String get driverTripPrice;
 
+  /// No description provided for @driverTripDuration.
+  ///
+  /// In fr, this message translates to:
+  /// **'Durée'**
+  String get driverTripDuration;
+
+  /// No description provided for @driverTripPreview.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aperçu du trajet'**
+  String get driverTripPreview;
+
   /// No description provided for @driverTripSeatsAvailable.
   ///
   /// In fr, this message translates to:
   /// **'Places libres : {available} / {total}'**
   String driverTripSeatsAvailable(String available, String total);
+
+  /// No description provided for @driverCreateTripTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau trajet'**
+  String get driverCreateTripTitle;
+
+  /// No description provided for @driverCreateTripSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Définissez votre station actuelle et votre destination.'**
+  String get driverCreateTripSubtitle;
+
+  /// No description provided for @driverDestination.
+  ///
+  /// In fr, this message translates to:
+  /// **'Destination'**
+  String get driverDestination;
+
+  /// No description provided for @driverDepartureDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date de départ'**
+  String get driverDepartureDate;
+
+  /// No description provided for @driverPublishTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Publier le trajet'**
+  String get driverPublishTrip;
+
+  /// No description provided for @driverTripPublished.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le trajet a été publié et est visible par les passagers.'**
+  String get driverTripPublished;
+
+  /// No description provided for @driverTripCreationError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de publier ce trajet. Vérifiez les informations.'**
+  String get driverTripCreationError;
+
+  /// No description provided for @driverTripSameStation.
+  ///
+  /// In fr, this message translates to:
+  /// **'La station actuelle et la destination doivent être différentes.'**
+  String get driverTripSameStation;
+
+  /// No description provided for @driverLouageMissing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun louage n’est associé à ce compte chauffeur.'**
+  String get driverLouageMissing;
+
+  /// No description provided for @driverLouageOutOfService.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le louage est hors service et ne peut pas publier de trajet.'**
+  String get driverLouageOutOfService;
+
+  /// No description provided for @driverDepartureInPast.
+  ///
+  /// In fr, this message translates to:
+  /// **'L’heure de départ doit être dans le futur.'**
+  String get driverDepartureInPast;
+
+  /// No description provided for @driverDuplicateDeparture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un trajet est déjà prévu à cette heure.'**
+  String get driverDuplicateDeparture;
+
+  /// No description provided for @driverTripMissing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce trajet est introuvable.'**
+  String get driverTripMissing;
+
+  /// No description provided for @driverTripNotWaiting.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seuls les trajets en attente peuvent être annulés.'**
+  String get driverTripNotWaiting;
+
+  /// No description provided for @driverCreateFirstTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer mon premier trajet'**
+  String get driverCreateFirstTrip;
+
+  /// No description provided for @driverTripCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get driverTripCancel;
+
+  /// No description provided for @driverTripCancelTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler ce trajet ?'**
+  String get driverTripCancelTitle;
+
+  /// No description provided for @driverTripCancelMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action supprimera le trajet en attente pour les passagers.'**
+  String get driverTripCancelMessage;
+
+  /// No description provided for @driverTripCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le trajet a été annulé.'**
+  String get driverTripCancelled;
 
   /// No description provided for @driverBookingsTitle.
   ///
