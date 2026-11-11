@@ -106,7 +106,9 @@ class _AuthGateScreenState extends ConsumerState<AuthGateScreen>
     super.didChangeDependencies();
     _motionOff = MediaQuery.of(context).disableAnimations;
     if (_motionOff) {
-      for (final c in [_bgCtrl, _vanCtrl, _floatCtrl]) c.stop();
+      for (final c in [_bgCtrl, _vanCtrl, _floatCtrl]) {
+        c.stop();
+      }
       _staggerCtrl.value = 1;
     }
     // NOTE : avec resizeToAvoidBottomInset: true, Flutter remonte le body
@@ -185,7 +187,7 @@ class _AuthGateScreenState extends ConsumerState<AuthGateScreen>
             child: RepaintBoundary(
               child: AnimatedBuilder(
                 animation: _bgCtrl,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   painter: _BgPainter(_bgCtrl.value)),
               ),
             ),
@@ -222,7 +224,7 @@ class _AuthGateScreenState extends ConsumerState<AuthGateScreen>
               child: RepaintBoundary(
                 child: AnimatedBuilder(
                   animation: _vanCtrl,
-                  builder: (_, __) => CustomPaint(
+                  builder: (_, _) => CustomPaint(
                     painter: _RoutePainter(
                       progress:  _vanCtrl.value,
                       motionOff: _motionOff,
@@ -541,7 +543,7 @@ class _FloatingCard extends StatelessWidget {
     final phase = index / total;
     return AnimatedBuilder(
       animation: floatCtrl,
-      builder: (_, __) {
+      builder: (_, _) {
         final t  = floatCtrl.value;
         final dy = math.sin((t + phase) * 2 * math.pi) * 6.0;
         final dx = math.cos((t + phase) * 2 * math.pi * 0.6) * 2.5;
@@ -856,8 +858,8 @@ class _LoginFormState extends State<_LoginForm>
       barrierDismissible: true, barrierLabel: '',
       barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (_, __, ___) => _ForgotDialog(ctrl: ctrl, l10n: l10n),
-      transitionBuilder: (_, anim, __, child) => FadeTransition(
+      pageBuilder: (_, _, _) => _ForgotDialog(ctrl: ctrl, l10n: l10n),
+      transitionBuilder: (_, anim, _, child) => FadeTransition(
         opacity: anim,
         child: ScaleTransition(
           scale: Tween<double>(begin: 0.86, end: 1.0).animate(

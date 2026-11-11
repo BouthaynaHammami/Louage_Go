@@ -205,14 +205,14 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
     final userAsync = ref.watch(currentUserProvider);
     return userAsync.when(
       loading: () => _buildLoading(),
-      error: (_, __) => Scaffold(
+      error: (_, _) => Scaffold(
         body: EmptyState(icon: Icons.error_outline, title: l10n.searchLoadError)),
       data: (user) {
         final dataAsync = ref.watch(passengerHomeDataProvider(user?.id));
         final firstName = user?.name.trim().split(RegExp(r'\s+')).firstOrNull;
         return dataAsync.when(
           loading: () => _buildLoading(),
-          error: (_, __) => Scaffold(
+          error: (_, _) => Scaffold(
             body: EmptyState(icon: Icons.error_outline, title: l10n.searchLoadError)),
           data: (data) => _buildPage(l10n, data, firstName, user?.id),
         );
@@ -366,7 +366,7 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
         if (_sidebarOpen)
           AnimatedBuilder(
             animation: _sideCtrl,
-            builder: (_, __) {
+            builder: (_, _) {
               return Stack(
                 children: [
                   // Scrim
@@ -449,7 +449,7 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(vertical: 2),
           itemCount: shortcuts.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (context, i) {
             final s = shortcuts[i];
             return _RouteChip(
@@ -490,7 +490,7 @@ class _PassengerHomeScreenState extends ConsumerState<PassengerHomeScreen>
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: popular.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
         itemBuilder: (context, i) {
           final route = popular[i];
           return TweenAnimationBuilder<double>(

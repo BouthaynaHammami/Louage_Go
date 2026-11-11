@@ -141,7 +141,7 @@ class _IntroScreenState extends State<IntroScreen>
       backgroundColor: Colors.black,
       body: AnimatedBuilder(
         animation: Listenable.merge([_uiCtrl, _exitCtrl]),
-        builder: (_, __) {
+        builder: (_, _) {
           return Stack(
             children: [
 

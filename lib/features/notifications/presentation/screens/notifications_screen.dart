@@ -164,7 +164,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
                 ? _emptyWidget(l10n)
                 : ref.watch(notificationsForUserProvider(user.id)).when(
                     loading: () => _skeletonWidget(),
-                    error: (_, __) => EmptyState(
+                    error: (_, _) => EmptyState(
                       icon: Icons.error_outline_rounded,
                       title: l10n.notificationsLoadError),
                     data: (items) =>
@@ -567,7 +567,7 @@ class _FilterBar extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemCount: _tabs.length,
         itemBuilder: (_, i) {
           final (cat, icon, label) = _tabs[i];

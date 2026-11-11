@@ -182,6 +182,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String ticketEmailRecipientHint(String email) {
+    return '→ $email';
+  }
+
+  @override
   String get ticketEmailNotConfigured => 'إرسال البريد الإلكتروني غير مُعد.';
 
   @override
@@ -1781,6 +1786,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reviewsLoadMore => 'عرض المزيد';
 
   @override
+  String get bookingRateDriver => 'تقييم السائق';
+
+  @override
+  String get bookingRateDriverDone => 'تم إرسال التقييم';
+
+  @override
+  String get reviewsNewReviewNotifTitle => 'تقييم جديد';
+
+  @override
+  String reviewsNewReviewNotifMessage(int rating) {
+    return 'منحك أحد الركاب $rating نجمة.';
+  }
+
+  @override
   String get widgetGalleryTitle => 'معرض المكونات';
 
   @override
@@ -1913,6 +1932,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationsTypeTrip => 'الرحلة';
+
+  @override
+  String get notificationsTypeReminder => 'تذكير';
+
+  @override
+  String get reminderNotifTitle => 'تذكير بالمغادرة';
+
+  @override
+  String reminderNotifBody(String from, String to, String time) {
+    return 'المغادرة $from ← $to الساعة $time بعد ساعتين';
+  }
 
   @override
   String get notificationsTypePromotion => 'عرض';

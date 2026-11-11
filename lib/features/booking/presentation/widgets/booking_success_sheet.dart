@@ -84,10 +84,11 @@ class _BookingToastState extends State<_BookingToast>
   }
 
   void _dismiss() {
-    if (mounted)
+    if (mounted) {
       _ctrl.reverse().then((_) {
         if (mounted) widget.onClose();
       });
+    }
   }
 
   @override
@@ -206,7 +207,7 @@ class _BookingToastState extends State<_BookingToast>
                         TweenAnimationBuilder<double>(
                           tween: Tween(begin: 1.0, end: 0.0),
                           duration: const Duration(milliseconds: 3200),
-                          builder: (_, v, __) => LinearProgressIndicator(
+                          builder: (_, v, _) => LinearProgressIndicator(
                             value: v,
                             backgroundColor: Colors.grey.shade100,
                             valueColor: const AlwaysStoppedAnimation(_kGreen),
@@ -434,7 +435,7 @@ class _SuccessHeader extends StatelessWidget {
             if (!done)
               AnimatedBuilder(
                 animation: sparkCtrl,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   size: const Size(120, 120),
                   painter: _SparkPainter(sparks: sparks, t: sparkCtrl.value),
                 ),

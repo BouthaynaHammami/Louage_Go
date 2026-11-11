@@ -114,7 +114,9 @@ class _PremiumNavBarState extends State<PremiumNavBar>
   void dispose() {
     _bubbleCtrl.dispose();
     _popCtrl.dispose();
-    for (final c in _pressCtrl) c.dispose();
+    for (final c in _pressCtrl) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -150,7 +152,7 @@ class _PremiumNavBarState extends State<PremiumNavBar>
             height: barH + botPad,
             child: AnimatedBuilder(
               animation: _bubbleX,
-              builder: (_, __) {
+              builder: (_, _) {
                 return CustomPaint(
                   painter: _NotchedBarPainter(
                     fraction: _bubbleX.value,
@@ -193,7 +195,7 @@ class _PremiumNavBarState extends State<PremiumNavBar>
           // ── Floating bubble (active icon) ─────────────────────────────
           AnimatedBuilder(
             animation: Listenable.merge([_bubbleX, _popScale]),
-            builder: (_, __) {
+            builder: (_, _) {
               final barWidth = MediaQuery.sizeOf(context).width;
               final cx = _bubbleX.value * barWidth;
               final cy =

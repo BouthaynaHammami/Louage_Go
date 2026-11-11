@@ -430,6 +430,12 @@ abstract class AppLocalizations {
   /// **'Billet envoyé à {email}.'**
   String ticketEmailSent(String email);
 
+  /// No description provided for @ticketEmailRecipientHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'→ {email}'**
+  String ticketEmailRecipientHint(String email);
+
   /// No description provided for @ticketEmailNotConfigured.
   ///
   /// In fr, this message translates to:
@@ -3418,6 +3424,30 @@ abstract class AppLocalizations {
   /// **'Voir plus'**
   String get reviewsLoadMore;
 
+  /// No description provided for @bookingRateDriver.
+  ///
+  /// In fr, this message translates to:
+  /// **'Noter le chauffeur'**
+  String get bookingRateDriver;
+
+  /// No description provided for @bookingRateDriverDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avis envoyé'**
+  String get bookingRateDriverDone;
+
+  /// No description provided for @reviewsNewReviewNotifTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvel avis reçu'**
+  String get reviewsNewReviewNotifTitle;
+
+  /// No description provided for @reviewsNewReviewNotifMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un passager vous a attribué {rating} étoile(s).'**
+  String reviewsNewReviewNotifMessage(int rating);
+
   /// No description provided for @widgetGalleryTitle.
   ///
   /// In fr, this message translates to:
@@ -3681,6 +3711,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Trajet'**
   String get notificationsTypeTrip;
+
+  /// No description provided for @notificationsTypeReminder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel'**
+  String get notificationsTypeReminder;
+
+  /// No description provided for @reminderNotifTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rappel de départ'**
+  String get reminderNotifTitle;
+
+  /// No description provided for @reminderNotifBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Départ {from} → {to} à {time} dans 2 heures'**
+  String reminderNotifBody(String from, String to, String time);
 
   /// No description provided for @notificationsTypePromotion.
   ///

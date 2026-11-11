@@ -280,7 +280,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       barrierLabel: '',
       barrierColor: Colors.black.withValues(alpha: 0.55),
       transitionDuration: const Duration(milliseconds: 340),
-      pageBuilder: (_, __, ___) => child,
+      pageBuilder: (_, _, _) => child,
       transitionBuilder: (ctx, anim, _, child) {
         final curved = CurvedAnimation(
           parent: anim,

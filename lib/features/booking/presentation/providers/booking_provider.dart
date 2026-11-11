@@ -2,12 +2,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../auth/auth_providers.dart';
 import '../../../notifications/presentation/providers/notifications_provider.dart';
+import '../../../../core/services/reminder_scheduler.dart';
 import '../../data/hive_booking_repository.dart';
 import '../../domain/booking_repository.dart';
+
+/// Exposé pour pouvoir être surchargé dans les tests.
+/// En production, `main.dart` injecte le vrai [LocalReminderScheduler].
+final reminderSchedulerProvider = Provider<ReminderScheduler?>((ref) => null);
 
 final bookingRepositoryProvider = Provider<BookingRepository>(
   (ref) => HiveBookingRepository(
     notifications: ref.read(notificationRepositoryProvider),
+    reminderScheduler: ref.read(reminderSchedulerProvider),
   ),
 );
 

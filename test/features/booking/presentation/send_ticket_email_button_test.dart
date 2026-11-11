@@ -13,10 +13,132 @@ import 'package:louage_go/l10n/generated/app_localizations.dart';
 import 'package:louage_go/models/app_user.dart';
 import 'package:louage_go/models/booking.dart';
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+const _booking = Booking(
+  id: 'booking-1',
+  fromCity: 'Tunis',
+  toCity: 'Sousse',
+  totalPrice: 25,
+);
+
+Future<void> _pump(
+  WidgetTester tester,
+  _FakeEmailService service, {
+  String email = 'passenger@example.test',
+  String name = 'Amira',
+}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        emailConfiguredProvider.overrideWith((ref) => true),
+        emailServiceProvider.overrideWithValue(service),
+        ticketPdfGeneratorProvider.overrideWithValue(
+          (booking) async => File('mock-ticket.pdf'),
+        ),
+        currentUserProvider.overrideWith(
+          (ref) => Stream.value(
+            AppUser(id: 'passenger-1', name: name, email: email),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        locale: const Locale('fr'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        home: const Scaffold(body: SendTicketEmailButton(booking: _booking)),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+// ── Tests ─────────────────────────────────────────────────────────────────────
+
 void main() {
-  testWidgets('button shows progress while sending, then success message', (
+  // ── (a) Valid account email → direct send, no dialog ─────────────────────
+  testWidgets(
+    'sends directly when account has a valid email, no dialog shown',
+    (tester) async {
+      final service = _FakeEmailService();
+      await _pump(tester, service, email: 'passenger@example.test');
+
+      await tester.tap(find.text('Envoyer par e-mail'));
+      await tester.pumpAndSettle();
+
+      // No dialog appeared
+      expect(find.byType(AlertDialog), findsNothing);
+      // Email was sent to the account address
+      expect(service.lastEmail, 'passenger@example.test');
+      expect(service.callCount, 1);
+    },
+  );
+
+  // ── (b) Empty email → dialog opens ───────────────────────────────────────
+  testWidgets('opens dialog when account email is empty', (tester) async {
+    final service = _FakeEmailService();
+    await _pump(tester, service, email: '');
+
+    await tester.tap(find.text('Envoyer par e-mail'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Adresse e-mail du destinataire'), findsOneWidget);
+    expect(service.callCount, 0);
+  });
+
+  // ── (c) Invalid email → dialog opens ─────────────────────────────────────
+  testWidgets('opens dialog when account email is invalid', (tester) async {
+    final service = _FakeEmailService();
+    // An address without '@' or domain is invalid per the shared regex
+    await _pump(tester, service, email: 'not-an-email');
+
+    await tester.tap(find.text('Envoyer par e-mail'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Adresse e-mail du destinataire'), findsOneWidget);
+    expect(service.callCount, 0);
+  });
+
+  // ── (d) SnackBar contains the real recipient address ─────────────────────
+  testWidgets('SnackBar shows the actual recipient address after sending', (
     tester,
   ) async {
+    final service = _FakeEmailService();
+    await _pump(tester, service, email: 'passenger@example.test');
+
+    await tester.tap(find.text('Envoyer par e-mail'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Billet envoyé à passenger@example.test.'),
+      findsOneWidget,
+    );
+  });
+
+  // ── (d-alt) SnackBar shows address entered through dialog ────────────────
+  testWidgets(
+    'SnackBar shows address entered in dialog when account email is empty',
+    (tester) async {
+      final service = _FakeEmailService();
+      await _pump(tester, service, email: '');
+
+      await tester.tap(find.text('Envoyer par e-mail'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'other@example.test');
+      await tester.tap(find.byType(FilledButton));
+      await tester.pumpAndSettle();
+
+      expect(service.lastEmail, 'other@example.test');
+      expect(
+        find.text('Billet envoyé à other@example.test.'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  // ── Progress indicator while sending ─────────────────────────────────────
+  testWidgets('shows progress indicator while sending', (tester) async {
     final service = _FakeEmailService();
     final completer = Completer<void>();
     service.onSend = () => completer.future;
@@ -28,13 +150,10 @@ void main() {
 
     completer.complete();
     await tester.pumpAndSettle();
-    expect(
-      find.text('Billet envoyé à passenger@example.test.'),
-      findsOneWidget,
-    );
-    expect(service.callCount, 1);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
+  // ── Retry on error ────────────────────────────────────────────────────────
   testWidgets('shows a localized retry action after an email error', (
     tester,
   ) async {
@@ -46,13 +165,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text('La limite d’envoi e-mail est atteinte. Réessayez plus tard.'),
+      find.text('La limite d\u2019envoi e-mail est atteinte. Réessayez plus tard.'),
       findsOneWidget,
     );
     expect(find.text('Réessayer'), findsOneWidget);
   });
 
-  testWidgets('asks for and validates an email when the account has none', (
+  // ── Dialog validation ─────────────────────────────────────────────────────
+  testWidgets('dialog rejects an invalid address and accepts a valid one', (
     tester,
   ) async {
     final service = _FakeEmailService();
@@ -60,7 +180,6 @@ void main() {
 
     await tester.tap(find.text('Envoyer par e-mail'));
     await tester.pumpAndSettle();
-    expect(find.text('Adresse e-mail du destinataire'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'bad');
     await tester.tap(find.byType(FilledButton));
@@ -77,74 +196,63 @@ void main() {
     );
   });
 
-  testWidgets('hides the action when Brevo is not configured', (tester) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          emailConfiguredProvider.overrideWith((ref) => false),
-          currentUserProvider.overrideWith(
-            (ref) => Stream.value(
-              const AppUser(
-                id: 'passenger-1',
-                name: 'Amira',
-                email: 'passenger@example.test',
+  // ── Recipient hint shown when email is known ──────────────────────────────
+  testWidgets(
+    'shows recipient hint text under the button when email is known',
+    (tester) async {
+      final service = _FakeEmailService();
+      await _pump(tester, service, email: 'passenger@example.test');
+
+      expect(find.text('→ passenger@example.test'), findsOneWidget);
+    },
+  );
+
+  // ── No hint when email is empty ───────────────────────────────────────────
+  testWidgets('no recipient hint when account email is empty', (tester) async {
+    final service = _FakeEmailService();
+    await _pump(tester, service, email: '');
+
+    expect(find.textContaining('→'), findsNothing);
+  });
+
+  // ── Brevo not configured ──────────────────────────────────────────────────
+  testWidgets(
+    'shows a disabled button with a hint when Brevo is not configured',
+    (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            emailConfiguredProvider.overrideWith((ref) => false),
+            currentUserProvider.overrideWith(
+              (ref) => Stream.value(
+                const AppUser(
+                  id: 'passenger-1',
+                  name: 'Amira',
+                  email: 'passenger@example.test',
+                ),
               ),
             ),
-          ),
-        ],
-        child: MaterialApp(
-          locale: const Locale('fr'),
-          supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          home: Scaffold(
-            body: SendTicketEmailButton(booking: Booking(id: 'booking-1')),
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text('Send by email'), findsNothing);
-  });
-}
-
-Future<void> _pump(
-  WidgetTester tester,
-  _FakeEmailService service, {
-  String email = 'passenger@example.test',
-}) async {
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        emailConfiguredProvider.overrideWith((ref) => true),
-        emailServiceProvider.overrideWithValue(service),
-        ticketPdfGeneratorProvider.overrideWithValue(
-          (booking) async => File('mock-ticket.pdf'),
-        ),
-        currentUserProvider.overrideWith(
-          (ref) => Stream.value(
-            AppUser(id: 'passenger-1', name: 'Amira', email: email),
-          ),
-        ),
-      ],
-      child: MaterialApp(
-        locale: const Locale('fr'),
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        home: const Scaffold(
-          body: SendTicketEmailButton(
-            booking: Booking(
-              id: 'booking-1',
-              fromCity: 'Tunis',
-              toCity: 'Sousse',
-              totalPrice: 25,
+          ],
+          child: MaterialApp(
+            locale: const Locale('fr'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            home: const Scaffold(
+              body: SendTicketEmailButton(booking: Booking(id: 'booking-1')),
             ),
           ),
         ),
-      ),
-    ),
+      );
+      await tester.pumpAndSettle();
+
+      final button = tester.widget<OutlinedButton>(find.byType(OutlinedButton));
+      expect(button.onPressed, isNull);
+      expect(find.text('Envoi par e-mail non configuré.'), findsOneWidget);
+    },
   );
-  await tester.pumpAndSettle();
 }
+
+// ── Fake email service ────────────────────────────────────────────────────────
 
 class _FakeEmailService implements EmailService {
   int callCount = 0;

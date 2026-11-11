@@ -62,6 +62,14 @@
       }
     }
   },
+  "ticketEmailRecipientHint": "→ {email}",
+  "@ticketEmailRecipientHint": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "ticketEmailNotConfigured": "Email delivery is not configured.",
   "ticketEmailNetworkError": "Network error. Check your connection and try again.",
   "ticketEmailTimeoutError": "The email service took too long to respond.",
@@ -685,6 +693,17 @@
   "reviewsDeleteAction": "Delete",
   "reviewsCancelAction": "Cancel",
   "reviewsLoadMore": "Load more",
+  "bookingRateDriver": "Rate the driver",
+  "bookingRateDriverDone": "Review sent",
+  "reviewsNewReviewNotifTitle": "New review received",
+  "reviewsNewReviewNotifMessage": "A passenger rated you {rating} star(s).",
+  "@reviewsNewReviewNotifMessage": {
+    "placeholders": {
+      "rating": {
+        "type": "int"
+      }
+    }
+  },
   "widgetGalleryTitle": "Widget gallery",
   "widgetGalleryFields": "Form fields",
   "widgetGalleryValidate": "Validate",
@@ -729,6 +748,16 @@
   "notificationsUnread": "Unread",
   "notificationsTypeBooking": "Booking",
   "notificationsTypeTrip": "Trip",
+  "notificationsTypeReminder": "Reminder",
+  "reminderNotifTitle": "Departure reminder",
+  "reminderNotifBody": "Departure {from} → {to} at {time} in 2 hours",
+  "@reminderNotifBody": {
+    "placeholders": {
+      "from": { "type": "String" },
+      "to":   { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
   "notificationsTypePromotion": "Promotion",
   "notificationsTypeSystem": "Information",
   "notificationsPermissionTitle": "Enable notifications",

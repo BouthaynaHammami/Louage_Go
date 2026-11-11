@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "LouageGo",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "LouageGo (Brevo)",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--dart-define=BREVO_API_KEY=${input:brevoKey}",
+        "--dart-define=BREVO_SENDER_EMAIL=${input:brevoSender}"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "brevoKey",
+      "type": "promptString",
+      "description": "Clé API Brevo (ne sera pas stockée dans aucun fichier)",
+      "password": true
+    },
+    {
+      "id": "brevoSender",
+      "type": "promptString",
+      "description": "Adresse e-mail d'expéditeur vérifiée dans votre compte Brevo"
+    }
+  ]
+}

@@ -344,7 +344,7 @@ class _CinematicHeader extends StatelessWidget {
             Positioned.fill(
               child: AnimatedBuilder(
                 animation: routeCtrl,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   painter: _HeaderParticlesPainter(
                     progress: routeCtrl.value,
                     color: colorScheme.primary,
@@ -529,7 +529,7 @@ class _RouteAnimation extends StatelessWidget {
 
     return AnimatedBuilder(
       animation: controller,
-      builder: (_, __) => SizedBox(
+      builder: (_, _) => SizedBox(
         height: height,
         child: LayoutBuilder(
           builder: (_, constraints) {

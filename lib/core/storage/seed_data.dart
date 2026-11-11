@@ -27,6 +27,7 @@ class SeedData {
     tripsBox: HiveService.trips,
     bookingsBox: HiveService.bookings,
     sessionBox: HiveService.session,
+    reviewsBox: HiveService.reviews,
     now: DateTime.now(),
   );
 
@@ -62,6 +63,7 @@ class SeedData {
     required Box<Map>? bookingsBox,
     required Box<Map> sessionBox,
     required DateTime now,
+    Box<Map>? reviewsBox,
   }) async {
     for (final station in _stations) {
       await stationsBox.put(station.id, station.toMap());
@@ -228,9 +230,9 @@ class SeedData {
               .add(const Duration(hours: 3))
               .toIso8601String(),
         );
-        if (!tripsBox.containsKey(trip.id)) {
-          await tripsBox.put(trip.id, trip.toMap());
-        }
+        // Toujours écrire ces trips de démo pour garantir le statut 'arrived'
+        // même si l'app avait été lancée avant leur ajout.
+        await tripsBox.put(trip.id, trip.toMap());
         final booking = Booking(
           id: 'demo_review_booking_$index',
           userId: passenger.id,
@@ -241,8 +243,20 @@ class SeedData {
           createdAt: departure
               .subtract(const Duration(days: 1))
               .toIso8601String(),
+          fromCity: 'Tunis',
+          toCity: 'Sfax',
+          driverName: 'Chauffeur Demo',
         );
-        if (!bookingsBox.containsKey(booking.id)) {
+        // Toujours écrire la réservation de démo pour garantir que tripId
+        // est correct, SAUF si un avis existe déjà pour ce trip (ne pas
+        // permettre à l'utilisateur de noter deux fois).
+        final effectiveReviewsBox = reviewsBox ?? HiveService.reviews;
+        final alreadyReviewed = effectiveReviewsBox.values.any(
+          (raw) =>
+              (raw['userId']?.toString() ?? '') == passenger.id &&
+              (raw['tripId']?.toString() ?? '') == trip.id,
+        );
+        if (!alreadyReviewed) {
           await bookingsBox.put(booking.id, booking.toMap());
         }
       }

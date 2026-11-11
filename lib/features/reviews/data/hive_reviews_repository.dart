@@ -1,9 +1,13 @@
+// ignore_for_file: prefer_initializing_formals
+
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/storage/hive_service.dart';
+import '../../../features/notifications/domain/notification_repository.dart';
 import '../../../models/booking.dart';
 import '../../../models/driver_profile.dart';
 import '../../../models/louage.dart';
@@ -28,6 +32,7 @@ class HiveReviewsRepository implements ReviewsRepository {
     Box<Map>? bookingsBox,
     Box<Map>? reportsBox,
     ReviewEligibility? eligibility,
+    NotificationRepository? notifications,
     DateTime Function()? now,
   }) : _reviewsBox = reviewsBox ?? HiveService.reviews,
        _driversBox = driversBox ?? HiveService.drivers,
@@ -37,6 +42,7 @@ class HiveReviewsRepository implements ReviewsRepository {
        _bookingsBox = bookingsBox ?? HiveService.bookings,
        _reportsBox = reportsBox ?? HiveService.reports,
        _now = now ?? DateTime.now,
+       _notifications = notifications,
        _eligibility =
            eligibility ??
            HiveReviewEligibility(
@@ -55,6 +61,7 @@ class HiveReviewsRepository implements ReviewsRepository {
   final Box<Map> _bookingsBox;
   final Box<Map> _reportsBox;
   final ReviewEligibility _eligibility;
+  final NotificationRepository? _notifications;
   final DateTime Function() _now;
 
   @override
@@ -98,6 +105,7 @@ class HiveReviewsRepository implements ReviewsRepository {
     );
     await _reviewsBox.put(key, review.toMap());
     await _recalculateDriver(driverId);
+    await _notifyDriverSafely(driverId: driverId, rating: rating);
     return review;
   }
 
@@ -390,6 +398,27 @@ class HiveReviewsRepository implements ReviewsRepository {
 
   static String _reviewKey(String userId, String tripId) =>
       'review_${Uri.encodeComponent(userId)}_${Uri.encodeComponent(tripId)}';
+
+  Future<void> _notifyDriverSafely({
+    required String driverId,
+    required int rating,
+  }) async {
+    final notifications = _notifications;
+    if (notifications == null) return;
+    try {
+      await notifications.create(
+        userId: driverId,
+        title: 'Nouvel avis reçu',
+        message: 'Un passager vous a attribué $rating étoile(s).',
+        type: 'review',
+        route: '/driver/reviews',
+        data: {'rating': rating},
+        messageId: 'review-${_uuid.v4()}',
+      );
+    } on StateError catch (error) {
+      debugPrint('Review notification unavailable: $error');
+    }
+  }
 }
 
 extension<T> on Iterable<T> {

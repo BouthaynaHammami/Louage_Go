@@ -182,7 +182,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             child: RepaintBoundary(
               child: AnimatedBuilder(
                 animation: _bgCtrl,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   painter: slide.painter(_bgCtrl.value),
                 ),
               ),
@@ -224,7 +224,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             height: size.height * 0.44,
             child: AnimatedBuilder(
               animation: _slideCtrl,
-              builder: (_, __) {
+              builder: (_, _) {
                 return Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -280,7 +280,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             bottom: safeB + 160,
             child: AnimatedBuilder(
               animation: _slideCtrl,
-              builder: (_, __) => FadeTransition(
+              builder: (_, _) => FadeTransition(
                 opacity: _textFade,
                 child: SlideTransition(
                   position: _textSlide,
@@ -440,7 +440,7 @@ class _RoadStripe extends StatelessWidget {
     return RepaintBoundary(
       child: AnimatedBuilder(
         animation: bgCtrl,
-        builder: (_, __) => CustomPaint(
+        builder: (_, _) => CustomPaint(
           size: Size(MediaQuery.sizeOf(context).width, 14),
           painter: _RoadPainter(bgCtrl.value),
         ),

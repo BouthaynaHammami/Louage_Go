@@ -185,7 +185,7 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
           Expanded(
             child: resultsAsync.when(
               loading: () => _buildSkeletons(isDark),
-              error:   (_, __) => _buildError(context, l10n),
+              error:   (_, _) => _buildError(context, l10n),
               data:    (all) => _buildList(context, _visible(all)),
             ),
           ),
@@ -197,8 +197,8 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
   Widget _buildSkeletons(bool isDark) => ListView.separated(
     padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
     itemCount: 3,
-    separatorBuilder: (_, __) => const SizedBox(height: 12),
-    itemBuilder: (_, __) => Container(
+    separatorBuilder: (_, _) => const SizedBox(height: 12),
+    itemBuilder: (_, _) => Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
@@ -258,7 +258,7 @@ class _LouageListScreenState extends ConsumerState<LouageListScreen> {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       itemCount: trips.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (_, i) {
         final r = trips[i];
         return _TripCard(
@@ -306,7 +306,7 @@ class _DayBand extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         itemCount: days.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (_, i) {
           final day      = days[i];
           final selected = DateUtils.isSameDay(day, selectedDate);

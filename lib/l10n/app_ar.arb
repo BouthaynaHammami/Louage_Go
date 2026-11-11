@@ -62,6 +62,14 @@
       }
     }
   },
+  "ticketEmailRecipientHint": "→ {email}",
+  "@ticketEmailRecipientHint": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "ticketEmailNotConfigured": "إرسال البريد الإلكتروني غير مُعد.",
   "ticketEmailNetworkError": "خطأ في الشبكة. تحقق من الاتصال ثم أعد المحاولة.",
   "ticketEmailTimeoutError": "استغرق خادم البريد وقتًا طويلًا للرد.",
@@ -685,6 +693,17 @@
   "reviewsDeleteAction": "حذف",
   "reviewsCancelAction": "إلغاء",
   "reviewsLoadMore": "عرض المزيد",
+  "bookingRateDriver": "تقييم السائق",
+  "bookingRateDriverDone": "تم إرسال التقييم",
+  "reviewsNewReviewNotifTitle": "تقييم جديد",
+  "reviewsNewReviewNotifMessage": "منحك أحد الركاب {rating} نجمة.",
+  "@reviewsNewReviewNotifMessage": {
+    "placeholders": {
+      "rating": {
+        "type": "int"
+      }
+    }
+  },
   "widgetGalleryTitle": "معرض المكونات",
   "widgetGalleryFields": "حقول النموذج",
   "widgetGalleryValidate": "تحقق",
@@ -729,6 +748,16 @@
   "notificationsUnread": "غير مقروء",
   "notificationsTypeBooking": "الحجز",
   "notificationsTypeTrip": "الرحلة",
+  "notificationsTypeReminder": "تذكير",
+  "reminderNotifTitle": "تذكير بالمغادرة",
+  "reminderNotifBody": "المغادرة {from} ← {to} الساعة {time} بعد ساعتين",
+  "@reminderNotifBody": {
+    "placeholders": {
+      "from": { "type": "String" },
+      "to":   { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
   "notificationsTypePromotion": "عرض",
   "notificationsTypeSystem": "معلومة",
   "notificationsPermissionTitle": "تفعيل الإشعارات",

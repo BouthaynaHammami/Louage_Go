@@ -328,7 +328,7 @@ class _RouteLineState extends State<_RouteLine>
       height: 112,
       child: AnimatedBuilder(
         animation: _ctrl,
-        builder: (_, __) => CustomPaint(
+        builder: (_, _) => CustomPaint(
           painter: _RouteLinePainter(_ctrl.value),
         ),
       ),

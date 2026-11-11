@@ -8,6 +8,20 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/booking.dart';
 import '../providers/ticket_email_provider.dart';
 
+// Shared regex used for validation; identical to the one in AuthRepositoryImpl.
+final _emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+
+bool _isValidEmail(String value) => _emailRegex.hasMatch(value.trim());
+
+/// Returns a display name for the recipient: uses [name] if non-empty,
+/// otherwise falls back to the local part of [email] (before the @).
+String _recipientName(String name, String email) {
+  final trimmed = name.trim();
+  if (trimmed.isNotEmpty) return trimmed;
+  final at = email.indexOf('@');
+  return at > 0 ? email.substring(0, at) : email;
+}
+
 class SendTicketEmailButton extends ConsumerStatefulWidget {
   const SendTicketEmailButton({required this.booking, super.key});
 
@@ -22,25 +36,96 @@ class _SendTicketEmailButtonState extends ConsumerState<SendTicketEmailButton> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (!ref.watch(emailConfiguredProvider)) return const SizedBox.shrink();
-    final user = ref.watch(currentUserProvider).asData?.value;
-    final emailState = ref.watch(ticketEmailControllerProvider);
-    final isLoading = emailState.isLoading;
+    final configured = ref.watch(emailConfiguredProvider);
 
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: user == null || isLoading
-            ? null
-            : () => _startSend(l10n, user.email, user.name),
-        icon: isLoading
-            ? const SizedBox.square(
-                dimension: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : const Icon(Icons.email_outlined),
-        label: Text(l10n.ticketEmailSend),
-      ),
+    // ── Brevo not configured ───────────────────────────────────────────────
+    if (!configured) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: null,
+              icon: const Icon(Icons.email_outlined),
+              label: Text(l10n.ticketEmailSend),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.ticketEmailNotConfigured,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 11.5,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.50),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // ── User still loading ─────────────────────────────────────────────────
+    final userAsync = ref.watch(currentUserProvider);
+    if (userAsync.isLoading) {
+      return SizedBox(
+        width: double.infinity,
+        child: OutlinedButton.icon(
+          onPressed: null,
+          icon: const SizedBox.square(
+            dimension: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          label: Text(l10n.ticketEmailSend),
+        ),
+      );
+    }
+
+    final user = userAsync.asData?.value;
+    final emailState = ref.watch(ticketEmailControllerProvider);
+    final isSending = emailState.isLoading;
+
+    final accountEmail = user?.email.trim() ?? '';
+    final hasValidEmail = _isValidEmail(accountEmail);
+
+    // ── Button + optional recipient hint ──────────────────────────────────
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: user == null || isSending
+                ? null
+                : () => _startSend(l10n, accountEmail, user.name),
+            icon: isSending
+                ? const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.email_outlined),
+            label: Text(l10n.ticketEmailSend),
+          ),
+        ),
+        if (hasValidEmail) ...[
+          const SizedBox(height: 4),
+          Text(
+            l10n.ticketEmailRecipientHint(accountEmail),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 11.5,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.50),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -49,15 +134,15 @@ class _SendTicketEmailButtonState extends ConsumerState<SendTicketEmailButton> {
     String accountEmail,
     String accountName,
   ) async {
-    final normalizedEmail = accountEmail.trim();
-    if (normalizedEmail.isNotEmpty) {
-      await _send(l10n, normalizedEmail, accountName);
+    if (_isValidEmail(accountEmail)) {
+      await _send(l10n, accountEmail.trim(), _recipientName(accountName, accountEmail));
       return;
     }
 
+    // Email absent or invalid — ask the user.
     final enteredEmail = await _askForEmail(l10n);
     if (!mounted || enteredEmail == null) return;
-    await _send(l10n, enteredEmail, accountName);
+    await _send(l10n, enteredEmail, _recipientName(accountName, enteredEmail));
   }
 
   Future<String?> _askForEmail(AppLocalizations l10n) async {
@@ -161,7 +246,7 @@ class _TicketEmailAddressDialogState extends State<_TicketEmailAddressDialog> {
 
     void submit() {
       final value = _controller.text.trim();
-      if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
+      if (!_isValidEmail(value)) {
         setState(() => _error = l10n.ticketEmailInvalidAddress);
         return;
       }

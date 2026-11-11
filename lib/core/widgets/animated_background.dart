@@ -75,7 +75,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
       child: RepaintBoundary(
         child: AnimatedBuilder(
           animation: _ctrl,
-          builder: (_, __) => CustomPaint(
+          builder: (_, _) => CustomPaint(
             painter: _LivingWorldPainter(
               progress: _ctrl.value,
               isDark: isDark,

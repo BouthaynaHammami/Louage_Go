@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:louage_go/features/notifications/domain/notification_repository.dart';
 import 'package:louage_go/features/reviews/data/hive_review_eligibility.dart';
 import 'package:louage_go/features/reviews/data/hive_reviews_repository.dart';
 import 'package:louage_go/features/reviews/domain/review_exception.dart';
+import 'package:louage_go/models/app_notification.dart';
 import 'package:louage_go/models/booking.dart';
 import 'package:louage_go/models/driver_profile.dart';
 import 'package:louage_go/models/louage.dart';
@@ -267,9 +269,88 @@ void main() {
       0,
     );
   });
+  test('submitting a review notifies the driver via NotificationRepository', () async {
+    final fakeNotifications = _FakeNotificationRepository();
+    final repoWithNotifs = HiveReviewsRepository(
+      reviewsBox: reviews,
+      driversBox: drivers,
+      usersBox: users,
+      tripsBox: trips,
+      louagesBox: louages,
+      bookingsBox: bookings,
+      reportsBox: reports,
+      notifications: fakeNotifications,
+      now: () => now,
+    );
+    await _submitWith(repoWithNotifs, 'user-1', 4, 'Great');
+    expect(fakeNotifications.created, hasLength(1));
+    final notif = fakeNotifications.created.single;
+    expect(notif.userId, 'driver-1');
+    expect(notif.type, 'review');
+    expect(notif.data['rating'], 4);
+  });
+}
+
+// ── Fake notification repository ─────────────────────────────────────────────
+
+class _FakeNotificationRepository implements NotificationRepository {
+  final List<AppNotification> created = [];
+
+  @override
+  Future<AppNotification> create({
+    required String userId,
+    required String title,
+    required String message,
+    required String type,
+    String? route,
+    Map<String, dynamic> data = const {},
+    String messageId = '',
+  }) async {
+    final notif = AppNotification(
+      id: 'notif-${created.length}',
+      userId: userId,
+      title: title,
+      message: message,
+      type: type,
+      route: route ?? '',
+      data: data,
+      messageId: messageId,
+    );
+    created.add(notif);
+    return notif;
+  }
+
+  @override
+  Stream<List<AppNotification>> watchForUser(String userId) =>
+      Stream.value([]);
+  @override
+  Stream<int> unreadCount(String userId) => Stream.value(0);
+  @override
+  Future<void> markRead(String id) async {}
+  @override
+  Future<void> markAllRead(String userId) async {}
+  @override
+  Future<void> delete(String id) async {}
+  @override
+  Future<void> restore(AppNotification notification) async {}
+  @override
+  Future<void> clear(String userId) async {}
 }
 
 Future<Review> _submit(
+  HiveReviewsRepository repository,
+  String userId,
+  int rating,
+  String comment,
+) => repository.submitReview(
+  userId: userId,
+  tripId: 'trip-1',
+  driverId: 'driver-1',
+  rating: rating,
+  comment: comment,
+);
+
+Future<Review> _submitWith(
   HiveReviewsRepository repository,
   String userId,
   int rating,

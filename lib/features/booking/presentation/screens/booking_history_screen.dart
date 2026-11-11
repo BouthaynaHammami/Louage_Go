@@ -1,12 +1,13 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/skeleton_box.dart';
 import '../../../../features/auth/auth_providers.dart';
+import '../../../../features/reviews/presentation/providers/reviews_provider.dart';
+import '../../../../features/reviews/presentation/widgets/review_stars.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../models/booking.dart';
 import '../../data/ticket_pdf_service.dart';
@@ -780,7 +781,7 @@ class _OutlineAction extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════════════════
 // DETAILS SHEET
 // ═══════════════════════════════════════════════════════════════════════════
-class _DetailsSheet extends StatelessWidget {
+class _DetailsSheet extends ConsumerWidget {
   const _DetailsSheet({
     required this.booking,
     required this.l10n,
@@ -793,12 +794,12 @@ class _DetailsSheet extends StatelessWidget {
   final VoidCallback? onCancel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final b = booking;
-    final ref = _refId(b.id);
+    final bookingRef = _refId(b.id);
     final dateStr = _formatDate(b.createdAt);
     final timeStr = _extractTime(b.departureTime);
-    final (_, __, statusFg, statusBg) = _statusStyle(b.status, l10n);
+    final (_, _, statusFg, statusBg) = _statusStyle(b.status, l10n);
 
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
@@ -858,7 +859,7 @@ class _DetailsSheet extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        ref,
+                        bookingRef,
                         style: TextStyle(
                           fontSize: 12,
                           color: isDark ? Colors.white38 : Colors.grey.shade400,
@@ -993,6 +994,15 @@ class _DetailsSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 SendTicketEmailButton(booking: b),
+                // Rate driver
+                if (b.tripId.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _RateDriverButton(
+                    booking: b,
+                    l10n: l10n,
+                    isDark: isDark,
+                  ),
+                ],
                 // Cancel
                 if (onCancel != null) ...[
                   const SizedBox(height: 8),
@@ -1008,6 +1018,66 @@ class _DetailsSheet extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _RateDriverButton extends ConsumerWidget {
+  const _RateDriverButton({
+    required this.booking,
+    required this.l10n,
+    required this.isDark,
+  });
+
+  final Booking booking;
+  final AppLocalizations l10n;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userId = ref.watch(currentUserProvider).asData?.value?.id ?? '';
+    if (userId.isEmpty) return const SizedBox.shrink();
+
+    final contextAsync = ref.watch(
+      reviewTripContextProvider((userId, booking.tripId)),
+    );
+
+    return contextAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, e) => const SizedBox.shrink(),
+      data: (tripContext) {
+        if (tripContext == null) return const SizedBox.shrink();
+
+        // Already reviewed — show disabled button with stars
+        if (tripContext.existingReview != null) {
+          return _SheetButton(
+            icon: Icons.star_rounded,
+            label: l10n.bookingRateDriverDone,
+            onTap: null,
+            color: const Color(0xFFFFB300),
+            trailing: ReviewStars(
+              rating: tripContext.existingReview!.rating.round(),
+              size: 14,
+            ),
+          );
+        }
+
+        // Not eligible (trip not finished)
+        if (!tripContext.eligible) return const SizedBox.shrink();
+
+        // Eligible — active button
+        return _SheetButton(
+          icon: Icons.star_outline_rounded,
+          label: l10n.bookingRateDriver,
+          onTap: () {
+            Navigator.pop(context);
+            context.pushNamed(
+              'passengerRateTrip',
+              pathParameters: {'tripId': booking.tripId},
+            );
+          },
+        );
+      },
     );
   }
 }
@@ -1064,37 +1134,49 @@ class _SheetButton extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.color,
+    this.trailing,
   });
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
   final Color? color;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     final c = color ?? _kRed;
+    final effectiveColor = onTap == null
+        ? c.withValues(alpha: 0.45)
+        : c;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: c.withValues(alpha: 0.07),
+          color: effectiveColor.withValues(alpha: 0.07),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: c.withValues(alpha: 0.22), width: 1),
+          border: Border.all(
+            color: effectiveColor.withValues(alpha: 0.22),
+            width: 1,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: c),
+            Icon(icon, size: 18, color: effectiveColor),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: c,
+                color: effectiveColor,
               ),
             ),
+            if (trailing != null) ...[
+              const SizedBox(width: 8),
+              trailing!,
+            ],
           ],
         ),
       ),
@@ -1186,8 +1268,8 @@ class _Skeleton extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: 4,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, __) => Container(
+      separatorBuilder: (_, i) => const SizedBox(height: 12),
+      itemBuilder: (_, j) => Container(
         height: 140,
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E1E2E) : Colors.white,

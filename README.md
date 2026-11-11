@@ -1,4 +1,4 @@
-<div align="center">
+chauffeur@louagego.tn<div align="center">
 
 # 🚕 LouageGo
 
@@ -116,6 +116,8 @@ flutter run --dart-define=BREVO_API_KEY=xxx --dart-define=BREVO_SENDER_EMAIL=exp
 Le nom d'expéditeur peut être remplacé avec `--dart-define=BREVO_SENDER_NAME=LouageGo`. L'adresse d'expéditeur doit être validée dans le compte Brevo. Les clés API Brevo peuvent expirer après 90 jours d'inactivité ; renouvelez-les selon les règles de votre compte. Ne commitez jamais de clé API ni de fichier `.env`.
 
 Cette intégration directe sert uniquement au développement et à la démonstration : une application mobile distribuée peut être inspectée, donc toute clé `--dart-define` intégrée au binaire peut être extraite. En production, l'application doit transmettre la demande à un backend de confiance (par exemple une Cloud Function), qui garde la clé Brevo côté serveur et applique les contrôles d'accès et de quota.
+
+> **Note :** Les `--dart-define` ne sont pas pris en compte par le hot reload/hot restart : arrêtez complètement l'application puis relancez-la. Sans configuration, le bouton « Envoyer par e-mail » est affiché désactivé avec un message explicatif.
 
 ## 🗂️ Structure du projet
 

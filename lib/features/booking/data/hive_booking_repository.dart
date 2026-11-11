@@ -6,6 +6,7 @@ import 'package:hive_ce/hive.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../core/services/reminder_scheduler.dart';
 import '../../../core/storage/hive_service.dart';
 import '../../../features/notifications/domain/notification_repository.dart';
 import '../../../models/booking.dart';
@@ -27,6 +28,7 @@ class HiveBookingRepository implements BookingRepository {
     Box<Map>? usersBox,
     Box<Map>? driversBox,
     NotificationRepository? notifications,
+    ReminderScheduler? reminderScheduler,
     DateTime Function()? now,
   }) : _bookings = bookingsBox ?? HiveService.bookings,
        _payments = paymentsBox ?? HiveService.payments,
@@ -36,6 +38,7 @@ class HiveBookingRepository implements BookingRepository {
        _users = usersBox ?? HiveService.users,
        _drivers = driversBox ?? HiveService.drivers,
        _notifications = notifications,
+       _reminderScheduler = reminderScheduler,
        _now = now ?? DateTime.now;
 
   final Box<Map> _bookings;
@@ -46,6 +49,7 @@ class HiveBookingRepository implements BookingRepository {
   final Box<Map> _users;
   final Box<Map> _drivers;
   final NotificationRepository? _notifications;
+  final ReminderScheduler? _reminderScheduler;
   final DateTime Function() _now;
   static const _uuid = Uuid();
   static Future<void> _mutationQueue = Future<void>.value();
@@ -245,6 +249,15 @@ class HiveBookingRepository implements BookingRepository {
       data: {'bookingId': id},
       messageId: 'booking-confirmed-$id',
     );
+    final departure = DateTime.tryParse(booking.departureTime);
+    if (departure != null) {
+      await _scheduleReminderSafely(
+        bookingId: id,
+        fromCity: fromCity,
+        toCity: toCity,
+        departure: departure,
+      );
+    }
     return booking;
   }
 
@@ -296,6 +309,7 @@ class HiveBookingRepository implements BookingRepository {
       data: {'bookingId': booking.id},
       messageId: 'booking-cancelled-${booking.id}',
     );
+    await _cancelReminderSafely(booking.id);
     return updated;
   }
 
@@ -322,6 +336,50 @@ class HiveBookingRepository implements BookingRepository {
     } on StateError catch (error) {
       // Notification permission is optional and must not undo a booking.
       debugPrint('Booking notification unavailable: $error');
+    }
+  }
+
+  /// Planifie une notification de rappel de départ 2 heures avant [departure].
+  /// Ne plante jamais : toute erreur est loggée et ignorée.
+  Future<void> _scheduleReminderSafely({
+    required String bookingId,
+    required String fromCity,
+    required String toCity,
+    required DateTime departure,
+  }) async {
+    final scheduler = _reminderScheduler;
+    if (scheduler == null) return;
+    final reminderTime = departure.subtract(const Duration(hours: 2));
+    // Ne rien planifier si l'heure de rappel est dans le passé ou trop proche.
+    final now = _now();
+    if (reminderTime.isBefore(now.add(const Duration(minutes: 1)))) return;
+    final id = reminderIdForBooking(bookingId);
+    final from = fromCity.isNotEmpty ? fromCity : '?';
+    final to = toCity.isNotEmpty ? toCity : '?';
+    final hh = departure.hour.toString().padLeft(2, '0');
+    final mm = departure.minute.toString().padLeft(2, '0');
+    final timeStr = '$hh:$mm';
+    try {
+      await scheduler.schedule(
+        id: id,
+        title: 'Rappel de départ',
+        body: 'Départ $from → $to à $timeStr dans 2 heures',
+        scheduledTime: reminderTime,
+        payload: '/passenger/trips',
+      );
+    } on Object catch (error) {
+      debugPrint('Reminder schedule failed: $error');
+    }
+  }
+
+  /// Annule le rappel associé à [bookingId]. Silencieux en cas d'erreur.
+  Future<void> _cancelReminderSafely(String bookingId) async {
+    final scheduler = _reminderScheduler;
+    if (scheduler == null) return;
+    try {
+      await scheduler.cancel(reminderIdForBooking(bookingId));
+    } on Object catch (error) {
+      debugPrint('Reminder cancel failed: $error');
     }
   }
 }

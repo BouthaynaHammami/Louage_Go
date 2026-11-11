@@ -185,6 +185,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String ticketEmailRecipientHint(String email) {
+    return '→ $email';
+  }
+
+  @override
   String get ticketEmailNotConfigured => 'Email delivery is not configured.';
 
   @override
@@ -1814,6 +1819,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewsLoadMore => 'Load more';
 
   @override
+  String get bookingRateDriver => 'Rate the driver';
+
+  @override
+  String get bookingRateDriverDone => 'Review sent';
+
+  @override
+  String get reviewsNewReviewNotifTitle => 'New review received';
+
+  @override
+  String reviewsNewReviewNotifMessage(int rating) {
+    return 'A passenger rated you $rating star(s).';
+  }
+
+  @override
   String get widgetGalleryTitle => 'Widget gallery';
 
   @override
@@ -1946,6 +1965,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsTypeTrip => 'Trip';
+
+  @override
+  String get notificationsTypeReminder => 'Reminder';
+
+  @override
+  String get reminderNotifTitle => 'Departure reminder';
+
+  @override
+  String reminderNotifBody(String from, String to, String time) {
+    return 'Departure $from → $to at $time in 2 hours';
+  }
 
   @override
   String get notificationsTypePromotion => 'Promotion';

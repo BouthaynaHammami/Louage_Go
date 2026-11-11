@@ -5,9 +5,12 @@ import '../../domain/driver_review.dart';
 import '../../domain/review_summary.dart';
 import '../../domain/review_trip_context.dart';
 import '../../domain/reviews_repository.dart';
+import '../../../notifications/presentation/providers/notifications_provider.dart';
 
 final reviewsRepositoryProvider = Provider<ReviewsRepository>(
-  (ref) => HiveReviewsRepository(),
+  (ref) => HiveReviewsRepository(
+    notifications: ref.read(notificationRepositoryProvider),
+  ),
 );
 
 final driverReviewsProvider =

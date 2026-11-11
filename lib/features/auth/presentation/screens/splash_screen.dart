@@ -115,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen>
             child: RepaintBoundary(
               child: AnimatedBuilder(
                 animation: _bgCtrl,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   painter: _SplashBgPainter(_bgCtrl.value),
                 ),
               ),
@@ -127,7 +127,7 @@ class _SplashScreenState extends State<SplashScreen>
             child: RepaintBoundary(
               child: AnimatedBuilder(
                 animation: _bgCtrl,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   painter: _TunisiaMapPainter(_bgCtrl.value),
                 ),
               ),
@@ -142,7 +142,7 @@ class _SplashScreenState extends State<SplashScreen>
             height: 80,
             child: AnimatedBuilder(
               animation: _vanX,
-              builder: (_, __) {
+              builder: (_, _) {
                 final progress = _vanX.value;
                 final vanW = size.width * 0.28;
                 final x = -vanW + progress * (size.width + vanW);
@@ -214,7 +214,7 @@ class _SplashScreenState extends State<SplashScreen>
             top: safeT + size.height * 0.38,
             child: AnimatedBuilder(
               animation: _mainCtrl,
-              builder: (_, __) => Column(
+              builder: (_, _) => Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Logo mark avec halo
@@ -296,7 +296,7 @@ class _SplashScreenState extends State<SplashScreen>
             left: 0, right: 0,
             child: AnimatedBuilder(
               animation: _bgCtrl,
-              builder: (_, __) {
+              builder: (_, _) {
                 final t = _bgCtrl.value;
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,

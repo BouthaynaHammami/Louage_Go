@@ -176,7 +176,7 @@ class _IntroSlidesScreenState extends State<IntroSlidesScreen>
             child: RepaintBoundary(
               child: AnimatedBuilder(
                 animation: _bgCtrl,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   painter: slide.painter(_bgCtrl.value),
                 ),
               ),
@@ -210,7 +210,7 @@ class _IntroSlidesScreenState extends State<IntroSlidesScreen>
             controller: _pageCtrl,
             itemCount: _count,
             onPageChanged: _onPageChanged,
-            itemBuilder: (_, __) => const SizedBox.expand(),
+            itemBuilder: (_, _) => const SizedBox.expand(),
           ),
 
           // ── 4. Zone illustration (van + route) ───────────────────────
@@ -220,7 +220,7 @@ class _IntroSlidesScreenState extends State<IntroSlidesScreen>
             height: size.height * 0.46,
             child: AnimatedBuilder(
               animation: _inCtrl,
-              builder: (_, __) {
+              builder: (_, _) {
                 return Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -272,7 +272,7 @@ class _IntroSlidesScreenState extends State<IntroSlidesScreen>
             bottom: safeB + 148,
             child: AnimatedBuilder(
               animation: _inCtrl,
-              builder: (_, __) => FadeTransition(
+              builder: (_, _) => FadeTransition(
                 opacity: _textFade,
                 child: SlideTransition(
                   position: _textSlide,
@@ -431,7 +431,7 @@ class _Road extends StatelessWidget {
     return RepaintBoundary(
       child: AnimatedBuilder(
         animation: bgCtrl,
-        builder: (_, __) => CustomPaint(
+        builder: (_, _) => CustomPaint(
           size: Size(MediaQuery.sizeOf(context).width, 14),
           painter: _RoadPainter(bgCtrl.value),
         ),

@@ -62,6 +62,14 @@
       }
     }
   },
+  "ticketEmailRecipientHint": "→ {email}",
+  "@ticketEmailRecipientHint": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "ticketEmailNotConfigured": "Envoi par e-mail non configuré.",
   "ticketEmailNetworkError": "Erreur réseau. Vérifiez votre connexion puis réessayez.",
   "ticketEmailTimeoutError": "Le service e-mail met trop de temps à répondre.",
@@ -685,6 +693,17 @@
   "reviewsDeleteAction": "Supprimer",
   "reviewsCancelAction": "Annuler",
   "reviewsLoadMore": "Voir plus",
+  "bookingRateDriver": "Noter le chauffeur",
+  "bookingRateDriverDone": "Avis envoyé",
+  "reviewsNewReviewNotifTitle": "Nouvel avis reçu",
+  "reviewsNewReviewNotifMessage": "Un passager vous a attribué {rating} étoile(s).",
+  "@reviewsNewReviewNotifMessage": {
+    "placeholders": {
+      "rating": {
+        "type": "int"
+      }
+    }
+  },
   "widgetGalleryTitle": "Catalogue des widgets",
   "widgetGalleryFields": "Champs de formulaire",
   "widgetGalleryValidate": "Valider",
@@ -729,6 +748,16 @@
   "notificationsUnread": "Non lue",
   "notificationsTypeBooking": "Réservation",
   "notificationsTypeTrip": "Trajet",
+  "notificationsTypeReminder": "Rappel",
+  "reminderNotifTitle": "Rappel de départ",
+  "reminderNotifBody": "Départ {from} → {to} à {time} dans 2 heures",
+  "@reminderNotifBody": {
+    "placeholders": {
+      "from": { "type": "String" },
+      "to":   { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
   "notificationsTypePromotion": "Promotion",
   "notificationsTypeSystem": "Information",
   "notificationsPermissionTitle": "Activer les notifications",

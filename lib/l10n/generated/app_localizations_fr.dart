@@ -188,6 +188,11 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String ticketEmailRecipientHint(String email) {
+    return '→ $email';
+  }
+
+  @override
   String get ticketEmailNotConfigured => 'Envoi par e-mail non configuré.';
 
   @override
@@ -1830,6 +1835,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get reviewsLoadMore => 'Voir plus';
 
   @override
+  String get bookingRateDriver => 'Noter le chauffeur';
+
+  @override
+  String get bookingRateDriverDone => 'Avis envoyé';
+
+  @override
+  String get reviewsNewReviewNotifTitle => 'Nouvel avis reçu';
+
+  @override
+  String reviewsNewReviewNotifMessage(int rating) {
+    return 'Un passager vous a attribué $rating étoile(s).';
+  }
+
+  @override
   String get widgetGalleryTitle => 'Catalogue des widgets';
 
   @override
@@ -1964,6 +1983,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get notificationsTypeTrip => 'Trajet';
+
+  @override
+  String get notificationsTypeReminder => 'Rappel';
+
+  @override
+  String get reminderNotifTitle => 'Rappel de départ';
+
+  @override
+  String reminderNotifBody(String from, String to, String time) {
+    return 'Départ $from → $to à $time dans 2 heures';
+  }
 
   @override
   String get notificationsTypePromotion => 'Promotion';
